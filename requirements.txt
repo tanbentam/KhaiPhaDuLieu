@@ -1,0 +1,39 @@
+# Thu vien cho do an Khai pha du lieu - Mobility & Traffic Hotspots
+# Python 3.10 - 3.12 (may ca nhan hoac Google Colab)
+#
+# LUU Y: giu file nay chi co ky tu ASCII (khong dau). pip cu tren Windows doc file
+# bang ma cp1252, gap chu tieng Viet co dau se bao UnicodeDecodeError.
+#
+# May ca nhan:  python -m pip install -r requirements.txt
+# Colab:        !pip install -q -r requirements.txt
+#
+# Dung dai phien ban thay vi ghim cung de chay duoc ca tren Colab
+# (khong ep Colab cai lai numpy/pandas). Phien ban da kiem thu ghi o cuoi file.
+
+# Xu ly du lieu
+numpy>=2.0,<3
+pandas>=2.2,<3
+pyarrow>=15
+scipy>=1.13,<2
+
+# Phan cum va danh gia
+scikit-learn>=1.5,<1.8
+hdbscan>=0.8.40,<0.9
+
+# Truc quan hoa
+matplotlib>=3.8,<4
+seaborn>=0.13,<0.14
+folium>=0.17
+
+# Do tai nguyen va cau hinh
+psutil>=5.9
+PyYAML>=6.0
+
+# Chi can khi chay Jupyter tren may ca nhan (Colab da co, khong cai tren Colab):
+# ipykernel>=6
+
+# Phan cua M1 (tien xu ly khong gian) se bo sung khi chot, vi du: geopandas, pyproj, shapely
+
+# Da kiem thu 13/11/2026 - Python 3.10.6, Windows 11:
+# numpy 2.2.6, pandas 2.3.3, pyarrow 25.0.1, scipy 1.15.3, scikit-learn 1.7.2,
+# hdbscan 0.8.44, matplotlib 3.10.9, seaborn 0.13.2, folium 0.20.0, psutil 7.2.2, PyYAML 6.0.3
