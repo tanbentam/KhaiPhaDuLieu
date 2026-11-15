@@ -12,4 +12,5 @@ Checklist: `docs/checklist-m2.md`
 | 2.4 | [Chạy được trên Colab](Phan%202/2.4-chay-tren-colab.md) | Xong (đã chạy thật trên Colab; chưa kiểm nối Drive) | 0f30542, f2c02d6 |
 | 3.0 | [Mẫu pilot tạm của M2](Phan%203/3.0-mau-pilot-tam.md) | Xong (138.629 điểm, chỉ 219 toạ độ duy nhất) | 1bce97b, 147aee9 |
 | 3.1 | [K-Means: Elbow](Phan%203/3.1-kmeans-elbow.md) | Xong trên pilot (khuỷu gợi ý K = 5) | c26b82b |
-| 3.2 | [K-Means: chỉ số theo K, chọn K](Phan%203/3.2-kmeans-chon-k.md) | Xong trên pilot; đề xuất K = 5, chờ Tân xác nhận | |
+| 3.2 | [K-Means: chỉ số theo K, chọn K](Phan%203/3.2-kmeans-chon-k.md) | Xong trên pilot; đã chốt K = 5 | 2c2b125 |
+| 3.3 | [K-Means: fit K = 5 và bản đồ](Phan%203/3.3-kmeans-fit-ban-do.md) | Xong trên pilot | |

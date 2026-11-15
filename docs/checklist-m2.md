@@ -36,7 +36,7 @@ Quy ước:
 
 - [x] 3.1 Elbow: thử K từ 2 đến 15, `k-means++`, `n_init=10`, `random_state=42`. Lưu inertia ra `kmeans_elbow.csv` và vẽ `kmeans_elbow.png`.
 - [x] 3.2 Silhouette, Davies-Bouldin, Calinski-Harabasz theo K. Chọn K cuối dựa trên elbow, silhouette, kích thước cụm và bản đồ. Ghi rõ lý do chọn.
-- [ ] 3.3 Fit với K đã chọn. Lưu nhãn theo `trip_id` (`kmeans_labels.parquet`) và vẽ bản đồ centroid cùng các cụm (`kmeans_map.html`).
+- [x] 3.3 Fit với K đã chọn. Lưu nhãn theo `trip_id` (`kmeans_labels.parquet`) và vẽ bản đồ centroid cùng các cụm (`kmeans_map.html`).
   - Done phần 3 khi: có bảng K và lý do chọn; không chọn K chỉ vì inertia nhỏ; kiểm tra `n_iter_` để chắc thuật toán đã hội tụ.
 
 ## Phần 4. DBSCAN (M2-04, M2-05) [chờ M1]

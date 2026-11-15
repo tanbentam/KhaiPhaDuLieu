@@ -47,6 +47,7 @@ kmeans:
   init: k-means++
   n_init: 10
   max_iter: 300
+  k_final: 5                 # chot o muc 3.2 (tren mau pilot); xac nhan lai khi co du lieu M1
 
 dbscan:
   eps_m: [150, 250, 350, 500, 700, 1000]   # dieu chinh lai quanh diem gay cua k-distance
