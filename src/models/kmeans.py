@@ -61,6 +61,49 @@ def elbow(
     return pd.DataFrame(rows)
 
 
+def fit_weighted(X: Any, k: int, *, init: str = "k-means++", n_init: int = 50,
+                 max_iter: int = 300, seed: int = 42) -> tuple[np.ndarray, KMeans]:
+    """Fit K-Means tren toa do duy nhat (sample_weight = so chuyen), tra nhan cho TUNG chuyen."""
+    Xu, w, inv = aggregate_unique(X)
+    if k > len(Xu):
+        raise ValueError(f"k = {k} lon hon so toa do khac nhau ({len(Xu)})")
+    km = KMeans(n_clusters=k, init=init, n_init=n_init, max_iter=max_iter, random_state=seed)
+    km.fit(Xu, sample_weight=w)
+    return km.labels_[inv], km
+
+
+def scan_k(X: Any, k_values: Any, *, init: str = "k-means++", n_init: int = 50,
+           max_iter: int = 300, seed: int = 42, silhouette_max_sample: int = 20000) -> pd.DataFrame:
+    """Voi moi K: fit_weighted roi tinh chi so tren tung chuyen bang src.evaluation.evaluate.
+
+    Them `silhouette_unique`: Silhouette tren cac toa do duy nhat (khong trong so) de doi chieu,
+    vi Silhouette tren tung chuyen bi keo len do rat nhieu chuyen trung toa do (khoang cach 0).
+    """
+    from sklearn.metrics import silhouette_score
+
+    from src.evaluation import evaluate
+
+    X = np.asarray(X, dtype=np.float64)
+    Xu, w, inv = aggregate_unique(X)
+    rows = []
+    for k in k_values:
+        t0 = time.perf_counter()
+        labels, km = fit_weighted(X, int(k), init=init, n_init=n_init, max_iter=max_iter, seed=seed)
+        fit_sec = time.perf_counter() - t0
+        r = evaluate(X, labels, silhouette_max_sample=silhouette_max_sample, seed=seed)
+        lu = km.labels_
+        r["silhouette_unique"] = (float(silhouette_score(Xu, lu))
+                                  if 2 <= np.unique(lu).size <= len(Xu) - 1 else None)
+        r.update({"k": int(k), "inertia": float(km.inertia_), "n_iter": int(km.n_iter_),
+                  "n_unique": int(len(Xu)), "fit_sec": fit_sec,
+                  "smallest_share": r["size_min"] / r["n_points"] if r["size_min"] else None})
+        rows.append(r)
+    cols = ["k", "inertia", "silhouette", "silhouette_unique", "davies_bouldin", "calinski_harabasz",
+            "size_min", "size_median", "size_max", "largest_share", "smallest_share",
+            "n_points", "n_unique", "silhouette_sample", "n_iter", "fit_sec"]
+    return pd.DataFrame(rows)[cols]
+
+
 def knee_point(ks: Any, values: Any) -> int:
     """Diem khuyu theo cach 'khoang cach lon nhat toi day cung' (giong Kneedle don gian).
 
