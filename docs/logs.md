@@ -18,4 +18,5 @@ Checklist: `docs/checklist-m2.md`
 | 4.1 | [DBSCAN: k-distance có trọng số](Phan%204/4.1-dbscan-k-distance.md) | Xong trên pilot; đã chốt lưới eps 500–3000 m | 70e69b9 |
 | 4.2 | [DBSCAN: full so với weighted, đo RAM](Phan%204/4.2-dbscan-full-vs-weighted.md) | Xong trên pilot (9/9 ARI = 1) | a34ed37 |
 | 4.3 | [DBSCAN: lưới eps × min_samples](Phan%204/4.3-dbscan-luoi-tham-so.md) | Xong trên pilot (144 cấu hình) | a1ba81c |
-| 4.4 | [DBSCAN: chọn cấu hình, log, bản đồ](Phan%204/4.4-dbscan-chon-cau-hinh.md) | Xong trên pilot (chính B: 1%, 2000 m; phụ C: 0,5%, 1000 m) | |
+| 4.4 | [DBSCAN: chọn cấu hình, log, bản đồ](Phan%204/4.4-dbscan-chon-cau-hinh.md) | Xong trên pilot (chính B: 1%, 2000 m; phụ C: 0,5%, 1000 m) | 813b756 |
+| 5.3 | [So sánh K-Means và DBSCAN](Phan%205/5.3-so-sanh-kmeans-dbscan.md), [diễn giải](Phan%205/baseline_interpretation.md) | Xong trên pilot (5.1, 5.2 chờ M1/M3) | |

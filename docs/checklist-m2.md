@@ -53,7 +53,7 @@ Quy ước:
 
 - [ ] 5.1 Chạy K-Means và DBSCAN trên 3 lát cắt WEEKDAY_AM, WEEKDAY_PM, WEEKEND, cùng tập `trip_id` với M3.
 - [ ] 5.2 Lập `baseline_metrics.csv` theo đúng định dạng đã thống nhất với M3 để M4 ghép bảng được.
-- [ ] 5.3 So sánh hình dạng cụm và điểm nhiễu: chọn ít nhất 2 vùng mà hai thuật toán cho kết quả khác nhau, có bản đồ phóng to. Kiểm tra điểm nhiễu là ngoại lệ thật hay do eps quá nhỏ. Viết vào `baseline_interpretation.md`.
+- [x] 5.3 So sánh hình dạng cụm và điểm nhiễu: chọn ít nhất 2 vùng mà hai thuật toán cho kết quả khác nhau, có bản đồ phóng to. Kiểm tra điểm nhiễu là ngoại lệ thật hay do eps quá nhỏ. Viết vào `baseline_interpretation.md`.
   - Done phần 5 khi: mọi nhận xét đều có bản đồ hoặc số liệu đi kèm; không kết luận "ùn tắc".
 
 ## Phần 6. Benchmark chính thức trên máy Tân [đề xuất]
