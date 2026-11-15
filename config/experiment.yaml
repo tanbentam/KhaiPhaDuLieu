@@ -1,0 +1,56 @@
+# Cau hinh thi nghiem dung chung (M2 soan, M3 bo sung muc hdbscan)
+# Tat ca duong dan la tuong doi so voi goc repo (chay duoc tren Colab).
+# Gia tri o day la cau hinh KHOI DIEM theo BA Spec v1.1 (Phu luc A2), khong phai ket qua.
+# Giu file chi co ky tu ASCII.
+
+project:
+  seed: 42
+  crs: "EPSG:26916"          # UTM 16N, don vi met
+  features: [x_m, y_m]       # chi dung toa do; khong dua gio/thu/quang duong vao khoang cach
+
+paths:
+  model_input: data/processed/model_input.parquet
+  manifest: data/manifests/model_input_manifest.json
+  labels_dir: outputs/labels
+  run_log: outputs/metrics/run_log.csv
+  figures_dir: outputs/figures
+  maps_dir: outputs/maps
+
+# Dinh nghia lat cat de doi chieu. Nguon chuan la cot time_slice do M1 tao;
+# neu M1 doi dinh nghia thi sua o day cho khop.
+# weekday: 0 = thu Hai ... 6 = Chu nhat; hours: gio bat dau chuyen (0-23)
+time_slices:
+  WEEKDAY_AM:
+    weekdays: [0, 1, 2, 3, 4]
+    hours: [7, 8, 9]
+  WEEKDAY_PM:
+    weekdays: [0, 1, 2, 3, 4]
+    hours: [16, 17, 18]
+  WEEKEND:
+    weekdays: [5, 6]
+    hours: all
+
+sampling:
+  pilot_sizes: [10000, 30000, 50000]
+  target_size: 100000        # may 16 GB: 100k-150k theo spec
+
+evaluation:
+  silhouette_max_sample: 20000   # Silhouette tinh tren mau con toi da so diem nay
+  min_clusters_for_metrics: 2    # it hon so cum nay thi ghi N/A
+  ram_stop_ratio: 0.85           # dung tang co mau khi RAM vuot nguong nay
+
+kmeans:
+  k_min: 2
+  k_max: 15
+  init: k-means++
+  n_init: 10
+  max_iter: 300
+
+dbscan:
+  eps_m: [150, 250, 350, 500, 700, 1000]   # dieu chinh lai quanh diem gay cua k-distance
+  min_samples: [5, 10, 15, 20]
+  metric: euclidean
+  algorithm: auto
+  n_jobs: -1
+
+# hdbscan: M3 bo sung (min_cluster_size, min_samples, cluster_selection_method)
