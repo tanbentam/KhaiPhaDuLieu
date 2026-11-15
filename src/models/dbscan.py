@@ -84,6 +84,21 @@ def knee_eps(share: Any, dist: Any) -> float:
     return float(y[int(np.argmax(below))])
 
 
+def estimate_full_neighbors(X: Any, eps: float) -> int:
+    """Uoc tinh tong so cap lang gieng (tinh ca chinh no) ma DBSCAN tren TUNG CHUYEN phai luu.
+
+    sklearn DBSCAN luu danh sach lang gieng trong ban kinh eps cho moi diem, nen bo nho
+    ~ tong so cap x 8 byte (int64). Tinh nhanh tren toa do duy nhat:
+    sum_i w_i * (tong trong so trong ban kinh eps cua toa do i).
+    Dung de BO QUA lan chay day du truoc khi no lam tran RAM.
+    """
+    from sklearn.neighbors import NearestNeighbors
+
+    Xu, w, _ = aggregate_unique(X)
+    nb = NearestNeighbors(radius=eps).fit(Xu).radius_neighbors(Xu, return_distance=False)
+    return int(sum(w[i] * w[idx].sum() for i, idx in enumerate(nb)))
+
+
 def fit_weighted(X: Any, eps: float, min_samples: int, *, metric: str = "euclidean",
                  algorithm: str = "auto", n_jobs: int | None = None) -> tuple[np.ndarray, Any]:
     """DBSCAN tren toa do duy nhat (sample_weight = so chuyen), tra nhan cho TUNG chuyen."""

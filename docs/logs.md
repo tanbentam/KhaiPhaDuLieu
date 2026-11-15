@@ -15,4 +15,5 @@ Checklist: `docs/checklist-m2.md`
 | 3.2 | [K-Means: chỉ số theo K, chọn K](Phan%203/3.2-kmeans-chon-k.md) | Xong trên pilot; đã chốt K = 5 | 2c2b125 |
 | 3.3 | [K-Means: fit K = 5 và bản đồ](Phan%203/3.3-kmeans-fit-ban-do.md) | Xong trên pilot | b4aaafc |
 | 4.0 | [Quyết định cách chạy DBSCAN](Phan%204/4.0-quyet-dinh-dbscan.md) | Đã duyệt | 762762e |
-| 4.1 | [DBSCAN: k-distance có trọng số](Phan%204/4.1-dbscan-k-distance.md) | Xong trên pilot; không có điểm gãy rõ, đề xuất lưới eps | |
+| 4.1 | [DBSCAN: k-distance có trọng số](Phan%204/4.1-dbscan-k-distance.md) | Xong trên pilot; đã chốt lưới eps 500–3000 m | 70e69b9 |
+| 4.2 | [DBSCAN: full so với weighted, đo RAM](Phan%204/4.2-dbscan-full-vs-weighted.md) | Xong trên pilot (9/9 ARI = 1) | |

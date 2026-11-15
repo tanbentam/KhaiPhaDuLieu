@@ -52,7 +52,7 @@ kmeans:
 # DBSCAN: 3 dieu chinh so voi spec, da duyet 15/11/2026 (docs/Phan 4/4.0-quyet-dinh-dbscan.md)
 dbscan:
   mode: weighted                                    # fit tren toa do duy nhat, sample_weight = so chuyen
-  eps_m: [250, 500, 750, 1000, 1500, 2000, 2500]    # spec 150-1000 qua nho (toa do cach nhau ~1 km); thu hep theo k-distance
+  eps_m: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000]   # chot sau 4.1 (k-distance khong co diem gay ro; toa do cach nhau ~1 km)
   min_samples_frac: [0.001, 0.003, 0.005, 0.01]     # luoi chinh: ty le so chuyen cua lat cat, lam tron len
   min_samples: [5, 20]                              # gia tri cua spec, chay kem de doi chieu
   metric: euclidean
