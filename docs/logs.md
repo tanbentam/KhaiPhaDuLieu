@@ -13,4 +13,6 @@ Checklist: `docs/checklist-m2.md`
 | 3.0 | [Mẫu pilot tạm của M2](Phan%203/3.0-mau-pilot-tam.md) | Xong (138.629 điểm, chỉ 219 toạ độ duy nhất) | 1bce97b, 147aee9 |
 | 3.1 | [K-Means: Elbow](Phan%203/3.1-kmeans-elbow.md) | Xong trên pilot (khuỷu gợi ý K = 5) | c26b82b |
 | 3.2 | [K-Means: chỉ số theo K, chọn K](Phan%203/3.2-kmeans-chon-k.md) | Xong trên pilot; đã chốt K = 5 | 2c2b125 |
-| 3.3 | [K-Means: fit K = 5 và bản đồ](Phan%203/3.3-kmeans-fit-ban-do.md) | Xong trên pilot | |
+| 3.3 | [K-Means: fit K = 5 và bản đồ](Phan%203/3.3-kmeans-fit-ban-do.md) | Xong trên pilot | b4aaafc |
+| 4.0 | [Quyết định cách chạy DBSCAN](Phan%204/4.0-quyet-dinh-dbscan.md) | Đã duyệt | 762762e |
+| 4.1 | [DBSCAN: k-distance có trọng số](Phan%204/4.1-dbscan-k-distance.md) | Xong trên pilot; không có điểm gãy rõ, đề xuất lưới eps | |
