@@ -99,6 +99,42 @@ def estimate_full_neighbors(X: Any, eps: float) -> int:
     return int(sum(w[i] * w[idx].sum() for i, idx in enumerate(nb)))
 
 
+def scan_grid(X: Any, eps_list: Any, ms_list: Any, *, seed: int = 42,
+              silhouette_max_sample: int = 20000) -> "Any":
+    """Chay DBSCAN co trong so cho moi (eps, min_samples); chi so tinh tren TUNG CHUYEN.
+
+    ms_list: danh sach (nhan, min_samples), vd [("0.5%", 151), ("spec 20", 20)].
+    Them `silhouette_unique` (Silhouette tren toa do duy nhat khong thuoc nhieu, khong trong so)
+    va `noise_coords` (so toa do bi gan nhieu). Moi dong co runtime va RAM them (measure).
+    """
+    import pandas as pd
+    from sklearn.metrics import silhouette_score
+
+    from src.evaluation import evaluate, measure
+
+    X = np.asarray(X, dtype=np.float64)
+    Xu, w, inv = aggregate_unique(X)
+    rows = []
+    for eps in eps_list:
+        for ms_label, ms in ms_list:
+            (lab, db), sec, _, mem = measure(lambda: fit_weighted(X, float(eps), int(ms)))
+            r = evaluate(X, lab, silhouette_max_sample=silhouette_max_sample, seed=seed)
+            lu = db.labels_
+            keep = lu != -1
+            k = np.unique(lu[keep]).size
+            r["silhouette_unique"] = (float(silhouette_score(Xu[keep], lu[keep]))
+                                      if 2 <= k <= keep.sum() - 1 else None)
+            r.update({"eps_m": float(eps), "ms_rule": ms_label, "min_samples": int(ms),
+                      "noise_coords": int((lu == -1).sum()), "n_coords": int(len(Xu)),
+                      "fit_sec": sec, "mem_delta_mb": mem})
+            rows.append(r)
+    cols = ["eps_m", "ms_rule", "min_samples", "n_clusters", "noise_ratio", "coverage", "noise_coords",
+            "n_coords", "size_min", "size_median", "size_max", "largest_share", "silhouette",
+            "silhouette_unique", "davies_bouldin", "calinski_harabasz", "n_points", "n_points_metric",
+            "silhouette_sample", "fit_sec", "mem_delta_mb"]
+    return pd.DataFrame(rows)[cols]
+
+
 def fit_weighted(X: Any, eps: float, min_samples: int, *, metric: str = "euclidean",
                  algorithm: str = "auto", n_jobs: int | None = None) -> tuple[np.ndarray, Any]:
     """DBSCAN tren toa do duy nhat (sample_weight = so chuyen), tra nhan cho TUNG chuyen."""
