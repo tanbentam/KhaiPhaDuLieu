@@ -24,7 +24,9 @@ Quy ước:
   - Số cụm, số điểm nhiễu, Noise Ratio, coverage, kích thước cụm (min, median, max, tỷ trọng cụm lớn nhất).
   - Silhouette, Davies-Bouldin, Calinski-Harabasz, chỉ tính trên các điểm đã được gán cụm, ghi kèm số điểm dùng để tính. Silhouette tính trên mẫu con tối đa 20k điểm.
   - Bỏ qua và ghi N/A khi số cụm nhỏ hơn 2.
-- [ ] 2.3 Viết hàm đo runtime (`perf_counter`) và RAM đỉnh (`psutil`). Mỗi lần chạy ghi một dòng vào `runs/baseline_run_log.csv` gồm `run_id`, thuật toán, tham số, cỡ mẫu, kết quả, thời gian, phiên bản thư viện.
+- [x] 2.3 Viết hàm đo runtime (`perf_counter`) và RAM đỉnh (`psutil`). Mỗi lần chạy ghi một dòng vào `runs/baseline_run_log.csv` gồm `run_id`, thuật toán, tham số, cỡ mẫu, kết quả, thời gian, phiên bản thư viện.
+- [ ] 2.4 Chạy được trên Colab: viết một ô thiết lập dùng chung cho mọi notebook. Ô này clone repo (repo đang để public), chạy `pip install -r requirements.txt`, thêm gốc repo vào `sys.path`, và lấy dữ liệu từ Google Drive (dữ liệu không nằm trên Git). Trên máy cá nhân thì ô này tự bỏ qua. Chạy thử thật trên Colab với code Phần 2 và dữ liệu giả lập.
+  - Done khi: chạy hết trên Colab không phải sửa code, chỉ khác ô thiết lập. Ghi lại phiên bản Python và thư viện trên Colab.
   - Done phần 2 khi: chạy thử trên dữ liệu giả lập ra đúng số liệu. Kiểm tra các trường hợp biên: toàn bộ là nhiễu, chỉ có 1 cụm, nhiều điểm trùng toạ độ.
 
 ## Phần 3. K-Means (M2-02, M2-03) [chờ M1]

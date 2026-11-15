@@ -73,7 +73,7 @@ File: `outputs/labels/<run_id>.parquet`
 
 ## 4. Log mỗi lần chạy (M2 và M3 dùng chung một file)
 
-File: `outputs/metrics/run_log.csv`. Mỗi lần fit ghi thêm một dòng, không sửa dòng cũ.
+File: `outputs/metrics/run_log.csv`. Mỗi lần fit ghi thêm một dòng, không sửa dòng cũ. Thứ tự cột chuẩn nằm trong `RUN_LOG_COLUMNS` (`src/evaluation/runlog.py`, 28 cột).
 
 `run_id` = `<thuat_toan>_<time_slice>_<YYYYMMDD-HHMMSS>`, ví dụ `dbscan_WEEKDAY_AM_20261120-143005`.
 
@@ -94,7 +94,8 @@ File: `outputs/metrics/run_log.csv`. Mỗi lần fit ghi thêm một dòng, khô
 | `n_points_metric` | Số điểm dùng để tính 3 chỉ số trên |
 | `silhouette_sample` | Cỡ mẫu con dùng cho Silhouette (tối đa 20000) |
 | `runtime_fit_sec` | Chỉ tính thời gian fit, không tính đọc file |
-| `peak_mem_mb` | RAM đỉnh khi fit; đo không được thì để trống |
+| `peak_mem_mb` | RAM đỉnh (RSS) của tiến trình khi fit; đo không được thì để trống |
+| `mem_delta_mb` | Phần RAM fit dùng thêm = đỉnh trừ RSS trước khi fit. Dùng cột này để so sánh RAM giữa các thuật toán (bổ sung ở mục 2.3) |
 | `machine` | Ví dụ `Tan-R7-7840H-16GB` hoặc `colab` |
 | `lib_versions` | Phiên bản sklearn và hdbscan |
 | `git_commit` | Mã commit lúc chạy, nếu có |
