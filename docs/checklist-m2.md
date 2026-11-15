@@ -66,4 +66,4 @@ Quy ước:
 
 - [x] 7.1 Viết phần báo cáo về K-Means và DBSCAN: nguyên lý, pseudocode, công thức (hàm mục tiêu SSE, điều kiện core point), ưu và nhược điểm, cách chọn K, eps, min_samples, kết quả.
 - [x] 7.2 Chuẩn bị tư liệu slide gửi M4 (M4 dựng bộ slide; Tân đồng ý thu hẹp ngày 15/11/2026): 2 hình minh hoạ nguyên lý (K-Means: gán điểm và cập nhật tâm; DBSCAN: core/border/noise), chọn sẵn hình kết quả, nội dung và lời nói canh giờ cho slide 6 (K-Means và DBSCAN, khoảng 1 phút 25 giây) và slide 8 (bảng chỉ số).
-- [ ] 7.3 Chuẩn bị trả lời các câu 3, 4, 5, 6, 9 trong phần vấn đáp của `docs/chi-tiet.md`. Mỗi câu trả lời được trong 20–40 giây.
+- [x] 7.3 Chuẩn bị trả lời các câu 3, 4, 5, 6, 9 trong phần vấn đáp của `docs/chi-tiet.md`. Mỗi câu trả lời được trong 20–40 giây.
