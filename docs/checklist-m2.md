@@ -20,7 +20,7 @@ Quy ước:
 ## Phần 2. Hạ tầng thí nghiệm dùng chung (M2-01)
 
 - [x] 2.1 Viết file cấu hình thí nghiệm: seed, các lát cắt thời gian, cỡ mẫu, lưới tham số cho K-Means và DBSCAN.
-- [ ] 2.2 Viết hàm đánh giá dùng chung (`src/evaluation/`):
+- [x] 2.2 Viết hàm đánh giá dùng chung (`src/evaluation/`):
   - Số cụm, số điểm nhiễu, Noise Ratio, coverage, kích thước cụm (min, median, max, tỷ trọng cụm lớn nhất).
   - Silhouette, Davies-Bouldin, Calinski-Harabasz, chỉ tính trên các điểm đã được gán cụm, ghi kèm số điểm dùng để tính. Silhouette tính trên mẫu con tối đa 20k điểm.
   - Bỏ qua và ghi N/A khi số cụm nhỏ hơn 2.
