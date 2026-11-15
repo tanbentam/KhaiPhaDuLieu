@@ -46,7 +46,7 @@ Quy ước:
 - [x] 4.1 Đồ thị k-distance **có trọng số** (khoảng cách cần đi để gom đủ k chuyến), vẽ theo từng chuyến, với k = các `min_samples` theo tỷ lệ và 5, 20 của spec. Từ đồ thị rút ra các eps ứng viên quanh điểm gãy.
 - [x] 4.2 Chạy DBSCAN trên từng chuyến với mẫu tăng dần 10k → 30k (dừng khi RAM vượt 80–85%), so sánh với cách có trọng số (ARI, số cụm, Noise Ratio) và đo RAM của cả hai cách.
 - [x] 4.3 Chạy lưới eps × min_samples (cách có trọng số), lưu `dbscan_tuning.csv` gồm số cụm, Noise Ratio, kích thước cụm, Silhouette/DBI, runtime, RAM.
-- [ ] 4.4 Chọn cấu hình cuối dựa trên bản đồ, coverage, Noise Ratio và ý nghĩa hotspot. Chạy qua `run_and_log` (lưu nhãn và log), vẽ bản đồ Folium với điểm nhiễu màu xám.
+- [x] 4.4 Chọn cấu hình cuối dựa trên bản đồ, coverage, Noise Ratio và ý nghĩa hotspot. Chạy qua `run_and_log` (lưu nhãn và log), vẽ bản đồ Folium với điểm nhiễu màu xám.
   - Done phần 4 khi: mọi cấu hình đã chạy đều được ghi log; lý do chọn eps dựa trên đồ thị k-distance chứ không chọn theo cảm tính.
 
 ## Phần 5. Phân tích và so sánh baseline (M2-06, M2-07) [chờ M1]

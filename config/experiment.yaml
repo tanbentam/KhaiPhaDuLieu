@@ -55,6 +55,8 @@ dbscan:
   eps_m: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000]   # chot sau 4.1 (k-distance khong co diem gay ro; toa do cach nhau ~1 km)
   min_samples_frac: [0.001, 0.003, 0.005, 0.01]     # luoi chinh: ty le so chuyen cua lat cat, lam tron len
   min_samples: [5, 20]                              # gia tri cua spec, chay kem de doi chieu
+  final: {min_samples_frac: 0.01, eps_m: 2000}      # cau hinh chinh, chot o muc 4.4 (tren mau pilot)
+  secondary: {min_samples_frac: 0.005, eps_m: 1000} # cau hinh phu de minh hoa do nhay cua eps
   metric: euclidean
   algorithm: auto
   n_jobs: -1
