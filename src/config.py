@@ -168,6 +168,11 @@ def validate_config(cfg: dict[str, Any]) -> None:
         ms = db.get("min_samples")
         if not (isinstance(ms, list) and ms and all(_is_int(m) and m >= 2 for m in ms)):
             err.append("dbscan.min_samples phai la danh sach so nguyen >= 2")
+        fr = db.get("min_samples_frac")
+        if fr is not None and not (isinstance(fr, list) and fr and all(_is_num(f) and 0 < f < 1 for f in fr)):
+            err.append("dbscan.min_samples_frac phai la danh sach so trong (0, 1)")
+        if db.get("mode", "weighted") not in ("weighted", "full"):
+            err.append("dbscan.mode phai la 'weighted' hoac 'full'")
         if not isinstance(db.get("metric"), str):
             err.append("dbscan.metric phai la chuoi")
         if not _is_int(db.get("n_jobs")):
