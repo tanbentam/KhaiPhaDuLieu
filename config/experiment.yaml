@@ -15,6 +15,8 @@ paths:
   run_log: outputs/metrics/run_log.csv
   figures_dir: outputs/figures
   maps_dir: outputs/maps
+  pilot_m2: data/pilot_m2/pilot_m2_v0.parquet            # mau TAM cua M2, khong dung cho ket qua cuoi
+  pilot_m2_manifest: data/pilot_m2/pilot_m2_v0_manifest.json
 
 # Dinh nghia lat cat de doi chieu. Nguon chuan la cot time_slice do M1 tao;
 # neu M1 doi dinh nghia thi sua o day cho khop.

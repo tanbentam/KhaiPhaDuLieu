@@ -9,4 +9,5 @@ Checklist: `docs/checklist-m2.md`
 | 2.1 | [File cấu hình thí nghiệm](Phan%202/2.1-file-cau-hinh.md) | Xong (chưa kiểm trên Colab) | 3730d87 |
 | 2.2 | [Hàm đánh giá dùng chung](Phan%202/2.2-ham-danh-gia.md) | Xong (chưa kiểm dữ liệu thật) | cce6f53 |
 | 2.3 | [Đo runtime, RAM và ghi log](Phan%202/2.3-do-tai-nguyen-ghi-log.md) | Xong (chưa kiểm dữ liệu thật) | 969075d |
-| 2.4 | [Chạy được trên Colab](Phan%202/2.4-chay-tren-colab.md) | Xong (đã chạy thật trên Colab; chưa kiểm nối Drive) | 0f30542 (+ commit cập nhật sau Colab) |
+| 2.4 | [Chạy được trên Colab](Phan%202/2.4-chay-tren-colab.md) | Xong (đã chạy thật trên Colab; chưa kiểm nối Drive) | 0f30542, f2c02d6 |
+| 3.0 | [Mẫu pilot tạm của M2](Phan%203/3.0-mau-pilot-tam.md) | Code xong; chờ chạy trên Colab | |

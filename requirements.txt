@@ -32,7 +32,11 @@ PyYAML>=6.0
 # Chi can khi chay Jupyter tren may ca nhan (Colab da co, khong cai tren Colab):
 # ipykernel>=6
 
-# Phan cua M1 (tien xu ly khong gian) se bo sung khi chot, vi du: geopandas, pyproj, shapely
+# Tai du lieu va chieu toa do (M2 them cho mau pilot tam; M1 dung chung)
+requests>=2.31
+pyproj>=3.6
+
+# Phan cua M1 (tien xu ly khong gian) se bo sung khi chot, vi du: geopandas, shapely
 
 # Da kiem thu 13/11/2026 - Python 3.10.6, Windows 11:
 # numpy 2.2.6, pandas 2.3.3, pyarrow 25.0.1, scipy 1.15.3, scikit-learn 1.7.2,

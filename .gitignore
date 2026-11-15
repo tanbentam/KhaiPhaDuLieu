@@ -1,0 +1,14 @@
+# Ban toi thieu do M2 tao (15/11/2026) de tranh commit nham du lieu.
+# M4 phu trach cau truc repo: bo sung / dieu chinh khi can.
+
+# Python, Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Du lieu: khong commit, lay tu link chung (Drive) hoac tai lai bang notebook
+data/
+
+# Ket qua lon hoac tam (metrics CSV va hinh co the commit sau khi nhom chot)
+outputs/labels/
+outputs/_test_env/

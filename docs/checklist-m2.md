@@ -31,6 +31,9 @@ Quy ước:
 
 ## Phần 3. K-Means (M2-02, M2-03) [chờ M1]
 
+- [ ] 3.0 Mẫu pilot tạm của M2: tải 1 tuần dữ liệu Chicago qua Colab (cổng dữ liệu trả 403 khi truy cập từ máy ở Việt Nam), làm sạch tối thiểu, chiếu sang EPSG:26916, lưu `data/pilot_m2/pilot_m2_v0.parquet` kèm manifest. Dùng để chạy thử 3.1–4.4 trong lúc chờ M1, không dùng cho kết quả cuối.
+  - Done khi: file tải về có số dòng khớp với số server đếm, manifest có sha256, file đã nằm trên máy Tân.
+
 - [ ] 3.1 Elbow: thử K từ 2 đến 15, `k-means++`, `n_init=10`, `random_state=42`. Lưu inertia ra `kmeans_elbow.csv` và vẽ `kmeans_elbow.png`.
 - [ ] 3.2 Silhouette, Davies-Bouldin, Calinski-Harabasz theo K. Chọn K cuối dựa trên elbow, silhouette, kích thước cụm và bản đồ. Ghi rõ lý do chọn.
 - [ ] 3.3 Fit với K đã chọn. Lưu nhãn theo `trip_id` (`kmeans_labels.parquet`) và vẽ bản đồ centroid cùng các cụm (`kmeans_map.html`).
