@@ -5,9 +5,10 @@
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+.venv/
 
-# Du lieu: khong commit, lay tu link chung (Drive) hoac tai lai bang notebook
-data/
+# Du lieu (chi thu muc data/ o goc repo; src/data/ la code, van commit): khong commit, lay tu link chung (Drive) hoac tai lai bang notebook
+/data/
 
 # Ket qua lon hoac tam (metrics CSV va hinh co the commit sau khi nhom chot)
 outputs/labels/

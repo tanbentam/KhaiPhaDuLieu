@@ -1,12 +1,9 @@
-# Cau hinh thi nghiem dung chung (M2 soan, M3 bo sung muc hdbscan)
-# Tat ca duong dan la tuong doi so voi goc repo (chay duoc tren Colab).
-# Gia tri o day la cau hinh KHOI DIEM theo BA Spec v1.1 (Phu luc A2), khong phai ket qua.
-# Giu file chi co ky tu ASCII.
+# Cau hinh thi nghiem chung cho M1, M2, M3
 
 project:
   seed: 42
-  crs: "EPSG:26916"          # UTM 16N, don vi met
-  features: [x_m, y_m]       # chi dung toa do; khong dua gio/thu/quang duong vao khoang cach
+  crs: "EPSG:26916"          # He toa do UTM 16N, don vi met
+  features: [x_m, y_m]       # Su dung toa do lam dac trung
 
 paths:
   model_input: data/processed/model_input.parquet
@@ -15,12 +12,17 @@ paths:
   run_log: outputs/metrics/run_log.csv
   figures_dir: outputs/figures
   maps_dir: outputs/maps
-  pilot_m2: data/pilot_m2/pilot_m2_v0.parquet            # mau TAM cua M2, khong dung cho ket qua cuoi
+  pilot_m2: data/pilot_m2/pilot_m2_v0.parquet
   pilot_m2_manifest: data/pilot_m2/pilot_m2_v0_manifest.json
+  raw_dir: data/raw
+  manifests_dir: data/manifests
 
-# Dinh nghia lat cat de doi chieu. Nguon chuan la cot time_slice do M1 tao;
-# neu M1 doi dinh nghia thi sua o day cho khop.
-# weekday: 0 = thu Hai ... 6 = Chu nhat; hours: gio bat dau chuyen (0-23)
+# M1: Khoang thoi gian thu thap du lieu
+extract:
+  start: "2023-04-17"
+  end: "2023-05-14"
+
+# Cac lat cat thoi gian
 time_slices:
   WEEKDAY_AM:
     weekdays: [0, 1, 2, 3, 4]
@@ -32,33 +34,36 @@ time_slices:
     weekdays: [5, 6]
     hours: all
 
+# Cau hinh lay mau
 sampling:
   pilot_sizes: [10000, 30000, 50000]
-  target_size: 100000        # may 16 GB: 100k-150k theo spec
+  target_size: 100000
 
+# Cau hinh danh gia
 evaluation:
-  silhouette_max_sample: 20000   # Silhouette tinh tren mau con toi da so diem nay
-  min_clusters_for_metrics: 2    # it hon so cum nay thi ghi N/A
-  ram_stop_ratio: 0.85           # dung tang co mau khi RAM vuot nguong nay
+  silhouette_max_sample: 20000
+  min_clusters_for_metrics: 2
+  ram_stop_ratio: 0.85
 
+# K-Means
 kmeans:
   k_min: 2
   k_max: 15
   init: k-means++
   n_init: 10
   max_iter: 300
-  k_final: 5                 # chot o muc 3.2 (tren mau pilot); xac nhan lai khi co du lieu M1
+  k_final: 5
 
-# DBSCAN: 3 dieu chinh so voi spec, da duyet 15/11/2026 (docs/Phan 4/4.0-quyet-dinh-dbscan.md)
+# DBSCAN
 dbscan:
-  mode: weighted                                    # fit tren toa do duy nhat, sample_weight = so chuyen
-  eps_m: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000]   # chot sau 4.1 (k-distance khong co diem gay ro; toa do cach nhau ~1 km)
-  min_samples_frac: [0.001, 0.003, 0.005, 0.01]     # luoi chinh: ty le so chuyen cua lat cat, lam tron len
-  min_samples: [5, 20]                              # gia tri cua spec, chay kem de doi chieu
-  final: {min_samples_frac: 0.01, eps_m: 2000}      # cau hinh chinh, chot o muc 4.4 (tren mau pilot)
-  secondary: {min_samples_frac: 0.005, eps_m: 1000} # cau hinh phu de minh hoa do nhay cua eps
+  mode: weighted
+  eps_m: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000]
+  min_samples_frac: [0.001, 0.003, 0.005, 0.01]
+  min_samples: [5, 20]
+  final: {min_samples_frac: 0.01, eps_m: 2000}
+  secondary: {min_samples_frac: 0.005, eps_m: 1000}
   metric: euclidean
   algorithm: auto
   n_jobs: -1
 
-# hdbscan: M3 bo sung (min_cluster_size, min_samples, cluster_selection_method)
+# HDBSCAN: M3 bo sung
