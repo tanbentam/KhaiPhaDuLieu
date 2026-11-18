@@ -6,8 +6,12 @@ project:
   features: [x_m, y_m]       # Su dung toa do lam dac trung
 
 paths:
-  model_input: data/processed/model_input.parquet
-  manifest: data/manifests/model_input_manifest.json
+  # File M1 giao cho M2, M3 (co so phien ban; doi phien ban thi sua 2 dong nay va release.version)
+  model_input: data/processed/model_input_sample_v1.parquet
+  manifest: data/manifests/model_input_sample_v1_manifest.json
+  master: data/processed/master_pickups_v1.parquet           # toan bo dong sau lam sach
+  processed_dir: data/processed
+  preprocess_dir: outputs/metrics/preprocess                 # cleaning log, kiem tra CRS, QA
   labels_dir: outputs/labels
   run_log: outputs/metrics/run_log.csv
   figures_dir: outputs/figures
@@ -21,6 +25,10 @@ paths:
 extract:
   start: "2023-04-17"
   end: "2023-05-14"
+
+# M1: Phien ban du lieu phat hanh. Khong ghi de ban cu: muon doi du lieu thi tang so nay.
+release:
+  version: "v1"
 
 # Cac lat cat thoi gian
 time_slices:

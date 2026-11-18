@@ -1,0 +1,6 @@
+time_slice,rows,unique_coords,top2_share_pct,median_rows_per_coord
+ALL,535167,304,23.03,12.5
+OTHER,267481,249,25.03,35.0
+WEEKDAY_AM,60498,165,20.31,59.0
+WEEKDAY_PM,86617,188,21.58,32.5
+WEEKEND,120571,189,24.61,42.0
