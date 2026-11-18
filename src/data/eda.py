@@ -413,6 +413,7 @@ def fig_trip_distance(df: pd.DataFrame, out_png, note: str) -> Path:
 def fig_boxplots(df: pd.DataFrame, out_png, note: str) -> Path:
     """Boxplot tren truc log cho 3 bien lech phai; moi bien 1 o rieng vi khac don vi."""
     plt = _plt()
+    import matplotlib.ticker as mticker
     items = [("trip_seconds", "Thời lượng (giây)"), ("trip_miles", "Quãng đường (dặm)"), ("fare", "Cước (USD)")]
     fig, axes = plt.subplots(3, 1, figsize=(8, 5.2))
     for ax, (c, lab) in zip(axes, items):
@@ -422,6 +423,10 @@ def fig_boxplots(df: pd.DataFrame, out_png, note: str) -> Path:
                    boxprops=dict(facecolor="#9ec5f4", edgecolor=BLUE), medianprops=dict(color=INK, linewidth=1.5),
                    whiskerprops=dict(color=BLUE), capprops=dict(color=BLUE))
         ax.set_xscale("log"); ax.set_yticks([]); ax.grid(axis="y", visible=False)
+        # moc 1-2-5 viet bang so thuong (khong dung 10^3) de doc duoc gia tri tren truc log
+        ax.xaxis.set_major_locator(mticker.LogLocator(base=10, subs=(1, 2, 5), numticks=15))
+        ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x:,.10g}".translate(str.maketrans(",.", ".,"))))   # 1.000 va 0,5 kieu Viet
+        ax.xaxis.set_minor_formatter(mticker.NullFormatter())
         ax.set_xlabel(f"{lab}, thang log – n = {_n(len(pos))} giá trị > 0 "
                       f"(bỏ {_n(len(v) - len(pos))} giá trị ≤ 0)", fontsize=9)
     axes[0].set_title("Thời lượng, quãng đường và cước: hộp = Q1–Q3, vạch = trung vị, râu = p5–p95")
@@ -610,3 +615,42 @@ def write_figures(df: pd.DataFrame, out_dir: str | Path, note: str, slices: dict
         kw = {"slices": slices} if fn is fig_by_hour else {}
         paths[name] = fn(df, out_dir / f"{name}.png", note, **kw)
     return paths
+
+
+# Bo cuc hien thi trong notebook: moi nhom 1 tieu de, cac hinh cung nhom dat canh nhau de so sanh.
+# "span" = so cot hinh chiem (luoi 2 cot); "rows" = so hang hinh chiem.
+GRID_LAYOUT = [
+    ("Chuyến đi: thời lượng và quãng đường", [("01_trip_duration_hist", {}), ("02_trip_distance_hist", {})]),
+    ("Thời gian: theo giờ và theo thứ", [("03_pickups_by_hour", {}), ("04_pickups_by_weekday", {})]),
+    ("Thời gian: giờ × thứ và từng ngày", [("05_hour_weekday_heatmap", {}), ("09_trips_by_date", {})]),
+    ("Không gian: toạ độ đón và mức dồn chuyến",
+     [("06_pickup_density_map", {"rows": 2}), ("10_pickup_coord_concentration", {}), ("08_boxplots_log", {})]),
+    ("Không gian: điểm đón so với điểm trả", [("07_pickup_vs_dropoff_map", {"span": 2})]),
+]
+
+
+def figure_grid_html(figs: dict[str, Path], max_width: int = 1080, layout=GRID_LAYOUT) -> str:
+    """HTML xep cac hinh thanh luoi 2 cot (anh nhung base64 nen hien duoc ca tren Colab).
+
+    Chi doi cach HIEN THI; file PNG goc van giu nguyen kich thuoc de dua vao bao cao.
+    Bam vao hinh de mo ban day du o tab moi.
+    """
+    import base64
+
+    out = [f'<div style="max-width:{max_width}px">']
+    for title, items in layout:
+        items = [(n, o) for n, o in items if n in figs]
+        if not items:
+            continue
+        out.append(f'<div style="font:600 14px sans-serif;margin:14px 0 6px">{title}</div>')
+        out.append('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start">')
+        for name, opt in items:
+            b64 = base64.b64encode(Path(figs[name]).read_bytes()).decode("ascii")
+            src = f"data:image/png;base64,{b64}"
+            style = f"grid-column:span {opt.get('span', 1)};grid-row:span {opt.get('rows', 1)}"
+            out.append(f'<a href="{src}" target="_blank" title="{name}.png" style="{style}">'
+                       f'<img src="{src}" alt="{name}" style="width:100%;display:block;'
+                       f'border:1px solid {GRID};border-radius:4px"></a>')
+        out.append("</div>")
+    out.append("</div>")
+    return "\n".join(out)

@@ -151,6 +151,8 @@ def test_all(keep_dir: str | None = None) -> int:
            "data_quality_report.md co bang kiem tra va ngay bat thuong")
         figs = A.write_figures(df, out / "figures", "Nguon: du lieu GIA de kiem thu", cfg["time_slices"])
         ok(len(figs) == 10 and all(p.stat().st_size > 20_000 for p in figs.values()), "ve du 10 hinh PNG")
+        html = A.figure_grid_html(figs)
+        ok(html.count("<img") == 10 and all(n in html for n, _ in A.FIGURES), "luoi hien thi co du 10 hinh")
         # bang rong / thieu du lieu khong lam sap ham ve
         tiny = df[df.weekday < 5].head(200)
         A.write_figures(tiny, out / "figures_tiny", "TEST", cfg["time_slices"])
