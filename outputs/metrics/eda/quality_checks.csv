@@ -1,0 +1,19 @@
+rule,n_rows,pct,action
+trip_id thieu,0,0.0,loai
+trip_id trung (dong lap lai),0,0.0,loai
+thoi diem don thieu / khong doc duoc,0,0.0,loai
+thoi diem don ngoai cua so truy van,0,0.0,loai
+thieu toa do don,19627,3.5377,loai
+toa do don ngoai khung Chicago,0,0.0,loai
+co toa do don nhung thieu ma khu (community area),261,0.047,giu
+thieu toa do tra,50550,9.1115,giu
+thoi diem tra truoc thoi diem don,7,0.0013,danh dau
+trip_seconds thieu,86,0.0155,danh dau
+trip_seconds = 0,11033,1.9887,danh dau
+trip_seconds < 0,0,0.0,danh dau
+trip_miles thieu,1,0.0002,danh dau
+trip_miles = 0,57545,10.3723,danh dau
+trip_miles < 0,0,0.0,danh dau
+toc do > 80 mph,412,0.0743,danh dau
+fare thieu,737,0.1328,giu
+fare < 0,0,0.0,danh dau

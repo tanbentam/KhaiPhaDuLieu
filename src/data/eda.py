@@ -174,6 +174,7 @@ def counts_by_slice(df: pd.DataFrame) -> pd.DataFrame:
 
 def counts_by_area(df: pd.DataFrame, col: str = "pickup_community_area") -> pd.DataFrame:
     g = df[col].astype("Int64").value_counts(dropna=False).rename("trips").rename_axis(col).reset_index()
+    g = g.sort_values(["trips", col], ascending=[False, True]).reset_index(drop=True)   # dong hang -> ma khu nho truoc
     g["pct"] = (100 * g["trips"] / len(df)).round(2)
     g["cum_pct"] = g["pct"].cumsum().round(2)
     return g
@@ -376,8 +377,9 @@ def _save(fig, out_png: str | Path, note: str) -> Path:
     return out_png
 
 
-def _n(n: int) -> str:
-    return f"{n:,}".replace(",", ".")
+def _n(n: float) -> str:
+    """So kieu Viet: 1.437 (nghin) va 12,5 (thap phan)."""
+    return f"{n:,.10g}".translate(str.maketrans(",.", ".,"))
 
 
 def _hist(values: pd.Series, out_png, note, title, xlabel, unit, bins: int = 60) -> Path:
@@ -390,13 +392,13 @@ def _hist(values: pd.Series, out_png, note, title, xlabel, unit, bins: int = 60)
     ax.hist(shown, bins=bins, color=BLUE, edgecolor=SURFACE, linewidth=0.6)
     ax.grid(axis="x", visible=False)
     top = ax.get_ylim()[1]
-    for x, lab, ha in [(p50, f"trung vị {p50:.1f} {unit}", "left"), (p95, f"p95 {p95:.1f} {unit}", "left")]:
+    for x, lab, ha in [(p50, f"trung vị {_n(round(p50, 1))} {unit}", "left"), (p95, f"p95 {_n(round(p95, 1))} {unit}", "left")]:
         ax.axvline(x, color=INK2, linewidth=1, linestyle="--")
         ax.text(x, top * 0.97, " " + lab, ha=ha, va="top", fontsize=9, color=INK2)
     ax.set_title(title)
-    ax.set_xlabel(f"{xlabel} (trục cắt tại p99 = {p99:.1f} {unit})")
+    ax.set_xlabel(f"{xlabel} (trục cắt tại p99 = {_n(round(p99, 1))} {unit})")
     ax.set_ylabel("Số chuyến")
-    extra = f"n = {_n(len(v))} chuyến có giá trị; {100 * (v == 0).mean():.1f}% bằng 0; lớn nhất {v.max():,.0f} {unit}."
+    extra = f"n = {_n(len(v))} chuyến có giá trị; {_n(round(100 * (v == 0).mean(), 1))}% bằng 0; lớn nhất {_n(round(v.max()))} {unit}."
     return _save(fig, out_png, f"{extra}\n{note}")
 
 
@@ -425,7 +427,7 @@ def fig_boxplots(df: pd.DataFrame, out_png, note: str) -> Path:
         ax.set_xscale("log"); ax.set_yticks([]); ax.grid(axis="y", visible=False)
         # moc 1-2-5 viet bang so thuong (khong dung 10^3) de doc duoc gia tri tren truc log
         ax.xaxis.set_major_locator(mticker.LogLocator(base=10, subs=(1, 2, 5), numticks=15))
-        ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x:,.10g}".translate(str.maketrans(",.", ".,"))))   # 1.000 va 0,5 kieu Viet
+        ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: _n(x)))
         ax.xaxis.set_minor_formatter(mticker.NullFormatter())
         ax.set_xlabel(f"{lab}, thang log – n = {_n(len(pos))} giá trị > 0 "
                       f"(bỏ {_n(len(v) - len(pos))} giá trị ≤ 0)", fontsize=9)
@@ -450,9 +452,7 @@ def fig_by_hour(df: pd.DataFrame, out_png, note: str, slices: dict[str, Any] | N
         d = h[h["day_type"] == key].sort_values("pickup_hour")
         if len(d):
             ax.plot(d["pickup_hour"], d["trips_per_day"], color=col, linewidth=2, marker=mk, markersize=5, label=lab)
-            last = d.iloc[-1]
-            ax.text(23.4, last["trips_per_day"], lab.split(" (")[0], color=INK2, fontsize=9, va="center")
-    ax.set_xlim(-0.5, 26.5); ax.set_xticks(range(24)); ax.set_ylim(bottom=0)
+    ax.set_xlim(-0.5, 23.5); ax.set_xticks(range(24)); ax.set_ylim(bottom=0)
     ax.grid(axis="x", visible=False)
     ax.set_title("Nhu cầu đón theo giờ trong ngày", pad=16)
     ax.set_xlabel("Giờ bắt đầu chuyến (0–23)"); ax.set_ylabel("Số chuyến trung bình mỗi ngày")
@@ -467,7 +467,7 @@ def fig_by_weekday(df: pd.DataFrame, out_png, note: str) -> Path:
     bars = ax.bar(range(7), w["trips_per_day"].fillna(0), color=BLUE, width=0.62)
     for b, v in zip(bars, w["trips_per_day"]):
         if pd.notna(v):
-            ax.text(b.get_x() + b.get_width() / 2, v, f"{v:,.0f}".replace(",", "."), ha="center", va="bottom",
+            ax.text(b.get_x() + b.get_width() / 2, v, _n(round(v)), ha="center", va="bottom",
                     fontsize=9, color=INK2)
     ax.set_xticks(range(7)); ax.set_xticklabels(WEEKDAY_VI); ax.grid(axis="x", visible=False)
     ax.set_title("Nhu cầu đón theo thứ trong tuần")
@@ -505,9 +505,10 @@ def fig_daily(df: pd.DataFrame, out_png, note: str) -> Path:
     fl = d[d["flag"]]
     ax.scatter(pd.to_datetime(fl["date"]), fl["trips"], s=170, facecolors="none", edgecolors=INK, linewidths=1.2,
                zorder=4, label=f"Lệch > {int(100 * ANOMALY_DEV)}% so với trung vị cùng thứ")
-    for r in fl.itertuples():
+    for i, r in enumerate(fl.itertuples()):               # nhan lech trai / phai de 2 ngay lien nhau khong de chu
         ax.annotate(f"{pd.Timestamp(r.date):%d/%m}: {r.deviation_pct:+.0f}%", (pd.Timestamp(r.date), r.trips),
-                    textcoords="offset points", xytext=(0, -16), ha="center", fontsize=8, color=INK2)
+                    textcoords="offset points", xytext=(-8, -18) if i % 2 == 0 else (8, -18),
+                    ha="right" if i % 2 == 0 else "left", fontsize=8, color=INK2)
     ax.set_ylim(bottom=0); ax.grid(axis="x", visible=False)
     ax.set_title("Số chuyến mỗi ngày trong cửa sổ dữ liệu")
     ax.set_xlabel("Ngày"); ax.set_ylabel("Số chuyến")
@@ -522,7 +523,8 @@ def _map_axes(ax, title: str) -> None:
     ax.set_aspect(1 / np.cos(np.deg2rad(41.88)))       # 1 do kinh ~ 0,74 do vi o vi do Chicago
     ax.set_title(title); ax.set_xlabel("Kinh độ (°)"); ax.set_ylabel("Vĩ độ (°)")
     for name, (la, lo) in LANDMARKS.items():
-        ax.annotate(name, (lo, la), textcoords="offset points", xytext=(7, 7), fontsize=8, color=INK2)
+        ax.annotate(name, (lo, la), textcoords="offset points", xytext=(16, 10), fontsize=8, color=INK, zorder=6,
+                    bbox=dict(boxstyle="round,pad=0.2", facecolor=SURFACE, edgecolor="none", alpha=0.85))
 
 
 def _bubbles(ax, cc: pd.DataFrame, norm, smax: float):
@@ -580,14 +582,14 @@ def fig_coord_concentration(df: pd.DataFrame, out_png, note: str) -> Path:
         if len(cc) >= k:
             y = cc["cum_share_pct"].iloc[k - 1]
             ax.scatter([k], [y], s=40, color=BLUE, zorder=3, edgecolors=SURFACE, linewidths=1.5)
-            ax.annotate(f"{k} toạ độ đầu: {y:.1f}%", (k, y), textcoords="offset points", xytext=(10, -4),
+            ax.annotate(f"{k} toạ độ đầu: {_n(round(y, 1))}%", (k, y), textcoords="offset points", xytext=(10, -4),
                         fontsize=9, color=INK2)
     ax.set_xscale("log"); ax.set_ylim(0, 102); ax.set_xlim(left=0.9)
     ax.set_title("Mức độ dồn chuyến vào ít toạ độ đón")
     ax.set_xlabel("Số toạ độ, xếp từ nhiều chuyến nhất (thang log)")
     ax.set_ylabel("Tỷ trọng cộng dồn số chuyến (%)")
     extra = (f"n = {_n(c['trips_with_coords'])} chuyến có toạ độ, {_n(c['unique_coords'])} toạ độ khác nhau; "
-             f"trung vị {c['median_trips_per_coord']:.0f} chuyến mỗi toạ độ; "
+             f"trung vị {_n(c['median_trips_per_coord'])} chuyến mỗi toạ độ; "
              f"{c['coords_lt_10_trips']} toạ độ có dưới 10 chuyến.")
     return _save(fig, out_png, f"{extra}\n{note}")
 
