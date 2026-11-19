@@ -192,6 +192,57 @@ def read_run_log(log_path: str | Path) -> pd.DataFrame:
     return pd.read_csv(log_path, encoding="utf-8")
 
 
+def export_metrics_table(
+    log_path: str | Path,
+    out_path: str | Path,
+    run_ids: list[str],
+    *,
+    require_same_sample: bool = True,
+    unique_algo_slice: bool = True,
+) -> pd.DataFrame:
+    """Loc cac run_id duoc chon tu run_log.csv ra bang tong hop (vd baseline_metrics.csv).
+
+    Giu nguyen bo 28 cot RUN_LOG_COLUMNS va nguyen van gia tri tu run_log.csv,
+    de M2 (baseline_metrics.csv) va M3 (hdbscan_metrics.csv) co cung cau truc cho M4 ghep bang.
+    """
+    if not run_ids:
+        raise ValueError("Danh sach run_ids khong duoc rong")
+    if len(set(run_ids)) != len(run_ids):
+        raise ValueError("Danh sach run_ids co gia tri bi trung")
+
+    log_path = Path(log_path)
+    with open(log_path, encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames != RUN_LOG_COLUMNS:
+            raise ValueError(f"Header cua {log_path} khac RUN_LOG_COLUMNS")
+        by_id = {r["run_id"]: r for r in reader}
+
+    missing = [rid for rid in run_ids if rid not in by_id]
+    if missing:
+        raise ValueError(f"Khong tim thay run_id trong {log_path}: {missing}")
+
+    selected = [by_id[rid] for rid in run_ids]
+    if require_same_sample:
+        samples = {r["sample_id"] for r in selected}
+        if len(samples) != 1:
+            raise ValueError(f"Cac run_id khong cung sample_id: {sorted(samples)}")
+    if unique_algo_slice:
+        seen: set[tuple[str, str]] = set()
+        for r in selected:
+            key = (r["algorithm"], r["time_slice"])
+            if key in seen:
+                raise ValueError(f"Trung cap (algorithm, time_slice): {key}")
+            seen.add(key)
+
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=RUN_LOG_COLUMNS)
+        w.writeheader()
+        w.writerows(selected)
+    return pd.read_csv(out_path, encoding="utf-8")
+
+
 # ---------------------------------------------------------------- tron goi
 
 def run_and_log(
