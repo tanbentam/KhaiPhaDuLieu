@@ -1,0 +1,31 @@
+time_slice,n,ari_all_A,ari_clustered_A,ari_all_C,ari_A_vs_C,table,kmeans_cluster,n_trips,share_noise_in_A_pct,main_dbA_cluster,main_dbA_share_pct,top_community_area,noise_coords,noise_trips,trips_per_coord_median,trips_per_coord_max,dist_median_m,near_eps_coords,far_coords,clustered_in_C_coords,trips_per_clustered_coord_median,clustered_in_C_trips_pct,region,kmeans_clusters,dbA_noise_pct,dbA_clusters
+WEEKDAY_AM,60498.0,0.7063264080349884,0.7258490093677925,0.6827425573332028,0.5702249057634329,ari,,,,,,,,,,,,,,,,,,,,
+WEEKDAY_PM,86617.0,0.8198496350238386,0.8367348537450805,0.6932561595187032,0.6077712540764083,ari,,,,,,,,,,,,,,,,,,,,
+WEEKEND,120571.0,0.7427376507676567,0.7448211391269934,0.6787316522924716,0.5250578903795641,ari,,,,,,,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,kmeans_vs_dbscanA,0.0,37673.0,3.0,0.0,97.0,8.0,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,kmeans_vs_dbscanA,1.0,9695.0,2.3,1.0,97.7,76.0,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,kmeans_vs_dbscanA,2.0,7753.0,33.2,0.0,66.8,6.0,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,kmeans_vs_dbscanA,3.0,3472.0,82.4,3.0,17.6,41.0,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,kmeans_vs_dbscanA,4.0,1905.0,44.0,2.0,56.0,56.0,,,,,,,,,,,,,,
+WEEKDAY_PM,,,,,,kmeans_vs_dbscanA,0.0,54135.0,1.7,0.0,98.3,8.0,,,,,,,,,,,,,,
+WEEKDAY_PM,,,,,,kmeans_vs_dbscanA,1.0,17937.0,1.4,1.0,98.6,76.0,,,,,,,,,,,,,,
+WEEKDAY_PM,,,,,,kmeans_vs_dbscanA,2.0,7739.0,39.4,0.0,60.6,6.0,,,,,,,,,,,,,,
+WEEKDAY_PM,,,,,,kmeans_vs_dbscanA,3.0,3757.0,100.0,-1.0,0.0,41.0,,,,,,,,,,,,,,
+WEEKDAY_PM,,,,,,kmeans_vs_dbscanA,4.0,3049.0,6.2,2.0,93.8,56.0,,,,,,,,,,,,,,
+WEEKEND,,,,,,kmeans_vs_dbscanA,0.0,63495.0,1.1,0.0,98.9,8.0,,,,,,,,,,,,,,
+WEEKEND,,,,,,kmeans_vs_dbscanA,1.0,29490.0,1.2,1.0,98.8,76.0,,,,,,,,,,,,,,
+WEEKEND,,,,,,kmeans_vs_dbscanA,2.0,16232.0,25.5,0.0,74.5,6.0,,,,,,,,,,,,,,
+WEEKEND,,,,,,kmeans_vs_dbscanA,3.0,6375.0,100.0,-1.0,0.0,41.0,,,,,,,,,,,,,,
+WEEKEND,,,,,,kmeans_vs_dbscanA,4.0,4979.0,7.3,2.0,55.2,56.0,,,,,,,,,,,,,,
+WEEKDAY_AM,,,,,,noise_summary,,,,,,,77.0,7648.0,60.0,571.0,4815.728203949062,5.0,53.0,10.0,53.5,34.5842050209205,,,,
+WEEKDAY_PM,,,,,,noise_summary,,,,,,,93.0,8137.0,38.0,743.0,5678.762086878066,3.0,78.0,10.0,23.0,29.2245299250338,,,,
+WEEKEND,,,,,,noise_summary,,,,,,,83.0,11914.0,86.0,837.0,5861.200083665333,7.0,68.0,13.0,25.5,25.440658049353704,,,,
+WEEKDAY_AM,,,,,,regions,,4230.0,,,,,,,,,,,,,,,R1 Phia nam,"[0, 3, 4]",78.6,"[0, 3]"
+WEEKDAY_AM,,,,,,regions,,10739.0,,,,,,,,,,,,,,,R2 O'Hare va tay bac,"[0, 1, 2]",11.8,[1]
+WEEKDAY_AM,,,,,,regions,,40870.0,,,,,,,,,,,,,,,R3 Phia bac doc ho,"[0, 2]",6.8,[0]
+WEEKDAY_PM,,,,,,regions,,4290.0,,,,,,,,,,,,,,,R1 Phia nam,"[0, 3, 4]",91.1,[0]
+WEEKDAY_PM,,,,,,regions,,18884.0,,,,,,,,,,,,,,,R2 O'Hare va tay bac,"[1, 2]",6.3,[1]
+WEEKDAY_PM,,,,,,regions,,53359.0,,,,,,,,,,,,,,,R3 Phia bac doc ho,"[0, 2]",6.3,[0]
+WEEKEND,,,,,,regions,,7441.0,,,,,,,,,,,,,,,R1 Phia nam,"[0, 3, 4]",92.7,[0]
+WEEKEND,,,,,,regions,,31168.0,,,,,,,,,,,,,,,R2 O'Hare va tay bac,"[1, 2]",6.5,[1]
+WEEKEND,,,,,,regions,,67016.0,,,,,,,,,,,,,,,R3 Phia bac doc ho,"[0, 2]",5.2,[0]
