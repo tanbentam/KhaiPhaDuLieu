@@ -75,4 +75,16 @@ dbscan:
   algorithm: auto
   n_jobs: -1
 
-# HDBSCAN: M3 bo sung
+# HDBSCAN: M3 bo sung cho phan cum mat do phan cap
+hdbscan:
+  metric: euclidean
+  cluster_selection_method: eom        # Excess of Mass (mac dinh)
+  min_cluster_size_candidates: [30, 50, 100, 200, 300, 500]
+  min_samples_candidates: [5, 10, 20, 50]
+  min_samples_default: 10              # co dinh khi khao sat min_cluster_size
+  cluster_selection_epsilon: 0.0
+  # Tham so cuoi cung se duoc chot sau buoc tuning (Notebook 05)
+  final:
+    min_cluster_size: 100
+    min_samples: 10
+    cluster_selection_method: eom
