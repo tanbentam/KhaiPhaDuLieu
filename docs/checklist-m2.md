@@ -51,7 +51,7 @@ Quy ước:
 
 ## Phần 5. Phân tích và so sánh baseline (M2-06, M2-07) [chờ M1]
 
-- [ ] 5.1 Chạy K-Means và DBSCAN trên 3 lát cắt WEEKDAY_AM, WEEKDAY_PM, WEEKEND, cùng tập `trip_id` với M3.
+- [x] 5.1 Chạy K-Means và DBSCAN trên 3 lát cắt WEEKDAY_AM, WEEKDAY_PM, WEEKEND, cùng tập `trip_id` với M3 (đã xong trên `master_v1`; chờ M3 xác nhận dùng chung `master_v1`).
 - [ ] 5.2 Lập `baseline_metrics.csv` theo đúng định dạng đã thống nhất với M3 để M4 ghép bảng được.
 - [x] 5.3 So sánh hình dạng cụm và điểm nhiễu: chọn ít nhất 2 vùng mà hai thuật toán cho kết quả khác nhau, có bản đồ phóng to. Kiểm tra điểm nhiễu là ngoại lệ thật hay do eps quá nhỏ. Viết vào `baseline_interpretation.md`.
   - Done phần 5 khi: mọi nhận xét đều có bản đồ hoặc số liệu đi kèm; không kết luận "ùn tắc".
