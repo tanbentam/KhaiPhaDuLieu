@@ -39,7 +39,12 @@ def fit_hdbscan(
         - probabilities: mang float32, xac suat diem thuoc ve cum duoc gan.
         - clusterer: doi tuong HDBSCAN da fit (chua cluster_persistence_, condensed_tree_...).
     """
-    import hdbscan
+    try:
+        import hdbscan
+        _HDBSCAN = hdbscan.HDBSCAN
+    except Exception:
+        from sklearn.cluster import HDBSCAN
+        _HDBSCAN = HDBSCAN
 
     X = np.asarray(X, dtype=np.float64)
     if X.ndim != 2 or X.shape[1] != 2:
@@ -47,16 +52,22 @@ def fit_hdbscan(
     if min_cluster_size < 2:
         raise ValueError(f"min_cluster_size phai >= 2, nhan duoc {min_cluster_size}")
 
-    clusterer = hdbscan.HDBSCAN(
-        min_cluster_size=int(min_cluster_size),
-        min_samples=int(min_samples) if min_samples is not None else None,
-        metric=metric,
-        cluster_selection_method=cluster_selection_method,
-        cluster_selection_epsilon=float(cluster_selection_epsilon),
-        gen_min_span_tree=gen_min_span_tree,
-        approx_min_span_tree=approx_min_span_tree,
-        core_dist_n_jobs=core_dist_n_jobs,
-    )
+    kwargs = {
+        "min_cluster_size": int(min_cluster_size),
+        "min_samples": int(min_samples) if min_samples is not None else None,
+        "metric": metric,
+        "cluster_selection_method": cluster_selection_method,
+        "cluster_selection_epsilon": float(cluster_selection_epsilon),
+    }
+    # Cac tham so dac thu cua hdbscan package (neu co)
+    if _HDBSCAN.__module__.startswith("hdbscan"):
+        kwargs["gen_min_span_tree"] = gen_min_span_tree
+        kwargs["approx_min_span_tree"] = approx_min_span_tree
+        kwargs["core_dist_n_jobs"] = core_dist_n_jobs
+    else:
+        kwargs["n_jobs"] = core_dist_n_jobs
+
+    clusterer = _HDBSCAN(**kwargs)
     clusterer.fit(X)
     labels = clusterer.labels_.astype(np.int32)
     probabilities = clusterer.probabilities_.astype(np.float32)

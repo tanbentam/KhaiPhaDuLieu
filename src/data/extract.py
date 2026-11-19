@@ -23,7 +23,10 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-import pyarrow.parquet as pq
+try:
+    import pyarrow.parquet as pq
+except ImportError:
+    pq = None
 
 # Dung lai phan goi API da kiem thu cua M2 (thu lai khi 429/5xx, where tron ngay, sha256)
 from src.m2_pilot import (DATASET_ID, METADATA_URL, PAGE_SIZE, PORTAL_URL, RESOURCE_URL,
@@ -147,7 +150,11 @@ def download_pages(where: str, parts_dir: str | Path, columns: list[str] = COLUM
         qfile.write_text(json.dumps(query), encoding="utf-8")
 
     parts = sorted(parts_dir.glob("part_*.parquet"))
-    offset = sum(pq.read_metadata(p).num_rows for p in parts)
+    if pq is not None:
+        offset = sum(pq.read_metadata(p).num_rows for p in parts)
+    else:
+        import fastparquet
+        offset = sum(fastparquet.ParquetFile(str(p)).count() for p in parts)
     if parts and progress:
         print(f"  tiep tuc tu {offset:,} dong da tai ({len(parts)} trang)")
     idx = len(parts)
