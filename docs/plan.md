@@ -1,6 +1,6 @@
 Nhóm gồm 4 thành viên
-1. Chu Thành Tân - 23010165
-2. Hoàng Thị Ngọc - 23010156
+1. Chu Thành Tân - 23010165 (M2: Baseline Modeling Lead - K-Means, DBSCAN)
+2. Hoàng Thị Ngọc - 23010156 (M1: Data Engineer & EDA Lead)
 3. Hà Xuân Đại - 23010494
 4. Hoàng Tuấn Bảo - 23010194
 

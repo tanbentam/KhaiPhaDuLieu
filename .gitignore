@@ -9,6 +9,10 @@ __pycache__/
 # Du lieu: khong commit, lay tu link chung (Drive) hoac tai lai bang notebook
 data/
 
+# Ghi chu rieng / tai lieu tam (khong dua len repo)
+docs/tin-nhan-gui-nhom.md
+docs/M1_ghi_chu_du_lieu_v1.pdf
+
 # Ket qua lon hoac tam (metrics CSV va hinh co the commit sau khi nhom chot)
 outputs/labels/
 outputs/_test_env/

@@ -22,4 +22,4 @@ Checklist: `docs/checklist-m2.md`
 | 5.3 | [So sánh K-Means và DBSCAN](Phan%205/5.3-so-sanh-kmeans-dbscan.md), [diễn giải](Phan%205/baseline_interpretation.md) | Xong trên pilot (5.1, 5.2 chờ M1/M3) | e112c9e |
 | 7.1 | [Phần báo cáo K-Means và DBSCAN](Phan%207/7.1-ly-thuyet-bao-cao.md) | Xong (số liệu pilot, 48/48 số khớp) | 9b92ddf |
 | 7.2 | [Tư liệu slide gửi M4](Phan%207/7.2-tu-lieu-slide.md) | Xong (slide 6, 8; HDBSCAN chờ M3) | 9b92ddf |
-| 7.3 | [Chuẩn bị vấn đáp](Phan%207/7.3-chuan-bi-van-dap.md) | Xong (5 câu chính + 9 câu nối tiếp; chưa tập nói) | |
+| 7.3 | [Chuẩn bị vấn đáp](Phan%207/7.3-chuan-bi-van-dap.md) | Xong (5 câu chính + 9 câu nối tiếp; chưa tập nói) | 20aa77a |

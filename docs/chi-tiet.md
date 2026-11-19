@@ -72,7 +72,10 @@ Quy tắc làm sạch đáng nhớ:
 
 Tài liệu dùng mã M1–M4 và để nhóm tự gán tên. Thành viên trong `plan.md`: Chu Thành Tân, Hoàng Thị Ngọc, Hà Xuân Đại, Hoàng Tuấn Bảo.
 
-Đã chốt (13/11/2026): **Chu Thành Tân nhận M2** (K-Means, DBSCAN). M1, M3, M4 chưa gán.
+Đã chốt:
+- **Chu Thành Tân nhận M2** (K-Means, DBSCAN, chốt ngày 13/11/2026).
+- **Hoàng Thị Ngọc nhận M1** (Data Engineer & EDA Lead, chốt ngày 17/11/2026).
+- M3, M4 đang chờ phân công cho Hà Xuân Đại và Hoàng Tuấn Bảo.
 Đề xuất kèm theo, chưa được nhóm duyệt: máy của Tân (RAM 16 GB, RTX 4060) chạy benchmark chính thức cho cả 3 thuật toán, để runtime và bộ nhớ được đo trên cùng phần cứng.
 
 | Mã | Vai trò                           | Sở hữu                                                               | Notebook |
