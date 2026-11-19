@@ -8,6 +8,7 @@ Moi lop dung cung khung nhin (extent) de so sanh cong bang (BA Spec muc 2.5).
 from __future__ import annotations
 
 import html
+import math
 from pathlib import Path
 from typing import Any
 
