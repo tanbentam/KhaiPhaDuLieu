@@ -1,0 +1,5 @@
+week_start,trips_with_coords,unique_coords,top2_share_pct,top5_share_pct,median_trips_per_coord,coords_lt_10_trips
+2023-04-17,138629,219,23.1,41.88,39.0,85
+2023-04-24,134338,211,22.93,42.17,38.0,77
+2023-05-01,135155,206,23.36,42.19,45.5,73
+2023-05-08,127045,202,22.71,42.21,51.5,69

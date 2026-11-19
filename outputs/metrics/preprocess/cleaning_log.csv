@@ -1,0 +1,13 @@
+step,rule_id,action,condition,reason,rows_before,rows_matched,rows_after,matched_pct_of_raw
+1,trip_id_null,drop,trip_id rong,Khong co khoa de noi nhan cum voi chuyen di,554794,0,554794,0.0
+2,trip_id_duplicate,drop,trip_id lap lai (giu dong dau tien),Moi luot don chi duoc dem mot lan,554794,0,554794,0.0
+3,start_time_invalid,drop,trip_start_timestamp rong hoac khong doc duoc,"Khong gan duoc gio, thu, lat cat thoi gian",554794,0,554794,0.0
+4,start_time_outside_window,drop,trip_start_timestamp nam ngoai cua so truy van,Ngoai pham vi nghien cuu,554794,0,554794,0.0
+5,pickup_coord_missing,drop,thieu pickup latitude hoac longitude,Khong tinh duoc khoang cach khong gian,554794,19627,535167,3.5377
+6,pickup_coord_out_of_range,drop,"lat ngoai [-90, 90] hoac lon ngoai [-180, 180]",Toa do khong hop le,535167,0,535167,0.0
+7,pickup_outside_chicago_bbox,drop,toa do nam ngoai khung bbox o tren,Ngoai vung nghien cuu,535167,0,535167,0.0
+8,flag_zero_duration,flag,trip_seconds <= 0 hoac rong,Thoi luong khong dung duoc cho phan tich toc do,535167,9975,535167,1.798
+9,flag_zero_distance,flag,trip_miles <= 0 hoac rong,Quang duong khong dung duoc; nhieu kha nang thiet bi ghi thieu,535167,52976,535167,9.5488
+10,flag_speed_gt_80,flag,trip_miles / (trip_seconds / 3600) > speed_flag_mph,"Toc do phi ly; nguong ky thuat, khong phai chuan phap ly",535167,353,535167,0.0636
+11,flag_end_before_start,flag,trip_end_timestamp < trip_start_timestamp,Thoi diem tra sai; thoi diem va vi tri don van dung duoc,535167,5,535167,0.0009
+12,flag_missing_area,flag,pickup_community_area rong (van co toa do),Khong dien giai duoc cum theo ma khu cho dong nay,535167,261,535167,0.047

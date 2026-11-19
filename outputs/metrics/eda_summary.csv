@@ -1,0 +1,116 @@
+group,metric,value
+quy_mo,rows,554794
+quy_mo,columns,17
+quy_mo,file_size_mb,31.59
+quy_mo,unique_trip_id,554794
+quy_mo,duplicate_rows,0
+quy_mo,duplicate_pct,0.0
+thoi_gian,timestamp_min,2023-04-17 00:00:00
+thoi_gian,timestamp_max,2023-05-14 23:45:00
+thoi_gian,days_expected,28
+thoi_gian,days_present,28
+thoi_gian,days_missing_pct,0.0
+thoi_gian,trips_per_day_mean,19814.1
+thoi_gian,trips_per_day_median,20703.5
+thoi_gian,trips_per_day_min,12909
+thoi_gian,trips_per_day_max,23963
+thoi_gian,minute_values,0 15 30 45
+khong_gian,pickup_coords_missing_pct,3.5377
+khong_gian,pickup_lat_min,41.660136051
+khong_gian,pickup_lat_max,42.016046492
+khong_gian,pickup_lon_min,-87.913624596
+khong_gian,pickup_lon_max,-87.534902901
+khong_gian,pickup_outside_bbox_pct,0.0
+khong_gian,pickup_community_areas,77
+khong_gian,pickup_census_tracts,243
+khong_gian,pickup_census_tract_missing_pct,51.7981
+toa_do_don,unique_coords,304
+toa_do_don,trips_with_coords,535167
+toa_do_don,top1_share_pct,12.83
+toa_do_don,top2_share_pct,23.03
+toa_do_don,top5_share_pct,42.11
+toa_do_don,top10_share_pct,59.66
+toa_do_don,coords_for_50pct,7
+toa_do_don,coords_for_80pct,23
+toa_do_don,median_trips_per_coord,12.5
+toa_do_don,coords_lt_10_trips,145
+lat_cat,OTHER_trips,278011
+lat_cat,WEEKDAY_AM_trips,63046
+lat_cat,WEEKDAY_PM_trips,89192
+lat_cat,WEEKEND_trips,124545
+lat_cat,OTHER_pct,50.11
+lat_cat,WEEKDAY_AM_pct,11.36
+lat_cat,WEEKDAY_PM_pct,16.08
+lat_cat,WEEKEND_pct,22.45
+chuyen_di,trip_seconds_median,979.5
+chuyen_di,trip_seconds_mean,1302.141
+chuyen_di,trip_seconds_std,1697.329
+chuyen_di,trip_seconds_iqr,1374.0
+chuyen_di,trip_seconds_p90,2700.0
+chuyen_di,trip_seconds_p95,3215.0
+chuyen_di,trip_seconds_max,86206.0
+chuyen_di,trip_seconds_zero_pct,1.989
+chuyen_di,trip_seconds_negative_pct,0.0
+chuyen_di,trip_miles_median,3.11
+chuyen_di,trip_miles_mean,6.848
+chuyen_di,trip_miles_std,7.666
+chuyen_di,trip_miles_iqr,11.57
+chuyen_di,trip_miles_p90,17.71
+chuyen_di,trip_miles_p95,18.65
+chuyen_di,trip_miles_max,945.4
+chuyen_di,trip_miles_zero_pct,10.372
+chuyen_di,trip_miles_negative_pct,0.0
+chuyen_di,fare_median,15.75
+chuyen_di,fare_mean,22.98
+chuyen_di,fare_std,22.0
+chuyen_di,fare_iqr,28.5
+chuyen_di,fare_p90,45.75
+chuyen_di,fare_p95,51.0
+chuyen_di,fare_max,6602.25
+chuyen_di,fare_zero_pct,0.07
+chuyen_di,fare_negative_pct,0.0
+chuyen_di,tips_median,2.0
+chuyen_di,tips_mean,3.244
+chuyen_di,tips_std,4.341
+chuyen_di,tips_iqr,5.0
+chuyen_di,tips_p90,9.9
+chuyen_di,tips_p95,11.44
+chuyen_di,tips_max,120.0
+chuyen_di,tips_zero_pct,44.129
+chuyen_di,tips_negative_pct,0.0
+chuyen_di,trip_total_median,19.2
+chuyen_di,trip_total_mean,28.854
+chuyen_di,trip_total_std,41.11
+chuyen_di,trip_total_iqr,36.75
+chuyen_di,trip_total_p90,60.0
+chuyen_di,trip_total_p95,67.0
+chuyen_di,trip_total_max,9456.4
+chuyen_di,trip_total_zero_pct,0.067
+chuyen_di,trip_total_negative_pct,0.0
+chuyen_di,speed_mph_median,13.778
+chuyen_di,speed_mph_mean,18.98
+chuyen_di,speed_mph_std,260.225
+chuyen_di,speed_mph_iqr,16.031
+chuyen_di,speed_mph_p90,34.522
+chuyen_di,speed_mph_p95,41.196
+chuyen_di,speed_mph_max,77076.0
+chuyen_di,speed_mph_zero_pct,8.463
+chuyen_di,speed_mph_negative_pct,0.0
+chat_luong,trip_id thieu,0.0
+chat_luong,trip_id trung (dong lap lai),0.0
+chat_luong,thoi diem don thieu / khong doc duoc,0.0
+chat_luong,thoi diem don ngoai cua so truy van,0.0
+chat_luong,thieu toa do don,3.5377
+chat_luong,toa do don ngoai khung Chicago,0.0
+chat_luong,co toa do don nhung thieu ma khu (community area),0.047
+chat_luong,thieu toa do tra,9.1115
+chat_luong,thoi diem tra truoc thoi diem don,0.0013
+chat_luong,trip_seconds thieu,0.0155
+chat_luong,trip_seconds = 0,1.9887
+chat_luong,trip_seconds < 0,0.0
+chat_luong,trip_miles thieu,0.0002
+chat_luong,trip_miles = 0,10.3723
+chat_luong,trip_miles < 0,0.0
+chat_luong,toc do > 80 mph,0.0743
+chat_luong,fare thieu,0.1328
+chat_luong,fare < 0,0.0

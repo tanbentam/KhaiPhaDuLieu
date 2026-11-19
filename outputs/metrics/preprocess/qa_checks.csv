@@ -1,0 +1,23 @@
+check,ok,detail
+"du cot bat buoc, dung thu tu",True,20 cot
+sha256 khop manifest,True,1165613449110766...
+so dong khop manifest,True,"100,000"
+"trip_id khong rong, duy nhat",True,
+sap tang dan theo trip_id,True,
+cot bat buoc khong co gia tri rong,True,{}
+kieu du lieu dung,True,{}
+"x_m, y_m huu han",True,
+"x_m, y_m dung bang phep chieu tu lat/lon",True,lech lon nhat 0.00e+00 m
+moi diem nam trong khung Chicago,True,0 diem ngoai
+thoi gian nam trong cua so,True,2023-04-17 00:00:00 .. 2023-05-14 23:45:00
+"pickup_hour 0-23, weekday 0-6",True,
+gio / thu khop timestamp,True,
+is_weekend khop weekday,True,
+time_slice khop config,True,
+daypart dung dinh nghia,True,
+so dong theo lat cat khop manifest,True,"{'OTHER': 49981, 'WEEKDAY_AM': 11304, 'WEEKDAY_PM': 16185, 'WEEKEND': 22530}"
+"cot co la bool, khong rong",True,"['flag_zero_duration', 'flag_zero_distance', 'flag_speed_gt_80', 'flag_end_before_start', 'flag_missing_area']"
+"dac trung chi gom x_m, y_m",True,"['x_m', 'y_m']"
+moi trip_id cua mau deu co trong master,True,
+master khop sha256 ghi trong manifest mau,True,
+moi tang thu x gio lech khong qua 1 dong so voi ty le,True,lech lon nhat 0.52 dong

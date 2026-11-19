@@ -1,0 +1,5 @@
+time_slice,trips_with_coords,unique_coords,top2_share_pct,top5_share_pct,median_trips_per_coord,coords_lt_10_trips
+OTHER,267481,249,25.03,43.56,35.0,106
+WEEKDAY_AM,60498,165,20.31,39.8,59.0,51
+WEEKDAY_PM,86617,188,21.58,42.13,32.5,59
+WEEKEND,120571,189,24.61,44.66,42.0,67

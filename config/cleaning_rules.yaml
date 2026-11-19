@@ -1,0 +1,58 @@
+# Quy tac lam sach du lieu pickup (M1-05). File chi dung ky tu ASCII.
+#
+# Nguyen tac (BA Spec muc 2.2.1): muc tieu la MAT DO DIEM DON, nen chi LOAI dong khi khong
+# xac dinh duoc "mot luot don, o dau, luc nao". Truong do chuyen di (thoi luong, quang duong,
+# toc do) bat thuong thi GAN CO, khong loai, vi cac truong do khong nam trong dac trung [x_m, y_m].
+#
+# Moi `id` phai co ham tuong ung trong src/data/preprocess.py (code bao loi neu thieu / thua).
+# Quy tac `drop` ap dung LAN LUOT theo thu tu duoi day; so dong truoc / sau tung quy tac
+# duoc ghi vao outputs/metrics/preprocess/cleaning_log.csv.
+
+bbox:                      # khung tho cua Chicago (BA Spec muc 2.2.1)
+  lat_min: 41.64
+  lat_max: 42.05
+  lon_min: -87.94
+  lon_max: -87.52
+
+speed_flag_mph: 80         # nguong gan co toc do
+speed_sensitivity_mph: [70, 90]   # chi de bao cao so dong o nguong khac, khong tao cot
+
+drop:
+  - id: trip_id_null
+    condition: "trip_id rong"
+    reason: "Khong co khoa de noi nhan cum voi chuyen di"
+  - id: trip_id_duplicate
+    condition: "trip_id lap lai (giu dong dau tien)"
+    reason: "Moi luot don chi duoc dem mot lan"
+  - id: start_time_invalid
+    condition: "trip_start_timestamp rong hoac khong doc duoc"
+    reason: "Khong gan duoc gio, thu, lat cat thoi gian"
+  - id: start_time_outside_window
+    condition: "trip_start_timestamp nam ngoai cua so truy van"
+    reason: "Ngoai pham vi nghien cuu"
+  - id: pickup_coord_missing
+    condition: "thieu pickup latitude hoac longitude"
+    reason: "Khong tinh duoc khoang cach khong gian"
+  - id: pickup_coord_out_of_range
+    condition: "lat ngoai [-90, 90] hoac lon ngoai [-180, 180]"
+    reason: "Toa do khong hop le"
+  - id: pickup_outside_chicago_bbox
+    condition: "toa do nam ngoai khung bbox o tren"
+    reason: "Ngoai vung nghien cuu"
+
+flag:
+  - id: flag_zero_duration
+    condition: "trip_seconds <= 0 hoac rong"
+    reason: "Thoi luong khong dung duoc cho phan tich toc do"
+  - id: flag_zero_distance
+    condition: "trip_miles <= 0 hoac rong"
+    reason: "Quang duong khong dung duoc; nhieu kha nang thiet bi ghi thieu"
+  - id: flag_speed_gt_80
+    condition: "trip_miles / (trip_seconds / 3600) > speed_flag_mph"
+    reason: "Toc do phi ly; nguong ky thuat, khong phai chuan phap ly"
+  - id: flag_end_before_start
+    condition: "trip_end_timestamp < trip_start_timestamp"
+    reason: "Thoi diem tra sai; thoi diem va vi tri don van dung duoc"
+  - id: flag_missing_area
+    condition: "pickup_community_area rong (van co toa do)"
+    reason: "Khong dien giai duoc cum theo ma khu cho dong nay"
