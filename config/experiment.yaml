@@ -10,6 +10,7 @@ paths:
   model_input: data/processed/model_input_sample_v1.parquet
   manifest: data/manifests/model_input_sample_v1_manifest.json
   master: data/processed/master_pickups_v1.parquet           # toan bo dong sau lam sach
+  master_manifest: data/manifests/master_pickups_v1_manifest.json
   processed_dir: data/processed
   preprocess_dir: outputs/metrics/preprocess                 # cleaning log, kiem tra CRS, QA
   labels_dir: outputs/labels
