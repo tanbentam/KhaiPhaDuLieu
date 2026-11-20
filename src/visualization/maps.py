@@ -73,7 +73,8 @@ def cluster_map(layers: dict[str, tuple[pd.DataFrame, Any, pd.DataFrame]], out_h
             f'padding:6px 10px;border:1px solid #999;font:12px/1.35 sans-serif;'
             f'max-width:min(460px, calc(100% - 20px));box-sizing:border-box">'
             f'<b>{html.escape(title)}</b><br>{html.escape(note)}<br>'
-            f'Cham = toa do centroid (khong phai GPS), kich thuoc ~ so chuyen; xam = nhieu; +n = tam cum n.</div>')
+            f'Cham = toa do centroid (khong phai GPS), kich thuoc ~ so chuyen; xam = nhieu; +n = tam cum n.<br>'
+            f'<i>Luu y nghiep vu: Hotspot la diem tap trung nhu cau don xe, khong phai diem un tac giao thong.</i></div>')
     m.get_root().html.add_child(folium.Element(head))
     out_html = Path(out_html)
     out_html.parent.mkdir(parents=True, exist_ok=True)
@@ -170,7 +171,8 @@ def temporal_shift_map(
         f'<span style="color:#1f77b4">● AM (Sang ngay thuong)</span> | '
         f'<span style="color:#d62728">● PM (Chieu ngay thuong)</span> | '
         f'<span style="color:#2ca02c">● WE (Cuoi tuan)</span><br>'
-        f'Duong noi: Vector dich chuyen giua cac tam hotspot (tooltip ghi chi tiet khoang cach m).</div>'
+        f'Duong noi: Vector dich chuyen giua cac tam hotspot.<br>'
+        f'<i>Luu y nghiep vu: Toa do la centroid khu vuc hanh chinh (khong phai GPS); Hotspot la diem tap trung nhu cau don xe, khong phai diem un tac giao thong.</i></div>'
     )
     m.get_root().html.add_child(folium.Element(info_box))
 
