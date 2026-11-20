@@ -47,7 +47,7 @@ Dữ liệu sử dụng: Bản đầy đủ v1 do M1 phát hành (`master_v1`, 5
 ---
 
 ## Phần 5. Tài Liệu Diễn Giải & Bàn Giao M4 (M3-08)
-- [x] **5.1 Tài liệu Diễn giải Chuyên sâu:** `docs/Phan 5/hdbscan_interpretation.md` (giải thích ưu thế vượt trội của HDBSCAN trước bài toán mật độ biến thiên so với K-Means và DBSCAN, kèm các lưu ý phương pháp luận về Silhouette 0,99 và dịch chuyển 0 m).
+- [x] **5.1 Tài liệu Diễn giải Chuyên sâu:** `docs/Phan 5/hdbscan_interpretation.md` (diễn giải so sánh 3 mô hình, tính thích ứng của HDBSCAN trước bài toán mật độ biến thiên, kèm các lưu ý phương pháp luận về cụm bán kính 0 m kéo Silhouette lên 0,99/kéo DBI xuống thấp, và hiện tượng dịch chuyển 0 m).
 - [x] **5.2 Báo cáo Kỹ thuật & Kịch bản Vấn đáp:** `reports/m3_hdbscan_temporal.md` (chuẩn bị sẵn nội dung cho M4 đưa vào Báo cáo Word/Slide và bộ câu hỏi vấn đáp Q7, Q8, Q9, Q10).
 - [x] **5.3 Biên bản Bàn giao H04 & H05:** `docs/Phan 5/5.5-bien-ban-ban-giao-m3.md`.
 - [x] **5.4 Đồng bộ Git:** Toàn bộ mã nguồn, cấu hình, notebook và tài liệu đã được commit và push lên nhánh `m3/hdbscan-temporal`.
