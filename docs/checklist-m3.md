@@ -19,7 +19,7 @@ Dữ liệu sử dụng: Bản đầy đủ v1 do M1 phát hành (`master_v1`, 5
 
 ## Phần 2. Hyperparameter Tuning & Khảo Sát Tính Ổn Định (M3-02, M3-03, M3-05)
 - [x] **2.1 Khảo sát `min_cluster_size`:** Giữ cố định `min_samples = 10` để tránh bẫy R05, quét qua dải $[30, 50, 100, 200, 300, 500]$ trên `WEEKDAY_AM`. Chọn $mcs = 100$ để loại bỏ micro-clusters và bảo toàn các hotspot chính.
-- [x] **2.2 Khảo sát `min_samples`:** Thử $ms \in [5, 10, 20, 50]$ với $mcs = 100$. Chọn $ms = 10$ để đạt Noise Ratio tối ưu quanh $10\%$.
+- [x] **2.2 Khảo sát `min_samples`:** Thử $ms \in [5, 10, 20]$ với $mcs = 100$. Chọn $ms = 10$ để đạt cấu trúc cụm ổn định, Noise Ratio thấp quanh $2,1\%$.
 - [x] **2.3 Xây dựng Notebook Tuning:** `notebooks/05_hdbscan_tuning.ipynb` và script `src/models/run_hdbscan.py`.
 - [x] **2.4 Biểu đồ Tuning:** Xuất `outputs/figures/hdbscan_tuning_master_v1.png`.
 
@@ -47,7 +47,7 @@ Dữ liệu sử dụng: Bản đầy đủ v1 do M1 phát hành (`master_v1`, 5
 ---
 
 ## Phần 5. Tài Liệu Diễn Giải & Bàn Giao M4 (M3-08)
-- [x] **5.1 Tài liệu Diễn giải Chuyên sâu:** `docs/Phan 5/hdbscan_interpretation.md` (giải thích ưu thế vượt trội của HDBSCAN trước bài toán mật độ biến thiên so với K-Means và DBSCAN).
-- [x] **5.2 Báo cáo Kỹ thuật & Kịch bản Vấn đáp:** `reports/m3_hdbscan_temporal.md` (chuẩn bị sẵn nội dung cho M4 đưa vào Báo cáo Word/Slide và bộ câu hỏi vấn đáp Q7, Q8, Q9).
+- [x] **5.1 Tài liệu Diễn giải Chuyên sâu:** `docs/Phan 5/hdbscan_interpretation.md` (giải thích ưu thế vượt trội của HDBSCAN trước bài toán mật độ biến thiên so với K-Means và DBSCAN, kèm các lưu ý phương pháp luận về Silhouette 0,99 và dịch chuyển 0 m).
+- [x] **5.2 Báo cáo Kỹ thuật & Kịch bản Vấn đáp:** `reports/m3_hdbscan_temporal.md` (chuẩn bị sẵn nội dung cho M4 đưa vào Báo cáo Word/Slide và bộ câu hỏi vấn đáp Q7, Q8, Q9, Q10).
 - [x] **5.3 Biên bản Bàn giao H04 & H05:** `docs/Phan 5/5.5-bien-ban-ban-giao-m3.md`.
 - [x] **5.4 Đồng bộ Git:** Toàn bộ mã nguồn, cấu hình, notebook và tài liệu đã được commit và push lên nhánh `m3/hdbscan-temporal`.
