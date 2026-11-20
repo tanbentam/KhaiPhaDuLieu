@@ -1,0 +1,13 @@
+task_id,title,owner,status,deadline,depends_on,artifact,reviewer,note
+M4-01,Board + quy uoc + CONTRIBUTING,M4 (Ha Xuan Dai),Review,2026-11-21,,docs/M4/project_board.csv; CONTRIBUTING.md; docs/M4/artifact_naming.md,M1,
+M4-02,Bo style chuan,M4 (Ha Xuan Dai),Review,2026-11-21,,src/visualization/style.py; docs/M4/visual_style_guide.md,M2,
+M4-03,Heatmap pickup demand,M4 (Ha Xuan Dai),Review,2026-11-21,M1 H01/H02,outputs/maps/pickup_demand_heatmap.html,M1,Chua co heatmap theo lat cat
+M4-04,Ban do so sanh 3 thuat toan (tam cum cung extent),M4 (Ha Xuan Dai),Review,2026-11-22,M2 H03; M3 H04,outputs/maps/cluster_map_*.html; outputs/figures/comparison/algorithm_comparison*.png,M2; M3,Muc diem can nhan
+M4-05,metrics_comparison + bieu do,M4 (Ha Xuan Dai),Review,2026-11-22,M2 H03; M3 H04/H05,outputs/metrics/metrics_comparison.csv; outputs/figures/comparison/*.png,M2; M3,
+M4-08,README + notebook 07 + clean-run,M4 (Ha Xuan Dai),Review,2026-11-22,M1; M2; M3,README.md; notebooks/07_visualization_reporting.ipynb; logs/clean_run_20261120.md,M1,Chua thu tren Windows/Colab
+M4-09,QA ky thuat (khong gom rehearsal),M4 (Ha Xuan Dai),Review,2026-11-22,M4-03..05,scripts/run_qa.py; docs/M4/final_QA_checklist.md,M2,
+M4-10,Tra ket qua QA cho owner,M3 (Hoang Tuan Bao); M2 (Chu Thanh Tan),Blocked,2026-11-24,M4-09,docs/M4/m4-handoff-discrepancies.md,M4,Cho phan hoi R-A R-B R-C
+M4-11,Ban do cap diem + heatmap theo lat cat,M4 (Ha Xuan Dai),To Do,2026-11-25,M1 du lieu; M2/M3 nhan,outputs/maps/*_points_*.html,M2; M3,Can data/ va outputs/labels/
+M4-12,Release ky thuat v1.0-tech,M4 (Ha Xuan Dai),To Do,2026-11-27,M4-10; M4-11,git tag v1.0-tech,M1,
+M4-06,Bien tap bao cao Word,M4 (Ha Xuan Dai),Out of scope (dot nay),,,,,Loai tru theo yeu cau
+M4-07,Slide va kich ban noi,M4 (Ha Xuan Dai),Out of scope (dot nay),,,,,Loai tru theo yeu cau

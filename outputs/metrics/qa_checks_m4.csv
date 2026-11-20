@@ -1,0 +1,35 @@
+check_id,scope,status,detail,owner
+QA-01,baseline_metrics.csv,PASS,schema khớp RUN_LOG_COLUMNS (28 cột),M2
+QA-01,hdbscan_metrics.csv,PASS,schema khớp RUN_LOG_COLUMNS (28 cột),M3
+QA-02,H05,PASS,sample_id = ['master_v1'],M2/M3
+QA-03,H05,PASS,"cùng n_points giữa 3 thuật toán theo lát cắt: WEEKDAY_AM=60,498, WEEKDAY_PM=86,617, WEEKEND=120,571",M2/M3
+QA-04,H05,PASS,"9 cặp (thuật toán × lát cắt), mỗi cặp 1 run_id",M2/M3
+QA-05,metrics,PASS,n_points_metric = n_points − n_noise (metric chỉ trên điểm có nhãn),M2/M3
+QA-06,metrics,PASS,"K-Means Noise Ratio = 0 (theo thiết kế, không phải ưu điểm)",M2
+QA-07,kmeans_clusters,PASS,3 run_id đều có trong metrics,M2
+QA-08,kmeans_clusters,PASS,số cụm và Σ(chuyến)+noise khớp metrics,M2
+QA-07,dbscan_clusters,PASS,3 run_id đều có trong metrics,M2
+QA-08,dbscan_clusters,PASS,số cụm và Σ(chuyến)+noise khớp metrics,M2
+QA-07,hdbscan_clusters,PASS,3 run_id đều có trong metrics,M3
+QA-08,hdbscan_clusters,PASS,số cụm và Σ(chuyến)+noise khớp metrics,M3
+QA-09,kmeans_clusters,PASS,"x,y ↔ lat,lon sai số lớn nhất 0.000 m; trong bbox Chicago: True",M2
+QA-09,dbscan_clusters,PASS,"x,y ↔ lat,lon sai số lớn nhất 0.000 m; trong bbox Chicago: True",M2
+QA-09,hdbscan_clusters,PASS,"x,y ↔ lat,lon sai số lớn nhất 0.000 m; trong bbox Chicago: True",M3
+QA-10,pickup_coords,PASS,304/304 tọa độ trong bbox Chicago,M1
+QA-11,hotspot_tracking,PASS,trips_from/trips_to khớp hdbscan_clusters (0 dòng lệch),M3
+QA-12,hotspot_tracking,WARN,"54% cặp MATCHED có dịch chuyển đúng 0 m (cụm trùng 1 centroid) — giới hạn độ phân giải tọa độ, không nên đọc là 'đứng yên tuyệt đối'",M3
+QA-13,hdbscan_clusters,WARN,"63% cụm HDBSCAN chỉ gồm 1 tọa độ duy nhất (bán kính 0) → Silhouette/DBI của HDBSCAN bị thổi phồng, không so trực tiếp với K-Means/DBSCAN",M3
+QA-14,runtime,WARN,"chế độ fit theo thuật toán: {'dbscan': ['weighted'], 'hdbscan': ['unweighted'], 'kmeans': ['weighted']} → KHÔNG cùng cách fit (weighted trên tọa độ duy nhất vs toàn bộ điểm): runtime không so trực tiếp",M2/M3
+QA-15,environment,WARN,"phiên bản Python theo thuật toán: {'dbscan': ['3.10.6'], 'hdbscan': ['3.11.9'], 'kmeans': ['3.10.6']} — BA 2.4 yêu cầu ghi/đồng nhất môi trường khi đo runtime",M2/M3
+QA-17,cluster_map_comparison.html,PASS,có chú thích centroid ≠ GPS,M4
+QA-17,cluster_map_dbscan.html,PASS,có chú thích centroid ≠ GPS,M4
+QA-17,cluster_map_hdbscan.html,PASS,có chú thích centroid ≠ GPS,M4
+QA-17,cluster_map_kmeans.html,PASS,có chú thích centroid ≠ GPS,M4
+QA-17,dbscan_map_master_v1.html,PASS,có chú thích centroid ≠ GPS,M2/M3
+QA-17,dbscan_map_pilot_m2_v0.html,PASS,có chú thích centroid ≠ GPS,M2/M3
+QA-17,hdbscan_map_master_v1.html,PASS,có chú thích centroid ≠ GPS,M2/M3
+QA-17,hdbscan_temporal_shift_map.html,WARN,thiếu chú thích centroid ≠ GPS trong HTML,M2/M3
+QA-17,kmeans_map_master_v1.html,PASS,có chú thích centroid ≠ GPS,M2/M3
+QA-17,kmeans_map_pilot_m2_v0.html,PASS,có chú thích centroid ≠ GPS,M2/M3
+QA-17,pickup_demand_heatmap.html,PASS,có chú thích centroid ≠ GPS,M4
+QA-16,artifacts,PASS,15/15 artifact tồn tại và không rỗng,M4

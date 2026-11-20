@@ -1,0 +1,5 @@
+# Tranh "sua" hang loat do khac biet CRLF/LF giua Windows va Colab/Linux
+* text=auto
+*.png binary
+*.parquet binary
+*.docx binary

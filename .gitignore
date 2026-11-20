@@ -17,3 +17,8 @@ docs/M1_ghi_chu_du_lieu_v1.pdf
 # Ket qua lon hoac tam (metrics CSV va hinh co the commit sau khi nhom chot)
 outputs/labels/
 outputs/_test_env/
+
+# M4
+.pytest_cache/
+*.log
+*_shot.png

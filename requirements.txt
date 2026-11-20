@@ -44,3 +44,7 @@ pyproj>=3.6
 #
 # Da kiem thu 15/11/2026 - Google Colab, Python 3.13.16:
 # numpy 2.4.6, scikit-learn 1.6.1, hdbscan 0.8.44 (notebooks/00_kiem_tra_moi_truong.ipynb dat)
+
+# M4 them (truc quan hoa so sanh, notebook 07)
+plotly>=5.20
+# Chay notebook 07 bang dong lenh (tuy chon): nbconvert, nbformat
