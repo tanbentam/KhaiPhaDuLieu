@@ -12,7 +12,6 @@ Luu y ve trien khai:
 """
 from __future__ import annotations
 
-import time
 from typing import Any
 
 import numpy as np
@@ -39,12 +38,7 @@ def fit_hdbscan(
         - probabilities: mang float32, xac suat diem thuoc ve cum duoc gan.
         - clusterer: doi tuong HDBSCAN da fit (chua cluster_persistence_, condensed_tree_...).
     """
-    try:
-        import hdbscan
-        _HDBSCAN = hdbscan.HDBSCAN
-    except Exception:
-        from sklearn.cluster import HDBSCAN
-        _HDBSCAN = HDBSCAN
+    import hdbscan
 
     X = np.asarray(X, dtype=np.float64)
     if X.ndim != 2 or X.shape[1] != 2:
@@ -52,23 +46,26 @@ def fit_hdbscan(
     if min_cluster_size < 2:
         raise ValueError(f"min_cluster_size phai >= 2, nhan duoc {min_cluster_size}")
 
-    kwargs = {
-        "min_cluster_size": int(min_cluster_size),
-        "min_samples": int(min_samples) if min_samples is not None else None,
-        "metric": metric,
-        "cluster_selection_method": cluster_selection_method,
-        "cluster_selection_epsilon": float(cluster_selection_epsilon),
-    }
-    # Cac tham so dac thu cua hdbscan package (neu co)
-    if _HDBSCAN.__module__.startswith("hdbscan"):
-        kwargs["gen_min_span_tree"] = gen_min_span_tree
-        kwargs["approx_min_span_tree"] = approx_min_span_tree
-        kwargs["core_dist_n_jobs"] = core_dist_n_jobs
-    else:
-        kwargs["n_jobs"] = core_dist_n_jobs
-
-    clusterer = _HDBSCAN(**kwargs)
+    clusterer = hdbscan.HDBSCAN(
+        min_cluster_size=int(min_cluster_size),
+        min_samples=int(min_samples) if min_samples is not None else None,
+        metric=metric,
+        cluster_selection_method=cluster_selection_method,
+        cluster_selection_epsilon=float(cluster_selection_epsilon),
+        gen_min_span_tree=gen_min_span_tree,
+        approx_min_span_tree=approx_min_span_tree,
+        core_dist_n_jobs=core_dist_n_jobs,
+    )
     clusterer.fit(X)
+    missing_outputs = [
+        name for name in ("cluster_persistence_", "condensed_tree_")
+        if not hasattr(clusterer, name)
+    ]
+    if missing_outputs:
+        raise RuntimeError(
+            "The installed hdbscan backend is missing required fitted outputs: "
+            + ", ".join(missing_outputs)
+        )
     labels = clusterer.labels_.astype(np.int32)
     probabilities = clusterer.probabilities_.astype(np.float32)
     return labels, probabilities, clusterer
@@ -127,12 +124,14 @@ def scan_min_cluster_size(
                 cluster_selection_method=cluster_selection_method,
             )
 
-        (labels, prob, clusterer), sec, peak_mb, delta_mb = measure(_run)
+        (labels, _, clusterer), sec, peak_mb, delta_mb = measure(_run)
         metrics = evaluate(X, labels, silhouette_max_sample=silhouette_max_sample, seed=seed)
 
-        # Do ben vung trung binh cua cac cum (cluster persistence)
-        pers = getattr(clusterer, "cluster_persistence_", None)
-        mean_persistence = float(np.mean(pers)) if pers is not None and len(pers) > 0 else None
+        persistence = get_cluster_persistence_table(clusterer)
+        mean_persistence = (
+            float(persistence["persistence"].mean())
+            if not persistence.empty else None
+        )
 
         row = {
             "min_cluster_size": int(mcs),
@@ -174,11 +173,14 @@ def scan_min_samples(
                 cluster_selection_method=cluster_selection_method,
             )
 
-        (labels, prob, clusterer), sec, peak_mb, delta_mb = measure(_run)
+        (labels, _, clusterer), sec, peak_mb, delta_mb = measure(_run)
         metrics = evaluate(X, labels, silhouette_max_sample=silhouette_max_sample, seed=seed)
 
-        pers = getattr(clusterer, "cluster_persistence_", None)
-        mean_persistence = float(np.mean(pers)) if pers is not None and len(pers) > 0 else None
+        persistence = get_cluster_persistence_table(clusterer)
+        mean_persistence = (
+            float(persistence["persistence"].mean())
+            if not persistence.empty else None
+        )
 
         row = {
             "min_cluster_size": int(min_cluster_size),
@@ -196,11 +198,29 @@ def scan_min_samples(
 
 
 def get_cluster_persistence_table(clusterer: Any) -> pd.DataFrame:
-    """Xuat bang do ben vung cua tung cum (cluster persistence / stability)."""
-    pers = getattr(clusterer, "cluster_persistence_", None)
-    if pers is None:
-        return pd.DataFrame(columns=["cluster", "persistence"])
+    """Return stability for each cluster, using the public size-based label order."""
+    if not hasattr(clusterer, "cluster_persistence_") or not hasattr(clusterer, "labels_"):
+        raise RuntimeError(
+            "The fitted hdbscan model must expose cluster_persistence_ and labels_."
+        )
+
+    persistence = np.asarray(clusterer.cluster_persistence_, dtype=np.float64)
+    labels = np.asarray(clusterer.labels_, dtype=np.int64)
+    cluster_ids, counts = np.unique(labels[labels != -1], return_counts=True)
+    columns = ["cluster", "cluster_original", "cluster_size", "persistence"]
+    if not len(cluster_ids):
+        return pd.DataFrame(columns=columns)
+    if not np.array_equal(cluster_ids, np.arange(len(cluster_ids))):
+        raise RuntimeError("HDBSCAN cluster labels are not contiguous from zero.")
+    if len(persistence) != len(cluster_ids):
+        raise RuntimeError(
+            "HDBSCAN persistence count does not match the number of fitted clusters."
+        )
+
+    order = np.argsort(-counts, kind="stable")
     return pd.DataFrame({
-        "cluster": np.arange(len(pers)),
-        "persistence": pers.astype(float),
-    }).sort_values("persistence", ascending=False).reset_index(drop=True)
+        "cluster": np.arange(len(order)),
+        "cluster_original": cluster_ids[order],
+        "cluster_size": counts[order],
+        "persistence": persistence[cluster_ids[order]],
+    })

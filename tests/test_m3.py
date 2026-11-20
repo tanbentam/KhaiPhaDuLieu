@@ -7,10 +7,15 @@ hoac:
 """
 from __future__ import annotations
 
+import sys
+from types import SimpleNamespace
+from unittest.mock import patch
+
 import numpy as np
 import pandas as pd
 
-from src.evaluation.temporal import match_clusters, build_hotspot_tracking
+from src.evaluation.temporal import build_time_slice_manifest, match_clusters
+from src.models.hdbscan import fit_hdbscan, get_cluster_persistence_table
 
 
 def test_cluster_matching_mock():
@@ -54,9 +59,85 @@ def test_cluster_matching_mock():
     print("PASS: test_cluster_matching_mock thanh cong!")
 
 
+def test_cluster_persistence_tracks_size_relabeling():
+    clusterer = SimpleNamespace(
+        labels_=np.array([0, 0, 1, 1, 1, -1]),
+        cluster_persistence_=np.array([0.25, 0.75]),
+    )
+
+    result = get_cluster_persistence_table(clusterer)
+
+    assert result["cluster"].tolist() == [0, 1]
+    assert result["cluster_original"].tolist() == [1, 0]
+    assert result["cluster_size"].tolist() == [3, 2]
+    assert result["persistence"].tolist() == [0.75, 0.25]
+
+
+def test_cluster_persistence_rejects_missing_backend_output():
+    clusterer = SimpleNamespace(labels_=np.array([0, 0, 1, 1]))
+
+    try:
+        get_cluster_persistence_table(clusterer)
+    except RuntimeError as exc:
+        assert "cluster_persistence_" in str(exc)
+    else:
+        raise AssertionError("Missing persistence data must not be silently accepted")
+
+
+def test_fit_hdbscan_requires_stability_outputs():
+    class FakeHDBSCAN:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def fit(self, X):
+            self.labels_ = np.array([0, 0, 1, 1])
+            self.probabilities_ = np.ones(len(X))
+            self.cluster_persistence_ = np.array([0.4, 0.8])
+            self.condensed_tree_ = object()
+
+    module = SimpleNamespace(HDBSCAN=FakeHDBSCAN)
+    X = np.array([[0.0, 0.0], [0.1, 0.0], [2.0, 2.0], [2.1, 2.0]])
+
+    with patch.dict(sys.modules, {"hdbscan": module}):
+        labels, probabilities, clusterer = fit_hdbscan(X, min_cluster_size=2, min_samples=1)
+
+    assert labels.tolist() == [0, 0, 1, 1]
+    assert probabilities.tolist() == [1.0, 1.0, 1.0, 1.0]
+    assert clusterer.kwargs["min_samples"] == 1
+    assert clusterer.kwargs["gen_min_span_tree"] is False
+
+
+def test_time_slice_manifest_normalizes_by_exposure_hours():
+    source = pd.DataFrame({
+        "time_slice": ["WEEKDAY_AM", "WEEKDAY_AM", "WEEKDAY_AM", "WEEKEND", "OTHER"],
+        "trip_start_timestamp": [
+            "2023-04-17 07:10:00",
+            "2023-04-17 08:00:00",
+            "2023-04-18 07:30:00",
+            "2023-04-22 12:00:00",
+            "2023-04-23 12:00:00",
+        ],
+    })
+    config = {
+        "WEEKDAY_AM": {"weekdays": [0, 1, 2, 3, 4], "hours": [7, 8, 9]},
+        "WEEKEND": {"weekdays": [5, 6], "hours": "all"},
+    }
+
+    result = build_time_slice_manifest(source, config).set_index("time_slice")
+
+    assert result.loc["WEEKDAY_AM", "n_pickups"] == 3
+    assert result.loc["WEEKDAY_AM", "exposure_hours"] == 15
+    assert result.loc["WEEKDAY_AM", "pickups_per_hour"] == 0.2
+    assert result.loc["WEEKEND", "exposure_hours"] == 48
+
+
 def main():
     print("Dang chay bo kiem thu M3 (HDBSCAN & Temporal Tracking)...")
     test_cluster_matching_mock()
+    test_cluster_persistence_tracks_size_relabeling()
+    test_cluster_persistence_rejects_missing_backend_output()
+    test_fit_hdbscan_requires_stability_outputs()
+    test_time_slice_manifest_normalizes_by_exposure_hours()
     print("ALL M3 TESTS PASSED!")
 
 

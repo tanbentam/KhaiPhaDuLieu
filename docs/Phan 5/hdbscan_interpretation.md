@@ -4,6 +4,8 @@ Người viết: **Thành viên 3 (M3 – Hoàng Tuấn Bảo - Advanced Modelin
 Dữ liệu: **Bản đầy đủ v1 do M1 phát hành (`master_v1`)** (4 tuần 17/04–14/05/2023, 535.167 chuyến đón xe, 304 toạ độ centroid; 3 lát cắt: `WEEKDAY_AM` 60.498, `WEEKDAY_PM` 86.617, `WEEKEND` 120.571 chuyến).  
 Căn cứ: BA Specification v1.1 (Mục 1.3, 2.3.4, 2.3.5, 3.4.3).
 
+> **Trạng thái:** Metrics, cluster ID và tracking trong artifacts hiện có được tạo trước khi xác nhận backend HDBSCAN; chưa dùng làm số liệu cuối cho M4. M3 cần chạy lại mô hình/tracking bằng backend đã xác nhận và cập nhật các mục kết quả bên dưới. Các tổng lượt theo khu vực được nêu riêng là tính trực tiếp từ `master_pickups_v1.parquet`.
+
 ---
 
 ## 1. Cấu hình Lựa chọn của HDBSCAN
@@ -18,7 +20,7 @@ Qua quá trình thực nghiệm và khảo sát lưới tham số trên lát c�
 
 ## 2. So sánh Toàn diện Ba Mô hình: K-Means, DBSCAN và HDBSCAN
 
-*(Bảng tổng hợp từ `outputs/metrics/baseline_metrics.csv` và `outputs/metrics/hdbscan_metrics.csv`)*
+*(Bảng tổng hợp hiện có từ `outputs/metrics/baseline_metrics.csv` và `outputs/metrics/hdbscan_metrics.csv`; các số HDBSCAN cần tái sinh trước khi dùng làm kết quả cuối.)*
 
 | Tiêu chí so sánh | K-Means ($K = 5$) | DBSCAN chính A (1%, 1500 m) | HDBSCAN ($mcs = 100, ms = 10$) |
 |---|---|---|---|
@@ -48,7 +50,7 @@ Qua quá trình thực nghiệm và khảo sát lưới tham số trên lát c�
 
 ## 3. Phân tích Dịch chuyển Hotspot Theo Thời Gian (Temporal Tracking)
 
-Dựa trên thuật toán ghép cặp theo tâm gần nhất (`src.evaluation.temporal`, lưu tại `outputs/metrics/hotspot_tracking.csv`), kết quả tạo ra **229 dòng phân tích**:
+Dựa trên thuật toán ghép cặp theo centroid gần nhất (`src.evaluation.temporal`), artifacts cũ tạo ra **229 dòng phân tích**; cần chạy lại sau khi cập nhật backend:
 - **195 cặp MATCHED:** ghép thành công giữa các cụm tương đồng vị trí (thuật toán tham lam, 4 cụm đích nhận ghép từ nhiều cụm nguồn).
 - **32 cụm EMERGING:** cụm mới xuất hiện ở lát cắt sau.
 - **2 cụm DISSOLVED:** cụm ở lát cắt trước tiêu biến.
@@ -58,22 +60,22 @@ Dựa trên thuật toán ghép cặp theo tâm gần nhất (`src.evaluation.te
 ### 3.1. Dịch chuyển giữa Sáng ngày thường (`WEEKDAY_AM`, 07:00–09:59) $\rightarrow$ Chiều ngày thường (`WEEKDAY_PM`, 16:00–18:59):
 - **Hotspot Sân bay Quốc tế O'Hare (Khu 76):**
    - Vị trí tâm cụm cố định ($\Delta d = 0\text{ m}$ tại nhà ga).
-   - Tổng nhu cầu tăng từ **$15,7\%$** (sáng: $9.469$ chuyến) lên **$20,4\%$** (chiều: $17.690$ chuyến).
+   - Tổng lượt nguồn theo khu vực là $9.469$ (AM) và $17.693$ (PM), tương ứng $15,65\%$ và $20,43\%$ của từng lát cắt. Cluster ID/tâm ghép của artifacts cũ cần xác nhận lại.
 - **Hotspot Near West Side (Khu 28):**
    - Nhu cầu đón xe tại Cụm 1 sụt giảm mạnh nhất ở chuyển tiếp ngày thường: từ **$9,71\%$** ($5.874$ chuyến) vào buổi sáng xuống **$3,06\%$** ($2.650$ chuyến tại Cụm 9 PM) vào buổi chiều ($\Delta\text{share} = -6,65\%$). Ở chuyển tiếp sáng $\rightarrow$ cuối tuần, Cụm 1 sang Cụm 16 còn giảm mạnh hơn: **$-8,15\%$ điểm**.
 - **Hotspot Trung tâm Loop (Khu 32):**
-   - Tổng tỷ trọng toàn Khu vực 32 tăng từ **$17,9\%$** ($10.813$ chuyến trên 5 cụm: 2, 5, 10, 17, 24) lên **$22,5\%$** ($19.465$ chuyến trên 5 cụm: 1, 4, 5, 17, 19).
+   - Tổng lượt nguồn theo `pickup_community_area=32` là $10.875$ (AM) và $19.516$ (PM), tương ứng $17,98\%$ và $22,53\%$. Đây là tổng theo vùng từ dữ liệu gốc, không phải tổng theo `top_community_area` của các cluster.
 - **Hotspot Hyde Park (Khu 41):**
    - Buổi sáng: Cụm 29 đạt $351$ chuyến ($0,58\%$, bán kính $RMS = 117\text{ m}$).
    - Buổi chiều: Cụm 27 đạt $607$ chuyến ($0,70\%$, bán kính $RMS = 338\text{ m}$).
 
 ### 3.2. Dịch chuyển giữa Ngày làm việc (`WEEKDAY`) $\rightarrow$ Cuối tuần (`WEEKEND`):
 - **Khu vực Near North Side (Khu 8):**
-   - Tổng nhu cầu toàn Khu vực 8 tăng đều: $19,1\%$ ở AM ($11.579$ chuyến), $22,8\%$ ở PM ($19.721$ chuyến), và $23,4\%$ ở Weekend ($28.239$ chuyến). Riêng **Cụm 1 đạt $12,0\%$** ($14.454$ chuyến) — là cụm lớn nhất khu vực nội đô và lớn thứ 2 toàn thành phố sau Cụm 0 O'Hare.
+   - Tổng lượt nguồn theo `pickup_community_area=8` là $11.604$ (AM), $19.857$ (PM) và $28.312$ (Weekend), tương ứng $19,18\%$, $22,93\%$ và $23,48\%$. Kích thước/ID cụm trong artifacts cũ cần xác nhận lại.
 - **Sân bay O'Hare (Khu 76):**
-   - Chiếm thị phần áp đảo **$24,2\%$** ($29.137$ chuyến trên 2 cụm nhà ga). Trong đó, **Cụm 0 O'Hare là cụm đơn lẻ lớn nhất toàn thành phố** ($15.215$ chuyến, $12,6\%$).
+   - Tổng lượt nguồn tại khu vực 76 cuối tuần là $29.137$ ($24,17\%$ lát cắt). Không suy ra số cluster hay thứ hạng cụm từ số liệu vùng.
 - **Sân bay Midway (Khu 56):**
-   - Phân tách thành 2 cụm (Cụm 10 & 17), tổng tỷ trọng toàn khu 56 là **$2,7\%$** ở AM $\rightarrow$ **$3,3\%$** ở PM $\rightarrow$ **$3,8\%$** ở Weekend.
+   - Tổng lượt nguồn theo `pickup_community_area=56` là $1.637$, $2.850$, $4.576$, tương ứng $2,71\%$, $3,29\%$, $3,80\%$. Số cụm Midway cần xác nhận lại sau lần chạy mới.
 
 ---
 
@@ -84,9 +86,6 @@ Dựa trên thuật toán ghép cặp theo tâm gần nhất (`src.evaluation.te
    - 07:00–09:59: Tăng cường phương tiện tại Near West Side (Khu 28) và các trục hướng tâm vào Loop.
    - 16:00–18:59: Dịch chuyển trọng tâm sang đón khách tại Sân bay O'Hare (Khu 76) và các toà nhà văn phòng Loop (Khu 32).
    - Cuối tuần: Điều phối phương tiện dọc hành lang vui chơi giải trí Near North Side (Khu 8) và sân bay O'Hare.
-2. **Cảnh báo nghiệp vụ bắt buộc:**
-   - *Toạ độ đón xe là toạ độ centroid khu vực hành chính (không phải vị trí GPS chính xác của xe).*
-   - *Hotspot được phát hiện là **điểm nóng về nhu cầu đón xe (pickup demand)**, không phải điểm ùn tắc giao thông (R11 trong BA Spec). Để xác định ùn tắc cần tích hợp thêm dữ liệu tốc độ lưu thông (GPS trajectories / traffic sensors).*
 2. **Cảnh báo nghiệp vụ bắt buộc:**
    - *Toạ độ đón xe là toạ độ centroid khu vực hành chính (không phải vị trí GPS chính xác của xe).*
    - *Hotspot được phát hiện là **điểm nóng về nhu cầu đón xe (pickup demand)**, không phải điểm ùn tắc giao thông (R11 trong BA Spec). Để xác định ùn tắc cần tích hợp thêm dữ liệu tốc độ lưu thông (GPS trajectories / traffic sensors).*

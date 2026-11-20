@@ -32,6 +32,7 @@ from src.evaluation.hotspots import cluster_table, relabel_by_size
 from src.evaluation.runlog import export_metrics_table, run_and_log
 from src.models.hdbscan import (
     fit_hdbscan,
+    get_cluster_persistence_table,
     scan_min_cluster_size,
     scan_min_samples,
 )
@@ -61,22 +62,24 @@ def main() -> None:
     sample_id = manifest["sample_id"]
     slices = list(cfg["time_slices"])
 
+    hdb_cfg = cfg["hdbscan"]
+    final_cfg = hdb_cfg["final"]
+
     # 2. Khao sat tham so tren WEEKDAY_AM (60.498 dong)
     print("\n[2/6] Khao sat tham so HDBSCAN tren WEEKDAY_AM...", flush=True)
     am_df = df[df.time_slice == "WEEKDAY_AM"].reset_index(drop=True)
     X_am = am_df[["x_m", "y_m"]].to_numpy(dtype="float64")
 
-    # Dải tuning tinh gọn, đại diện cao
-    mcs_list = [50, 100, 200]
-    ms_default = 10
+    mcs_list = list(hdb_cfg["min_cluster_size_candidates"])
+    ms_default = int(hdb_cfg["min_samples_default"])
 
     print(f" -> Buoc 2.1: Quet min_cluster_size trong {mcs_list} (co dinh min_samples={ms_default})...", flush=True)
     df_mcs = scan_min_cluster_size(
         X_am,
         mcs_list,
         min_samples=ms_default,
-        metric="euclidean",
-        cluster_selection_method="eom",
+        metric=hdb_cfg["metric"],
+        cluster_selection_method=final_cfg["cluster_selection_method"],
         seed=cfg["project"]["seed"],
         silhouette_max_sample=cfg["evaluation"]["silhouette_max_sample"],
     )
@@ -89,15 +92,15 @@ def main() -> None:
               f"DBI: {r['davies_bouldin'] if r['davies_bouldin'] is not None else -1:.3f} | "
               f"Fit: {r['runtime_sec']:.2f}s | RAM+: {r['mem_delta_mb']:.1f}MB", flush=True)
 
-    chosen_mcs = 100
-    ms_list = [5, 10, 20]
+    chosen_mcs = int(final_cfg["min_cluster_size"])
+    ms_list = list(hdb_cfg["min_samples_candidates"])
     print(f"\n -> Buoc 2.2: Quet min_samples trong {ms_list} (co dinh min_cluster_size={chosen_mcs})...", flush=True)
     df_ms = scan_min_samples(
         X_am,
         ms_list,
         min_cluster_size=chosen_mcs,
-        metric="euclidean",
-        cluster_selection_method="eom",
+        metric=hdb_cfg["metric"],
+        cluster_selection_method=final_cfg["cluster_selection_method"],
         seed=cfg["project"]["seed"],
         silhouette_max_sample=cfg["evaluation"]["silhouette_max_sample"],
     )
@@ -116,7 +119,7 @@ def main() -> None:
     # Subplot 1: mcs
     ax1 = axes[0]
     ax1.plot(df_mcs["min_cluster_size"], df_mcs["n_clusters"], "o-", color="#1f77b4", label="So cum")
-    ax1.set_xlabel("min_cluster_size (min_samples = 10)")
+    ax1.set_xlabel(f"min_cluster_size (min_samples = {ms_default})")
     ax1.set_ylabel("So cum", color="#1f77b4")
     ax1.tick_params(axis="y", labelcolor="#1f77b4")
     ax1.grid(alpha=0.3)
@@ -146,13 +149,16 @@ def main() -> None:
     print(f" -> Da luu bieu do: {fig_path.relative_to(ROOT)}", flush=True)
 
     # 4. Chot cau hinh va fit tren ca 3 lat cat
-    final_mcs = 100
-    final_ms = 10
-    final_method = "eom"
+    final_mcs = int(final_cfg["min_cluster_size"])
+    final_ms = int(final_cfg["min_samples"])
+    final_method = final_cfg["cluster_selection_method"]
+    final_metric = hdb_cfg["metric"]
+    final_epsilon = float(hdb_cfg["cluster_selection_epsilon"])
     print(f"\n[4/6] Fit HDBSCAN chinh thuc (mcs={final_mcs}, ms={final_ms}) tren 3 lat cat...", flush=True)
 
     final_hdb = {}
     final_run_ids = []
+    stability_tabs = []
 
     for s in slices:
         part = df[df.time_slice == s].reset_index(drop=True)
@@ -161,18 +167,25 @@ def main() -> None:
             "min_cluster_size": final_mcs,
             "min_samples": final_ms,
             "cluster_selection_method": final_method,
-            "metric": "euclidean",
-            "cluster_selection_epsilon": 0.0,
+            "metric": final_metric,
+            "cluster_selection_epsilon": final_epsilon,
         }
 
         print(f" -> Dang fit {s} (n={len(X):,})...", end="", flush=True)
+        fitted_stability: list[pd.DataFrame] = []
+
         def _fit_fn(X_arr: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-            lab, prob, _ = fit_hdbscan(
+            lab, prob, clusterer = fit_hdbscan(
                 X_arr,
                 min_cluster_size=final_mcs,
                 min_samples=final_ms,
+                metric=final_metric,
                 cluster_selection_method=final_method,
+                cluster_selection_epsilon=final_epsilon,
             )
+            persistence = get_cluster_persistence_table(clusterer)
+            persistence["time_slice"] = s
+            fitted_stability.append(persistence)
             return relabel_by_size(lab), prob
 
         row = run_and_log(
@@ -188,6 +201,10 @@ def main() -> None:
             note=f"du lieu M1 {sample_id}; cau hinh chinh thuc chot o Giai doan 2",
         )
         final_run_ids.append(row["run_id"])
+        if fitted_stability:
+            stability_tabs.append(
+                fitted_stability[0].assign(sample_id=sample_id, run_id=row["run_id"])
+            )
 
         lab_df = pd.read_parquet(resolve_path(cfg, "labels_dir") / f"{row['run_id']}.parquet")
         assert (lab_df["trip_id"].values == part["trip_id"].values).all(), "trip_id khong khop!"
@@ -223,6 +240,11 @@ def main() -> None:
     clp = resolve_path(cfg, "run_log").parent / f"hdbscan_clusters_{sample_id}.csv"
     hdb_clusters.to_csv(clp, index=False)
     print(f" -> Da luu bang cum: {clp.relative_to(ROOT)}", flush=True)
+
+    stability = pd.concat(stability_tabs, ignore_index=True)
+    stability_path = resolve_path(cfg, "run_log").parent / f"hdbscan_stability_{sample_id}.csv"
+    stability.to_csv(stability_path, index=False)
+    print(f" -> Da luu bang persistence: {stability_path.relative_to(ROOT)}", flush=True)
 
     # 6. Tao ban do Folium HTML
     print("\n[6/6] Tao ban do Folium HTML cho HDBSCAN...", flush=True)

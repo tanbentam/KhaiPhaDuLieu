@@ -6,6 +6,8 @@
 - **Nhánh làm việc:** `m3/hdbscan-temporal`
 - **Bộ dữ liệu chính thức:** `master_v1` (535.167 dòng, CRS `EPSG:26916`, 304 toạ độ centroid)
 
+> **Trạng thái bàn giao:** Các số liệu HDBSCAN trong artifacts hiện có chưa được xác nhận bằng backend sau rà soát. Log cũ ghi version package nhưng không xác định backend import thực tế; bảng tuning cũng chưa có persistence. Mã nguồn hiện yêu cầu package `hdbscan` và dừng rõ ràng nếu không nạp được backend hoặc thiếu stability outputs. Trước khi M4 dùng số liệu như kết quả cuối, cần chạy `python -m src.models.benchmark_hdbscan`, `python -m src.models.run_hdbscan` và `python -m src.evaluation.run_temporal_comparison` trong môi trường đã kiểm tra được.
+
 ---
 
 ## MỤC LỤC
@@ -51,7 +53,7 @@ HDBSCAN giải quyết bài toán trên qua 5 bước toán học:
 ## 2. KẾT QUẢ THỰC NGHIỆM VÀ HYPERPARAMETER TUNING
 
 ### 2.1. Khảo sát `min_cluster_size` và `min_samples`
-Thực nghiệm khảo sát lưới tham số được thực thi trên lát cắt `WEEKDAY_AM` (khung giờ 07:00–09:59, $60.498$ dòng, $304$ toạ độ duy nhất) và lưu tại `outputs/metrics/`:
+Artifacts hiện có khảo sát lưới tham số trên lát cắt `WEEKDAY_AM` (khung giờ 07:00–09:59, $60.498$ dòng, $304$ toạ độ duy nhất) và lưu tại `outputs/metrics/`. Kết quả dưới đây cần được tái sinh sau khi xác nhận backend:
 - **Khảo sát `min_cluster_size`:** Giữ `min_samples = 10` cố định (tránh thay đổi ngầm theo R05), khảo sát $mcs \in [50, 100, 200]$:
   - Khi $mcs = 50$: Thu được $89$ cụm, phân rã thành nhiều micro-clusters nhỏ lẻ, tỷ lệ nhiễu cực thấp $0,7\%$ ($416$ điểm), Silhouette $0,991$, DBI $0,225$.
   - Khi $mcs = 100$: Thu được $67$ cụm, loại bỏ các điểm gom quá nhỏ, bảo toàn các điểm đón khách thực chất, tỷ lệ nhiễu $2,1\%$ ($1.275$ điểm), Silhouette $0,981$, DBI $0,288$, thời gian fit ghi nhận ở bước tuning là $32,9\text{ s}$ (lúc chạy chính thức là $18,1\text{ s}$ do dao động tải hệ thống/bộ đệm CPU).
@@ -64,11 +66,13 @@ Thực nghiệm khảo sát lưới tham số được thực thi trên lát c�
 
 $\Rightarrow$ **Cấu hình chính thức chốt:** `min_cluster_size = 100`, `min_samples = 10`, `cluster_selection_method = 'eom'`.
 
+Script và notebook hiện lấy dải tuning/cấu hình cuối từ `config/experiment.yaml`; lần chạy kế tiếp sẽ dùng đủ dải đã khai báo trong config.
+
 ---
 
 ## 3. BẢNG SO SÁNH CHỈ SỐ GIỮA 3 MÔ HÌNH TRÊN DỮ LIỆU `master_v1`
 
-*(Dữ liệu trích xuất chính thức từ `outputs/metrics/baseline_metrics.csv` và `outputs/metrics/hdbscan_metrics.csv`)*
+*(Các con số HDBSCAN dưới đây được trích từ artifacts hiện có; xem trạng thái bàn giao ở đầu báo cáo và không coi là kết quả cuối trước khi chạy lại backend đã xác nhận.)*
 
 | Thuật toán | Lát cắt thời gian | Số điểm ($N$) | Số cụm | Noise Ratio (%) | Coverage (%) | Cụm lớn nhất (%) | Silhouette | Davies-Bouldin | Runtime (s) | RAM thêm (MB) |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -101,11 +105,15 @@ $\Rightarrow$ **Cấu hình chính thức chốt:** `min_cluster_size = 100`, `m
 >    - *Toạ độ đón xe là toạ độ centroid khu vực hành chính (không phải vị trí GPS chính xác của xe).*
 >    - *Hotspot thể hiện điểm tập trung nhu cầu đón xe (pickup demand), không phải điểm ùn tắc giao thông.*
 
+> **Lưu ý so sánh:** M2 fit K-Means/DBSCAN trên 304 tọa độ có trọng số; HDBSCAN fit trên từng dòng chuyến vì implementation không nhận `sample_weight`. Đây là khác biệt về biểu diễn lúc fit. Không so sánh trực tiếp runtime; khi diễn giải metrics phải giữ caveat này và nêu rõ số điểm dùng để tính metrics.
+
 ---
 
 ## 4. KẾT QUẢ PHÂN TÍCH DỊCH CHUYỂN HOTSPOT THEO THỜI GIAN
 
-*(Dữ liệu chính thức từ `outputs/metrics/hotspot_tracking.csv` và `hdbscan_clusters_master_v1.csv`)*
+*(Tracking hiện có được tạo từ artifacts HDBSCAN trước khi xác nhận backend; cần tái sinh cùng với nhãn/cụm trước khi M4 chốt các cặp và cluster ID.)*
+
+Các tổng lượt theo `pickup_community_area` dưới đây được tính trực tiếp trên dữ liệu nguồn M1, bao gồm cả lượt bị gán noise. Chúng không đồng nghĩa với tổng kích thước các cụm có `top_community_area` tương ứng.
 
 Thuật toán ghép cặp theo tâm gần nhất (Nearest Centroid Matching với ngưỡng tối đa $\le 3.500\text{ m}$) tạo ra **229 dòng phân tích**:
 - **195 cặp MATCHED:** ghép thành công giữa các cụm tương đồng vị trí. Do thuật toán ghép tham lam (không ràng buộc một-một), có 4 cụm đích nhận ghép từ nhiều cụm nguồn lân cận.
@@ -122,30 +130,30 @@ Trong số 195 cặp MATCHED, có **105 cặp (53,8%)** có khoảng cách dịc
 1. **Cụm Sân bay Quốc tế O'Hare (Khu vực 76):**
    - Được HDBSCAN nhận diện qua 2 cụm lớn (Cụm 0 và Cụm 4 ở AM; Cụm 0 và Cụm 2 ở PM/Weekend), tâm cố định $\Delta d = 0\text{ m}$.
    - **Tỷ trọng nhu cầu tăng theo thời gian:**
-     - Buổi sáng (`WEEKDAY_AM`): $15,7\%$ tổng nhu cầu ($9.469$ chuyến: Cụm 0 chiếm $10,6\%$, Cụm 4 chiếm $5,1\%$).
-     - Buổi chiều (`WEEKDAY_PM`): Tăng lên **$20,4\%$** ($17.690$ chuyến: Cụm 0 chiếm $12,8\%$, Cụm 2 chiếm $7,7\%$).
-     - Cuối tuần (`WEEKEND`): Chiếm tới **$24,2\%$** ($29.137$ chuyến: Cụm 0 chiếm $12,6\%$, Cụm 2 chiếm $11,5\%$).
-   - *Đặc điểm quy mô:* Vào dịp cuối tuần, **Cụm 0 tại O'Hare chính là cụm đơn lẻ lớn nhất toàn thành phố** với $15.215$ chuyến ($12,6\%$).
+     - Buổi sáng (`WEEKDAY_AM`): $15,7\%$ tổng lượt trong lát cắt ($9.469$ chuyến).
+     - Buổi chiều (`WEEKDAY_PM`): **$20,4\%$** ($17.693$ chuyến).
+     - Cuối tuần (`WEEKEND`): **$24,2\%** ($29.137$ chuyến).
+   - Số lượt ở trên lấy trực tiếp từ `pickup_community_area=76`; không phụ thuộc vào cluster ID. Kích thước/ID cụm sẽ được cập nhật từ artifacts sau lần chạy đã xác nhận backend.
 
 2. **Khu vực Trung tâm Loop (Khu vực 32):**
-   - Tổng nhu cầu toàn bộ Khu vực 32 tăng từ **$17,9\%$** ($10.813$ chuyến trên 5 cụm: 2, 5, 10, 17, 24 ở AM) lên **$22,5\%$** ($19.465$ chuyến trên 5 cụm: 1, 4, 5, 17, 19 ở PM), phản ánh giả thuyết về nhu cầu đón xe tan tầm của khu vực thương mại - tài chính. Đến cuối tuần, tỷ trọng khu 32 hạ nhiệt xuống $13,5\%$ ($16.293$ chuyến).
+   - Tổng lượt theo `pickup_community_area=32` là **$17,98\%$** ($10.875$ chuyến) ở AM, **$22,53\%$** ($19.516$ chuyến) ở PM và **$13,54\%$** ($16.328$ chuyến) vào cuối tuần. Đây là tổng theo vùng từ dữ liệu nguồn, không phải phép cộng theo `top_community_area` của các cluster.
 
 3. **Khu vực Near West Side (Khu vực 28):**
    - Thể hiện sự sụt giảm thị phần lớn nhất trong chuyển tiếp sáng $\rightarrow$ chiều: Cụm 1 ở AM chiếm **$9,71\%$** ($5.874$ chuyến), sang PM ghép với Cụm 9 chỉ còn **$3,06\%$** ($2.650$ chuyến), giảm sâu **$-6,65\%$ điểm thị phần**. 
    - *Lưu ý:* Mức giảm $-6,65\%$ điểm là lớn nhất ở chuyển tiếp ngày thường (AM $\rightarrow$ PM). Ở chuyển tiếp sáng $\rightarrow$ cuối tuần (AM $\rightarrow$ Weekend), Cụm 1 sang Cụm 16 còn sụt giảm mạnh hơn: **$-8,15\%$ điểm** (từ $9,71\%$ xuống $1,56\%$).
 
 4. **Khu vực Near North Side (Khu vực 8):**
-   - Tổng nhu cầu toàn Khu vực 8 tăng đều qua các lát cắt: $19,1\%$ ở AM ($11.579$ chuyến), $22,8\%$ ở PM ($19.721$ chuyến), và đạt đỉnh $23,4\%$ vào Cuối tuần ($28.239$ chuyến).
-   - Vào cuối tuần, riêng **Cụm 1 đạt $12,0\%$** ($14.454$ chuyến) — là cụm lớn nhất khu vực nội đô và lớn thứ 2 toàn thành phố sau Cụm 0 O'Hare.
+   - Tổng lượt theo `pickup_community_area=8` là **$19,18\%$** ($11.604$ chuyến) ở AM, **$22,93\%$** ($19.857$ chuyến) ở PM và **$23,48\%$** ($28.312$ chuyến) vào cuối tuần.
+   - Kích thước cụm cuối tuần nêu trong artifacts hiện có cần được xác nhận lại sau lần chạy backend đã xác nhận; không suy ra tổng lượt toàn khu vực từ một cluster hoặc từ `top_community_area`.
 
 5. **Sân bay Midway (Khu vực 56):**
    - Tương tự DBSCAN, HDBSCAN cũng phân tách khu vực Midway thành **2 cụm riêng biệt** (ở AM là Cụm 15 & 22; PM là Cụm 13 & 20; Cuối tuần là Cụm 10 & 17) do khoảng cách giữa 2 toạ độ điểm đón.
-   - Tổng tỷ trọng toàn Khu vực 56 tăng nhẹ qua các lát cắt: **$2,7\%$** ở AM ($1.661$ chuyến) $\rightarrow$ **$3,3\%$** ở PM ($2.849$ chuyến) $\rightarrow$ **$3,8\%$** ở Weekend ($4.614$ chuyến).
+   - Tổng lượt theo `pickup_community_area=56` là **$2,71\%$** ($1.637$ chuyến) ở AM $\rightarrow$ **$3,29\%$** ($2.850$ chuyến) ở PM $\rightarrow$ **$3,80\%$** ($4.576$ chuyến) vào cuối tuần. Đây là số liệu vùng từ dữ liệu nguồn; số lượt trong các cụm đại diện khu vực có thể khác do noise/cách gán cụm.
 
 6. **Khu vực Hyde Park (Khu vực 41):**
    - Ở `WEEKDAY_AM`: HDBSCAN phát hiện Cụm 29 ($351$ chuyến, $0,58\%$, bán kính $RMS = 117\text{ m}$).
    - Ở `WEEKDAY_PM`: Cụm 27 ($607$ chuyến, $0,70\%$, bán kính $RMS = 338\text{ m}$).
-   - Cuối tuần (`WEEKEND`): Phân tách thành Cụm 30 ($629$ chuyến) và Cụm 74 ($119$ chuyến).
+   - Dữ liệu nguồn có $750$ lượt thuộc `pickup_community_area=41` vào cuối tuần. Các cluster ID/kích thước từng cụm trong artifacts hiện có cần được xác nhận lại sau lần chạy backend đã xác nhận.
 
 7. **Các cụm dịch chuyển không gian thực sự ($\Delta d > 0$):**
    - Xuất hiện ở các khu vực có nhiều toạ độ lân cận: Cụm 6 $\rightarrow$ Cụm 10 ở Lake View dịch chuyển $83\text{ m}$, Cụm 28 ở Grand Boulevard dịch chuyển $194\text{ m}$, Cụm 29 ở Hyde Park dịch chuyển $119\text{ m}$, Cụm 44 ở Lake View dịch chuyển $1.441\text{ m}$.
