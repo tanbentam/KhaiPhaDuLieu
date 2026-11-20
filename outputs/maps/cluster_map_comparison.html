@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8ec62f32396780efa13757ae271c8d82 {
+                    position: relative;
+                    width: 100.0vw;
+                    height: 100.0vh;
+
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>/*
+ * Glyphicons Halflings -- the icon font used by folium's default Awesome Markers
+ * (Icon(prefix="glyphicon")). Extracted from Bootstrap 3's glyphicon rules only.
+ *
+ * folium previously loaded netdna's bootstrap-glyphicons.css, which despite its
+ * name ships a full Bootstrap-3 base stylesheet (normalize reset + global `body`
+ * rules) that leaked onto the host page (GH-1820). This file provides just the
+ * @font-face and .glyphicon/.glyphicon-* rules needed for the markers, with no
+ * page-wide side effects. Font files are served from jsDelivr.
+ */
+@font-face{font-family:'Glyphicons Halflings';src:url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.eot');src:url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.ttf') format('truetype'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');}.glyphicon{position:relative;top:1px;display:inline-block;font-family:'Glyphicons Halflings';font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;}
+.glyphicon-asterisk:before{content:"\2a";}
+.glyphicon-plus:before{content:"\2b";}
+.glyphicon-euro:before{content:"\20ac";}
+.glyphicon-minus:before{content:"\2212";}
+.glyphicon-cloud:before{content:"\2601";}
+.glyphicon-envelope:before{content:"\2709";}
+.glyphicon-pencil:before{content:"\270f";}
+.glyphicon-glass:before{content:"\e001";}
+.glyphicon-music:before{content:"\e002";}
+.glyphicon-search:before{content:"\e003";}
+.glyphicon-heart:before{content:"\e005";}
+.glyphicon-star:before{content:"\e006";}
+.glyphicon-star-empty:before{content:"\e007";}
+.glyphicon-user:before{content:"\e008";}
+.glyphicon-film:before{content:"\e009";}
+.glyphicon-th-large:before{content:"\e010";}
+.glyphicon-th:before{content:"\e011";}
+.glyphicon-th-list:before{content:"\e012";}
+.glyphicon-ok:before{content:"\e013";}
+.glyphicon-remove:before{content:"\e014";}
+.glyphicon-zoom-in:before{content:"\e015";}
+.glyphicon-zoom-out:before{content:"\e016";}
+.glyphicon-off:before{content:"\e017";}
+.glyphicon-signal:before{content:"\e018";}
+.glyphicon-cog:before{content:"\e019";}
+.glyphicon-trash:before{content:"\e020";}
+.glyphicon-home:before{content:"\e021";}
+.glyphicon-file:before{content:"\e022";}
+.glyphicon-time:before{content:"\e023";}
+.glyphicon-road:before{content:"\e024";}
+.glyphicon-download-alt:before{content:"\e025";}
+.glyphicon-download:before{content:"\e026";}
+.glyphicon-upload:before{content:"\e027";}
+.glyphicon-inbox:before{content:"\e028";}
+.glyphicon-play-circle:before{content:"\e029";}
+.glyphicon-repeat:before{content:"\e030";}
+.glyphicon-refresh:before{content:"\e031";}
+.glyphicon-list-alt:before{content:"\e032";}
+.glyphicon-flag:before{content:"\e034";}
+.glyphicon-headphones:before{content:"\e035";}
+.glyphicon-volume-off:before{content:"\e036";}
+.glyphicon-volume-down:before{content:"\e037";}
+.glyphicon-volume-up:before{content:"\e038";}
+.glyphicon-qrcode:before{content:"\e039";}
+.glyphicon-barcode:before{content:"\e040";}
+.glyphicon-tag:before{content:"\e041";}
+.glyphicon-tags:before{content:"\e042";}
+.glyphicon-book:before{content:"\e043";}
+.glyphicon-print:before{content:"\e045";}
+.glyphicon-font:before{content:"\e047";}
+.glyphicon-bold:before{content:"\e048";}
+.glyphicon-italic:before{content:"\e049";}
+.glyphicon-text-height:before{content:"\e050";}
+.glyphicon-text-width:before{content:"\e051";}
+.glyphicon-align-left:before{content:"\e052";}
+.glyphicon-align-center:before{content:"\e053";}
+.glyphicon-align-right:before{content:"\e054";}
+.glyphicon-align-justify:before{content:"\e055";}
+.glyphicon-list:before{content:"\e056";}
+.glyphicon-indent-left:before{content:"\e057";}
+.glyphicon-indent-right:before{content:"\e058";}
+.glyphicon-facetime-video:before{content:"\e059";}
+.glyphicon-picture:before{content:"\e060";}
+.glyphicon-map-marker:before{content:"\e062";}
+.glyphicon-adjust:before{content:"\e063";}
+.glyphicon-tint:before{content:"\e064";}
+.glyphicon-edit:before{content:"\e065";}
+.glyphicon-share:before{content:"\e066";}
+.glyphicon-check:before{content:"\e067";}
+.glyphicon-move:before{content:"\e068";}
+.glyphicon-step-backward:before{content:"\e069";}
+.glyphicon-fast-backward:before{content:"\e070";}
+.glyphicon-backward:before{content:"\e071";}
+.glyphicon-play:before{content:"\e072";}
+.glyphicon-pause:before{content:"\e073";}
+.glyphicon-stop:before{content:"\e074";}
+.glyphicon-forward:before{content:"\e075";}
+.glyphicon-fast-forward:before{content:"\e076";}
+.glyphicon-step-forward:before{content:"\e077";}
+.glyphicon-eject:before{content:"\e078";}
+.glyphicon-chevron-left:before{content:"\e079";}
+.glyphicon-chevron-right:before{content:"\e080";}
+.glyphicon-plus-sign:before{content:"\e081";}
+.glyphicon-minus-sign:before{content:"\e082";}
+.glyphicon-remove-sign:before{content:"\e083";}
+.glyphicon-ok-sign:before{content:"\e084";}
+.glyphicon-question-sign:before{content:"\e085";}
+.glyphicon-info-sign:before{content:"\e086";}
+.glyphicon-screenshot:before{content:"\e087";}
+.glyphicon-remove-circle:before{content:"\e088";}
+.glyphicon-ok-circle:before{content:"\e089";}
+.glyphicon-ban-circle:before{content:"\e090";}
+.glyphicon-arrow-left:before{content:"\e091";}
+.glyphicon-arrow-right:before{content:"\e092";}
+.glyphicon-arrow-up:before{content:"\e093";}
+.glyphicon-arrow-down:before{content:"\e094";}
+.glyphicon-share-alt:before{content:"\e095";}
+.glyphicon-resize-full:before{content:"\e096";}
+.glyphicon-resize-small:before{content:"\e097";}
+.glyphicon-exclamation-sign:before{content:"\e101";}
+.glyphicon-gift:before{content:"\e102";}
+.glyphicon-leaf:before{content:"\e103";}
+.glyphicon-eye-open:before{content:"\e105";}
+.glyphicon-eye-close:before{content:"\e106";}
+.glyphicon-warning-sign:before{content:"\e107";}
+.glyphicon-plane:before{content:"\e108";}
+.glyphicon-random:before{content:"\e110";}
+.glyphicon-comment:before{content:"\e111";}
+.glyphicon-magnet:before{content:"\e112";}
+.glyphicon-chevron-up:before{content:"\e113";}
+.glyphicon-chevron-down:before{content:"\e114";}
+.glyphicon-retweet:before{content:"\e115";}
+.glyphicon-shopping-cart:before{content:"\e116";}
+.glyphicon-folder-close:before{content:"\e117";}
+.glyphicon-folder-open:before{content:"\e118";}
+.glyphicon-resize-vertical:before{content:"\e119";}
+.glyphicon-resize-horizontal:before{content:"\e120";}
+.glyphicon-hdd:before{content:"\e121";}
+.glyphicon-bullhorn:before{content:"\e122";}
+.glyphicon-certificate:before{content:"\e124";}
+.glyphicon-thumbs-up:before{content:"\e125";}
+.glyphicon-thumbs-down:before{content:"\e126";}
+.glyphicon-hand-right:before{content:"\e127";}
+.glyphicon-hand-left:before{content:"\e128";}
+.glyphicon-hand-up:before{content:"\e129";}
+.glyphicon-hand-down:before{content:"\e130";}
+.glyphicon-circle-arrow-right:before{content:"\e131";}
+.glyphicon-circle-arrow-left:before{content:"\e132";}
+.glyphicon-circle-arrow-up:before{content:"\e133";}
+.glyphicon-circle-arrow-down:before{content:"\e134";}
+.glyphicon-globe:before{content:"\e135";}
+.glyphicon-tasks:before{content:"\e137";}
+.glyphicon-filter:before{content:"\e138";}
+.glyphicon-fullscreen:before{content:"\e140";}
+.glyphicon-dashboard:before{content:"\e141";}
+.glyphicon-heart-empty:before{content:"\e143";}
+.glyphicon-link:before{content:"\e144";}
+.glyphicon-phone:before{content:"\e145";}
+.glyphicon-usd:before{content:"\e148";}
+.glyphicon-gbp:before{content:"\e149";}
+.glyphicon-sort:before{content:"\e150";}
+.glyphicon-sort-by-alphabet:before{content:"\e151";}
+.glyphicon-sort-by-alphabet-alt:before{content:"\e152";}
+.glyphicon-sort-by-order:before{content:"\e153";}
+.glyphicon-sort-by-order-alt:before{content:"\e154";}
+.glyphicon-sort-by-attributes:before{content:"\e155";}
+.glyphicon-sort-by-attributes-alt:before{content:"\e156";}
+.glyphicon-unchecked:before{content:"\e157";}
+.glyphicon-expand:before{content:"\e158";}
+.glyphicon-collapse-down:before{content:"\e159";}
+.glyphicon-collapse-up:before{content:"\e160";}
+.glyphicon-log-in:before{content:"\e161";}
+.glyphicon-flash:before{content:"\e162";}
+.glyphicon-log-out:before{content:"\e163";}
+.glyphicon-new-window:before{content:"\e164";}
+.glyphicon-record:before{content:"\e165";}
+.glyphicon-save:before{content:"\e166";}
+.glyphicon-open:before{content:"\e167";}
+.glyphicon-saved:before{content:"\e168";}
+.glyphicon-import:before{content:"\e169";}
+.glyphicon-export:before{content:"\e170";}
+.glyphicon-send:before{content:"\e171";}
+.glyphicon-floppy-disk:before{content:"\e172";}
+.glyphicon-floppy-saved:before{content:"\e173";}
+.glyphicon-floppy-remove:before{content:"\e174";}
+.glyphicon-floppy-save:before{content:"\e175";}
+.glyphicon-floppy-open:before{content:"\e176";}
+.glyphicon-credit-card:before{content:"\e177";}
+.glyphicon-transfer:before{content:"\e178";}
+.glyphicon-cutlery:before{content:"\e179";}
+.glyphicon-header:before{content:"\e180";}
+.glyphicon-compressed:before{content:"\e181";}
+.glyphicon-earphone:before{content:"\e182";}
+.glyphicon-phone-alt:before{content:"\e183";}
+.glyphicon-tower:before{content:"\e184";}
+.glyphicon-stats:before{content:"\e185";}
+.glyphicon-sd-video:before{content:"\e186";}
+.glyphicon-hd-video:before{content:"\e187";}
+.glyphicon-subtitles:before{content:"\e188";}
+.glyphicon-sound-stereo:before{content:"\e189";}
+.glyphicon-sound-dolby:before{content:"\e190";}
+.glyphicon-sound-5-1:before{content:"\e191";}
+.glyphicon-sound-6-1:before{content:"\e192";}
+.glyphicon-sound-7-1:before{content:"\e193";}
+.glyphicon-copyright-mark:before{content:"\e194";}
+.glyphicon-registration-mark:before{content:"\e195";}
+.glyphicon-cloud-download:before{content:"\e197";}
+.glyphicon-cloud-upload:before{content:"\e198";}
+.glyphicon-tree-conifer:before{content:"\e199";}
+.glyphicon-tree-deciduous:before{content:"\e200";}
+.glyphicon-briefcase:before{content:"\1f4bc";}
+.glyphicon-calendar:before{content:"\1f4c5";}
+.glyphicon-pushpin:before{content:"\1f4cc";}
+.glyphicon-paperclip:before{content:"\1f4ce";}
+.glyphicon-camera:before{content:"\1f4f7";}
+.glyphicon-lock:before{content:"\1f512";}
+.glyphicon-bell:before{content:"\1f514";}
+.glyphicon-bookmark:before{content:"\1f516";}
+.glyphicon-fire:before{content:"\1f525";}
+.glyphicon-wrench:before{content:"\1f527";}
+</style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    <div style="position:fixed;bottom:48px;left:10px;z-index:9999;background:rgba(255,255,255,.94);padding:6px 10px;border:1px solid #999;font:12px/1.35 sans-serif;max-width:min(520px,calc(100% - 20px));box-sizing:border-box"><b>So sánh tâm cụm 3 thuật toán — Ngày thường chiều (T2–T6, 16–18h)</b><br><span style="color:#0072B2">●</span> K-Means &nbsp;<span style="color:#E69F00">●</span> DBSCAN &nbsp;<span style="color:#009E73">●</span> HDBSCAN &nbsp;<br>Cùng tập chuyến, cùng extent, cùng thang diện tích (∝ số chuyến). Bật/tắt lớp ở góc trên phải để xem nơi 3 thuật toán đồng thuận (tâm cụm trùng nhau) hoặc khác biệt. Noise không được vẽ. Tọa độ là centroid của census tract/community area, KHÔNG phải GPS; không đọc là vị trí giao lộ.<br><i>Nguồn: Chicago Taxi Trips (wrvz-psew), 17/04–14/05/2023; master_v1</i></div>
+    
+            <div class="folium-map" id="map_8ec62f32396780efa13757ae271c8d82" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_8ec62f32396780efa13757ae271c8d82 = L.map(
+                "map_8ec62f32396780efa13757ae271c8d82",
+                {
+                    center: [41.838091271500005, -87.7242637485],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_8ec62f32396780efa13757ae271c8d82);
+
+            
+
+        
+    
+            var tile_layer_338e561390e43b0f138cbb7f75ffdd29 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_338e561390e43b0f138cbb7f75ffdd29.addTo(map_8ec62f32396780efa13757ae271c8d82);
+        
+    
+            var tile_layer_871c6683a94eaa452d090ad9c5f67ca3 = L.tileLayer(
+                "",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "kh\u00f4ng n\u1ec1n (offline)",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            var feature_group_911286cb09c6724d74138a8ef2ed6d83 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_40d765bf5bbb816e5beff8afb8904639 = L.circleMarker(
+                [41.88321741256953, -87.6305406677322],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 22.702662991377846, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_911286cb09c6724d74138a8ef2ed6d83);
+        
+    
+            circle_marker_40d765bf5bbb816e5beff8afb8904639.bindTooltip(
+                `<div>
+                     K-Means · cụm 0 · 54,135 chuyến · 62.5% · BK RMS 1.91 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_aff72e3693365825505f98f0346ff02a = L.circleMarker(
+                [41.97954813486605, -87.90580538924674],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.765625838920306, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_911286cb09c6724d74138a8ef2ed6d83);
+        
+    
+            circle_marker_aff72e3693365825505f98f0346ff02a.bindTooltip(
+                `<div>
+                     K-Means · cụm 1 · 17,937 chuyến · 20.7% · BK RMS 1.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f52a52c9be21e245df4d181d5715869c = L.circleMarker(
+                [41.95217511578586, -87.67193191471908],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.071422744016663, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_911286cb09c6724d74138a8ef2ed6d83);
+        
+    
+            circle_marker_f52a52c9be21e245df4d181d5715869c.bindTooltip(
+                `<div>
+                     K-Means · cụm 2 · 7,739 chuyến · 8.9% · BK RMS 3.86 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_45c2cd63ded05e983f4bc5bab1a2bd43 = L.circleMarker(
+                [41.76420692488875, -87.60773144054646],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.927027374638168, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_911286cb09c6724d74138a8ef2ed6d83);
+        
+    
+            circle_marker_45c2cd63ded05e983f4bc5bab1a2bd43.bindTooltip(
+                `<div>
+                     K-Means · cụm 3 · 3,757 chuyến · 4.3% · BK RMS 5.25 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_dc327025fbc2d18c40ca26f1e63f21a5 = L.circleMarker(
+                [41.78839587695199, -87.7550408841527],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.438570167794484, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_911286cb09c6724d74138a8ef2ed6d83);
+        
+    
+            circle_marker_dc327025fbc2d18c40ca26f1e63f21a5.bindTooltip(
+                `<div>
+                     K-Means · cụm 4 · 3,049 chuyến · 3.5% · BK RMS 1.54 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_911286cb09c6724d74138a8ef2ed6d83.addTo(map_8ec62f32396780efa13757ae271c8d82);
+        
+    
+            var feature_group_5133d3f00ac9905033d8840a15101cb9 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_7a901b61133d7e66037f1fb6244c3233 = L.circleMarker(
+                [41.88777237959151, -87.63161187270376],
+                {"bubblingMouseEvents": true, "color": "#E69F00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#E69F00", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 23.347111828968348, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_5133d3f00ac9905033d8840a15101cb9);
+        
+    
+            circle_marker_7a901b61133d7e66037f1fb6244c3233.bindTooltip(
+                `<div>
+                     DBSCAN · cụm 0 · 57,930 chuyến · 66.9% · BK RMS 2.58 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8594ee4aa888f93695ea91b524ffaecc = L.circleMarker(
+                [41.97951824246283, -87.907006723432],
+                {"bubblingMouseEvents": true, "color": "#E69F00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#E69F00", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.691245300869202, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_5133d3f00ac9905033d8840a15101cb9);
+        
+    
+            circle_marker_8594ee4aa888f93695ea91b524ffaecc.bindTooltip(
+                `<div>
+                     DBSCAN · cụm 1 · 17,690 chuyến · 20.4% · BK RMS 0.43 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9826e94fbd733e9cd052f928f62f17a0 = L.circleMarker(
+                [41.78851488515528, -87.75813332299491],
+                {"bubblingMouseEvents": true, "color": "#E69F00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#E69F00", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.298801524902412, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_5133d3f00ac9905033d8840a15101cb9);
+        
+    
+            circle_marker_9826e94fbd733e9cd052f928f62f17a0.bindTooltip(
+                `<div>
+                     DBSCAN · cụm 2 · 2,860 chuyến · 3.3% · BK RMS 0.84 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_5133d3f00ac9905033d8840a15101cb9.addTo(map_8ec62f32396780efa13757ae271c8d82);
+        
+    
+            var feature_group_521afcc10bb261b6cffe167840fd8114 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_7458432b5bcb71e7b9c28407ce97248d = L.circleMarker(
+                [41.97907082, -87.903039661],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.453604803326652, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_7458432b5bcb71e7b9c28407ce97248d.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 0 · 11,060 chuyến · 12.8% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_517cbc411b2941d5e7345fdf5a5c8cb0 = L.circleMarker(
+                [41.880994471, -87.632746489],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.024207582604005, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_517cbc411b2941d5e7345fdf5a5c8cb0.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 1 · 7,636 chuyến · 8.8% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9a43878546dd1136d7d9d080be7a439b = L.circleMarker(
+                [41.98026431499999, -87.913624596],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.545173176664647, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_9a43878546dd1136d7d9d080be7a439b.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 2 · 6,630 chuyến · 7.7% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b13c28c9d633d5cd3817d1f9da11c92a = L.circleMarker(
+                [41.89960211099999, -87.633308037],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.448202287353617, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_b13c28c9d633d5cd3817d1f9da11c92a.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 3 · 6,435 chuyến · 7.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8ff6c1c03fb67d0caba2463525482967 = L.circleMarker(
+                [41.88498719199999, -87.620992913],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.527173680397567, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_8ff6c1c03fb67d0caba2463525482967.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 4 · 4,728 chuyến · 5.5% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_13c9afe91460d27d2020dd181e24ae05 = L.circleMarker(
+                [41.878865584, -87.625192142],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.500807619662215, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_13c9afe91460d27d2020dd181e24ae05.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 5 · 4,683 chuyến · 5.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_17bac18609cd2f4bab94c0297fc630bf = L.circleMarker(
+                [41.85934971500001, -87.617358006],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.725537833989726, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_17bac18609cd2f4bab94c0297fc630bf.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 6 · 3,456 chuyến · 4.0% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f3c11da8494c7d77cb78fcf8709a744b = L.circleMarker(
+                [41.892507781, -87.626214906],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.355543979429028, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_f3c11da8494c7d77cb78fcf8709a744b.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 7 · 2,936 chuyến · 3.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_57bc977f73fa5281635cb38d602f859d = L.circleMarker(
+                [41.87400538299998, -87.66351755],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.281481241614863, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_57bc977f73fa5281635cb38d602f859d.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 8 · 2,837 chuyến · 3.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4415a3ebe416bcf2a8988d7c522e76d2 = L.circleMarker(
+                [41.879255084, -87.642648998],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.137969780180871, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_4415a3ebe416bcf2a8988d7c522e76d2.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 9 · 2,650 chuyến · 3.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1b11b7fbfb8083a60ac4fb678ce1712e = L.circleMarker(
+                [41.94401721718445, -87.65511350937628],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.890904057125859, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1b11b7fbfb8083a60ac4fb678ce1712e.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 10 · 2,343 chuyến · 2.7% · BK RMS 0.41 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_671bbcfbe0c7952afacb679c8427f5bf = L.circleMarker(
+                [41.89503345, -87.619710672],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.636832496843646, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_671bbcfbe0c7952afacb679c8427f5bf.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 11 · 2,047 chuyến · 2.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_66e1d2ea339eb1461b5a973ec604ec0d = L.circleMarker(
+                [41.89092202599999, -87.618868355],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.552347960710291, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_66e1d2ea339eb1461b5a973ec604ec0d.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 12 · 1,953 chuyến · 2.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_197b968698bae3cddcd6e55ce7326c37 = L.circleMarker(
+                [41.78599851799999, -87.750934289],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.364584412687327, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_197b968698bae3cddcd6e55ce7326c37.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 13 · 1,752 chuyến · 2.0% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_20a266be1b632cc049c10e27bb3ed740 = L.circleMarker(
+                [41.849248879488094, -87.62414844288566],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.2819516417693055, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_20a266be1b632cc049c10e27bb3ed740.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 14 · 1,667 chuyến · 1.9% · BK RMS 0.03 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_161f9f7afb2713a1d2b8cd73a1306507 = L.circleMarker(
+                [41.89915561299999, -87.626210532],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.04714248056745, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_161f9f7afb2713a1d2b8cd73a1306507.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 15 · 1,437 chuyến · 1.7% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_417910352368a64f2044b078dc05e8fa = L.circleMarker(
+                [41.92268501837585, -87.64949092158164],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.0450212533834184, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_417910352368a64f2044b078dc05e8fa.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 16 · 1,435 chuyến · 1.7% · BK RMS 0.01 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ab3faec4eecdb21a953a0b0b84003309 = L.circleMarker(
+                [41.87740612299999, -87.621971652],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.919354099947276, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_ab3faec4eecdb21a953a0b0b84003309.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 17 · 1,319 chuyến · 1.5% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_599f264acad6ce82bb302d108e5fc682 = L.circleMarker(
+                [41.89833179400001, -87.620762865],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.832860413606856, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_599f264acad6ce82bb302d108e5fc682.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 18 · 1,242 chuyến · 1.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_16312f990fddd6af2c67a419d99e7cb1 = L.circleMarker(
+                [41.870607372, -87.622172937],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.664791435639127, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_16312f990fddd6af2c67a419d99e7cb1.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 19 · 1,099 chuyến · 1.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5c44eb3941819c0fa2668c104c2d6580 = L.circleMarker(
+                [41.792606802857286, -87.7695490429711],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.66236558949623, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_5c44eb3941819c0fa2668c104c2d6580.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 20 · 1,097 chuyến · 1.3% · BK RMS 0.10 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a2854ab50f21ec69d5bdc969a1427152 = L.circleMarker(
+                [41.892042136, -87.63186395],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.655074752651517, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_a2854ab50f21ec69d5bdc969a1427152.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 21 · 1,091 chuyến · 1.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4587d783497583c81d48e78a30b96ef8 = L.circleMarker(
+                [41.88530002199999, -87.642808466],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.529193022369979, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_4587d783497583c81d48e78a30b96ef8.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 22 · 990 chuyến · 1.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8dc792f63a6bcec292bc157693851297 = L.circleMarker(
+                [41.85718385799999, -87.620334624],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.455303594207267, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_8dc792f63a6bcec292bc157693851297.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 23 · 933 chuyến · 1.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1e54e8b3a8f70dd4308f682cac0b6981 = L.circleMarker(
+                [41.96574037150945, -87.65567495194266],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.402094601235872, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1e54e8b3a8f70dd4308f682cac0b6981.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 24 · 893 chuyến · 1.0% · BK RMS 0.13 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_67a4741001142b7616fa9acdaef8b7a7 = L.circleMarker(
+                [41.901206994, -87.676355989],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.191082774368473, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_67a4741001142b7616fa9acdaef8b7a7.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 25 · 743 chuyến · 0.9% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7a2d9efb2b6cef9279b381c0f84e1569 = L.circleMarker(
+                [41.89321635999999, -87.63784421],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.11301899607208, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_7a2d9efb2b6cef9279b381c0f84e1569.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 26 · 691 chuyến · 0.8% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_85eb102cef691c1b2fddfcdc95c10e88 = L.circleMarker(
+                [41.79345196400554, -87.59100849703141],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.98042647382734, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_85eb102cef691c1b2fddfcdc95c10e88.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 27 · 607 chuyến · 0.7% · BK RMS 0.34 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2cc8977039c1b9d8b4223567c4c71f9a = L.circleMarker(
+                [41.986712702931776, -87.66341907865008],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.917434383523362, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_2cc8977039c1b9d8b4223567c4c71f9a.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 28 · 569 chuyến · 0.7% · BK RMS 0.01 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1d32e4e15dd288b7bbab05aea35a5491 = L.circleMarker(
+                [41.89197150799998, -87.612945414],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.782981877984027, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1d32e4e15dd288b7bbab05aea35a5491.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 29 · 492 chuyến · 0.6% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1ebb840f089103b73d78f0fa158019df = L.circleMarker(
+                [42.00155402816719, -87.69498808933113],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.7183929320978715, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1ebb840f089103b73d78f0fa158019df.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 30 · 457 chuyến · 0.5% · BK RMS 0.06 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_225881d729a78147c0401ee118688657 = L.circleMarker(
+                [41.88476723978717, -87.65721432240485],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.629616032284053, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_225881d729a78147c0401ee118688657.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 31 · 411 chuyến · 0.5% · BK RMS 0.19 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_517a88bccdad833dab2df7393a6381ee = L.circleMarker(
+                [41.74064372191123, -87.61030629901073],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.495210806111044, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_517a88bccdad833dab2df7393a6381ee.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 32 · 346 chuyến · 0.4% · BK RMS 1.07 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_bb5dfd40b699cba78761123e7c4d705e = L.circleMarker(
+                [41.812948939, -87.617859676],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.486542844342933, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_bb5dfd40b699cba78761123e7c4d705e.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 33 · 342 chuyến · 0.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d1104bf811a56f76a424dd0452628bae = L.circleMarker(
+                [41.892072635, -87.628874157],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.453577707985352, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_d1104bf811a56f76a424dd0452628bae.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 34 · 327 chuyến · 0.4% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9d5cd2311fa3cf35bd722558616ab13f = L.circleMarker(
+                [41.83509384547194, -87.61863946162502],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.442421919844147, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_9d5cd2311fa3cf35bd722558616ab13f.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 35 · 322 chuyến · 0.4% · BK RMS 0.06 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d8b2965bf66a26ec1e746376b22b4812 = L.circleMarker(
+                [41.761577908, -87.572781987],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.368873690920529, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_d8b2965bf66a26ec1e746376b22b4812.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 36 · 290 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_808a0136e7bec1968b493d1b7e000c1e = L.circleMarker(
+                [41.907520075, -87.6266589],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.364145270259865, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_808a0136e7bec1968b493d1b7e000c1e.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 37 · 288 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1066d1e993ef5a6aac357584c1686fe5 = L.circleMarker(
+                [41.92276062, -87.699155343],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.361774903099387, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1066d1e993ef5a6aac357584c1686fe5.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 38 · 287 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7c82a4cf0db190f58c1b5764cbae4605 = L.circleMarker(
+                [42.00961931488989, -87.67023064703105],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.308540939431783, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_7c82a4cf0db190f58c1b5764cbae4605.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 39 · 265 chuyến · 0.3% · BK RMS 0.06 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b0426f9ce4c4cb4f4ed258cce4a86044 = L.circleMarker(
+                [41.902788048, -87.62614559],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.270967314785784, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_b0426f9ce4c4cb4f4ed258cce4a86044.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 40 · 250 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_88914a201b7a3e943578dad82ab0adf1 = L.circleMarker(
+                [41.95365923864533, -87.72343953073371],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.258193449732079, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_88914a201b7a3e943578dad82ab0adf1.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 41 · 245 chuyến · 0.3% · BK RMS 0.06 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1125c23f9ac782edca2d05737c406aae = L.circleMarker(
+                [41.97517094300001, -87.687515515],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.213757149808582, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_1125c23f9ac782edca2d05737c406aae.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 42 · 228 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8b6c09897dcf8c6820c5665d8bd5d2f8 = L.circleMarker(
+                [41.763246799, -87.616134111],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.213757149808582, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_8b6c09897dcf8c6820c5665d8bd5d2f8.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 43 · 228 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_57d0fb169551b19eabd3f6dc12779e46 = L.circleMarker(
+                [41.80895208648704, -87.59602210602631],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.211092476671553, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_57d0fb169551b19eabd3f6dc12779e46.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 44 · 227 chuyến · 0.3% · BK RMS 0.11 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_246c6e33a8690bd69f17c599954e72e2 = L.circleMarker(
+                [41.900221297, -87.629105186],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.1895602270428824, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_246c6e33a8690bd69f17c599954e72e2.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 45 · 219 chuyến · 0.3% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_58eee245aa003e0d3d54ce6eeb1c05ab = L.circleMarker(
+                [41.801063123529495, -87.62529239142393],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.15651042097775, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_58eee245aa003e0d3d54ce6eeb1c05ab.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 46 · 207 chuyến · 0.2% · BK RMS 1.07 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ee72ee318d45aa695ee60ac893d261ee = L.circleMarker(
+                [41.706484381373095, -87.61771658476714],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.136787725216554, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_ee72ee318d45aa695ee60ac893d261ee.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 47 · 200 chuyến · 0.2% · BK RMS 0.87 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f907115431d14afc72173c04a8e59a92 = L.circleMarker(
+                [41.947791586, -87.683834942],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.122487939310687, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_f907115431d14afc72173c04a8e59a92.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 48 · 195 chuyến · 0.2% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_56a554e4fc2bea02813069076b0ec161 = L.circleMarker(
+                [41.77674221477137, -87.65114175605804],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.090368481581701, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_56a554e4fc2bea02813069076b0ec161.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 49 · 184 chuyến · 0.2% · BK RMS 0.96 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5cce5e1e82ce618b44ed2be4f1d3a136 = L.circleMarker(
+                [41.77887686, -87.594925439],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.057273700304523, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_5cce5e1e82ce618b44ed2be4f1d3a136.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 50 · 173 chuyến · 0.2% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_237c5bc2d22714926ed4788962d55bab = L.circleMarker(
+                [41.9849054722421, -87.80439740865987],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.013591453249981, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_237c5bc2d22714926ed4788962d55bab.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 51 · 159 chuyến · 0.2% · BK RMS 0.12 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0cd385dd4753a2fabcf33694dc9bb95f = L.circleMarker(
+                [41.900265687000015, -87.63210922],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.0039837344889415, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_0cd385dd4753a2fabcf33694dc9bb95f.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 52 · 156 chuyến · 0.2% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_00dcafa483f2f6dd3075f8363227c27f = L.circleMarker(
+                [41.905857769, -87.630865027],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.000760664423491, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_00dcafa483f2f6dd3075f8363227c27f.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 53 · 155 chuyến · 0.2% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2e6e79faecc9187e9eef4f626d9f2037 = L.circleMarker(
+                [41.84201769077871, -87.63396562268139],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.916507564579785, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_2e6e79faecc9187e9eef4f626d9f2037.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 54 · 130 chuyến · 0.2% · BK RMS 0.07 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_614bc2dd683bc2ead8d1bef15dfcbb72 = L.circleMarker(
+                [41.689729914, -87.669054403],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.909430180173243, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_614bc2dd683bc2ead8d1bef15dfcbb72.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 55 · 128 chuyến · 0.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f2d70cc27ea23e45503b2cbcb5a16b3f = L.circleMarker(
+                [41.71643396834245, -87.65528082826098],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.891490938992014, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_f2d70cc27ea23e45503b2cbcb5a16b3f.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 56 · 123 chuyến · 0.1% · BK RMS 0.96 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ab6d682d343649221373423cab640e85 = L.circleMarker(
+                [41.93881125631508, -87.71086991468276],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.865751738478044, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_ab6d682d343649221373423cab640e85.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 57 · 116 chuyến · 0.1% · BK RMS 0.17 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e3fb8a894b468e4629b9546b3eaa1e4c = L.circleMarker(
+                [41.741242728, -87.551428197],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.858255911343305, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_e3fb8a894b468e4629b9546b3eaa1e4c.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 58 · 114 chuyến · 0.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b92db06f27edf22261c652f1c78b5084 = L.circleMarker(
+                [41.66849281235919, -87.62293057257186],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.85448333962384, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_b92db06f27edf22261c652f1c78b5084.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 59 · 113 chuyến · 0.1% · BK RMS 1.53 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d21942b20f5683bcda8fa3b7c9e87fed = L.circleMarker(
+                [41.968069, -87.721559063],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.831488537340485, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_d21942b20f5683bcda8fa3b7c9e87fed.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 60 · 107 chuyến · 0.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_257fe04e0ed716c03f4a06f8a8946390 = L.circleMarker(
+                [41.954027649, -87.763399032],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.819749286517271, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_257fe04e0ed716c03f4a06f8a8946390.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 61 · 104 chuyến · 0.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f65467077d98bc57fdc1734cb9a55933 = L.circleMarker(
+                [41.82371281, -87.602350437],
+                {"bubblingMouseEvents": true, "color": "#009E73", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#009E73", "fillOpacity": 0.28, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.8118288178080055, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_521afcc10bb261b6cffe167840fd8114);
+        
+    
+            circle_marker_f65467077d98bc57fdc1734cb9a55933.bindTooltip(
+                `<div>
+                     HDBSCAN · cụm 62 · 102 chuyến · 0.1% · BK RMS 0.00 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_521afcc10bb261b6cffe167840fd8114.addTo(map_8ec62f32396780efa13757ae271c8d82);
+        
+    
+            map_8ec62f32396780efa13757ae271c8d82.fitBounds(
+                [[41.630136051, -87.943624596], [42.046046492, -87.504902901]],
+                {}
+            );
+        
+    
+            var layer_control_b6c7f07267ffa7eb3341e7710bb49c2d_layers = {
+                base_layers : {
+                    "N\u1ec1n OSM (c\u1ea7n Internet)" : tile_layer_338e561390e43b0f138cbb7f75ffdd29,
+                    "Kh\u00f4ng n\u1ec1n (offline)" : tile_layer_871c6683a94eaa452d090ad9c5f67ca3,
+                },
+                overlays :  {
+                    "K-Means \u2014 5 c\u1ee5m" : feature_group_911286cb09c6724d74138a8ef2ed6d83,
+                    "DBSCAN \u2014 3 c\u1ee5m" : feature_group_5133d3f00ac9905033d8840a15101cb9,
+                    "HDBSCAN \u2014 63 c\u1ee5m" : feature_group_521afcc10bb261b6cffe167840fd8114,
+                },
+            };
+            let layer_control_b6c7f07267ffa7eb3341e7710bb49c2d = L.control.layers(
+                layer_control_b6c7f07267ffa7eb3341e7710bb49c2d_layers.base_layers,
+                layer_control_b6c7f07267ffa7eb3341e7710bb49c2d_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_8ec62f32396780efa13757ae271c8d82);
+
+        
+</script>
+</html>

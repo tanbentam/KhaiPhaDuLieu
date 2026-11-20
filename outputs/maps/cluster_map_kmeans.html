@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_34119a7693ec1267b6fe337f99851ad5 {
+                    position: relative;
+                    width: 100.0vw;
+                    height: 100.0vh;
+
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>/*
+ * Glyphicons Halflings -- the icon font used by folium's default Awesome Markers
+ * (Icon(prefix="glyphicon")). Extracted from Bootstrap 3's glyphicon rules only.
+ *
+ * folium previously loaded netdna's bootstrap-glyphicons.css, which despite its
+ * name ships a full Bootstrap-3 base stylesheet (normalize reset + global `body`
+ * rules) that leaked onto the host page (GH-1820). This file provides just the
+ * @font-face and .glyphicon/.glyphicon-* rules needed for the markers, with no
+ * page-wide side effects. Font files are served from jsDelivr.
+ */
+@font-face{font-family:'Glyphicons Halflings';src:url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.eot');src:url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.ttf') format('truetype'),url('https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');}.glyphicon{position:relative;top:1px;display:inline-block;font-family:'Glyphicons Halflings';font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;}
+.glyphicon-asterisk:before{content:"\2a";}
+.glyphicon-plus:before{content:"\2b";}
+.glyphicon-euro:before{content:"\20ac";}
+.glyphicon-minus:before{content:"\2212";}
+.glyphicon-cloud:before{content:"\2601";}
+.glyphicon-envelope:before{content:"\2709";}
+.glyphicon-pencil:before{content:"\270f";}
+.glyphicon-glass:before{content:"\e001";}
+.glyphicon-music:before{content:"\e002";}
+.glyphicon-search:before{content:"\e003";}
+.glyphicon-heart:before{content:"\e005";}
+.glyphicon-star:before{content:"\e006";}
+.glyphicon-star-empty:before{content:"\e007";}
+.glyphicon-user:before{content:"\e008";}
+.glyphicon-film:before{content:"\e009";}
+.glyphicon-th-large:before{content:"\e010";}
+.glyphicon-th:before{content:"\e011";}
+.glyphicon-th-list:before{content:"\e012";}
+.glyphicon-ok:before{content:"\e013";}
+.glyphicon-remove:before{content:"\e014";}
+.glyphicon-zoom-in:before{content:"\e015";}
+.glyphicon-zoom-out:before{content:"\e016";}
+.glyphicon-off:before{content:"\e017";}
+.glyphicon-signal:before{content:"\e018";}
+.glyphicon-cog:before{content:"\e019";}
+.glyphicon-trash:before{content:"\e020";}
+.glyphicon-home:before{content:"\e021";}
+.glyphicon-file:before{content:"\e022";}
+.glyphicon-time:before{content:"\e023";}
+.glyphicon-road:before{content:"\e024";}
+.glyphicon-download-alt:before{content:"\e025";}
+.glyphicon-download:before{content:"\e026";}
+.glyphicon-upload:before{content:"\e027";}
+.glyphicon-inbox:before{content:"\e028";}
+.glyphicon-play-circle:before{content:"\e029";}
+.glyphicon-repeat:before{content:"\e030";}
+.glyphicon-refresh:before{content:"\e031";}
+.glyphicon-list-alt:before{content:"\e032";}
+.glyphicon-flag:before{content:"\e034";}
+.glyphicon-headphones:before{content:"\e035";}
+.glyphicon-volume-off:before{content:"\e036";}
+.glyphicon-volume-down:before{content:"\e037";}
+.glyphicon-volume-up:before{content:"\e038";}
+.glyphicon-qrcode:before{content:"\e039";}
+.glyphicon-barcode:before{content:"\e040";}
+.glyphicon-tag:before{content:"\e041";}
+.glyphicon-tags:before{content:"\e042";}
+.glyphicon-book:before{content:"\e043";}
+.glyphicon-print:before{content:"\e045";}
+.glyphicon-font:before{content:"\e047";}
+.glyphicon-bold:before{content:"\e048";}
+.glyphicon-italic:before{content:"\e049";}
+.glyphicon-text-height:before{content:"\e050";}
+.glyphicon-text-width:before{content:"\e051";}
+.glyphicon-align-left:before{content:"\e052";}
+.glyphicon-align-center:before{content:"\e053";}
+.glyphicon-align-right:before{content:"\e054";}
+.glyphicon-align-justify:before{content:"\e055";}
+.glyphicon-list:before{content:"\e056";}
+.glyphicon-indent-left:before{content:"\e057";}
+.glyphicon-indent-right:before{content:"\e058";}
+.glyphicon-facetime-video:before{content:"\e059";}
+.glyphicon-picture:before{content:"\e060";}
+.glyphicon-map-marker:before{content:"\e062";}
+.glyphicon-adjust:before{content:"\e063";}
+.glyphicon-tint:before{content:"\e064";}
+.glyphicon-edit:before{content:"\e065";}
+.glyphicon-share:before{content:"\e066";}
+.glyphicon-check:before{content:"\e067";}
+.glyphicon-move:before{content:"\e068";}
+.glyphicon-step-backward:before{content:"\e069";}
+.glyphicon-fast-backward:before{content:"\e070";}
+.glyphicon-backward:before{content:"\e071";}
+.glyphicon-play:before{content:"\e072";}
+.glyphicon-pause:before{content:"\e073";}
+.glyphicon-stop:before{content:"\e074";}
+.glyphicon-forward:before{content:"\e075";}
+.glyphicon-fast-forward:before{content:"\e076";}
+.glyphicon-step-forward:before{content:"\e077";}
+.glyphicon-eject:before{content:"\e078";}
+.glyphicon-chevron-left:before{content:"\e079";}
+.glyphicon-chevron-right:before{content:"\e080";}
+.glyphicon-plus-sign:before{content:"\e081";}
+.glyphicon-minus-sign:before{content:"\e082";}
+.glyphicon-remove-sign:before{content:"\e083";}
+.glyphicon-ok-sign:before{content:"\e084";}
+.glyphicon-question-sign:before{content:"\e085";}
+.glyphicon-info-sign:before{content:"\e086";}
+.glyphicon-screenshot:before{content:"\e087";}
+.glyphicon-remove-circle:before{content:"\e088";}
+.glyphicon-ok-circle:before{content:"\e089";}
+.glyphicon-ban-circle:before{content:"\e090";}
+.glyphicon-arrow-left:before{content:"\e091";}
+.glyphicon-arrow-right:before{content:"\e092";}
+.glyphicon-arrow-up:before{content:"\e093";}
+.glyphicon-arrow-down:before{content:"\e094";}
+.glyphicon-share-alt:before{content:"\e095";}
+.glyphicon-resize-full:before{content:"\e096";}
+.glyphicon-resize-small:before{content:"\e097";}
+.glyphicon-exclamation-sign:before{content:"\e101";}
+.glyphicon-gift:before{content:"\e102";}
+.glyphicon-leaf:before{content:"\e103";}
+.glyphicon-eye-open:before{content:"\e105";}
+.glyphicon-eye-close:before{content:"\e106";}
+.glyphicon-warning-sign:before{content:"\e107";}
+.glyphicon-plane:before{content:"\e108";}
+.glyphicon-random:before{content:"\e110";}
+.glyphicon-comment:before{content:"\e111";}
+.glyphicon-magnet:before{content:"\e112";}
+.glyphicon-chevron-up:before{content:"\e113";}
+.glyphicon-chevron-down:before{content:"\e114";}
+.glyphicon-retweet:before{content:"\e115";}
+.glyphicon-shopping-cart:before{content:"\e116";}
+.glyphicon-folder-close:before{content:"\e117";}
+.glyphicon-folder-open:before{content:"\e118";}
+.glyphicon-resize-vertical:before{content:"\e119";}
+.glyphicon-resize-horizontal:before{content:"\e120";}
+.glyphicon-hdd:before{content:"\e121";}
+.glyphicon-bullhorn:before{content:"\e122";}
+.glyphicon-certificate:before{content:"\e124";}
+.glyphicon-thumbs-up:before{content:"\e125";}
+.glyphicon-thumbs-down:before{content:"\e126";}
+.glyphicon-hand-right:before{content:"\e127";}
+.glyphicon-hand-left:before{content:"\e128";}
+.glyphicon-hand-up:before{content:"\e129";}
+.glyphicon-hand-down:before{content:"\e130";}
+.glyphicon-circle-arrow-right:before{content:"\e131";}
+.glyphicon-circle-arrow-left:before{content:"\e132";}
+.glyphicon-circle-arrow-up:before{content:"\e133";}
+.glyphicon-circle-arrow-down:before{content:"\e134";}
+.glyphicon-globe:before{content:"\e135";}
+.glyphicon-tasks:before{content:"\e137";}
+.glyphicon-filter:before{content:"\e138";}
+.glyphicon-fullscreen:before{content:"\e140";}
+.glyphicon-dashboard:before{content:"\e141";}
+.glyphicon-heart-empty:before{content:"\e143";}
+.glyphicon-link:before{content:"\e144";}
+.glyphicon-phone:before{content:"\e145";}
+.glyphicon-usd:before{content:"\e148";}
+.glyphicon-gbp:before{content:"\e149";}
+.glyphicon-sort:before{content:"\e150";}
+.glyphicon-sort-by-alphabet:before{content:"\e151";}
+.glyphicon-sort-by-alphabet-alt:before{content:"\e152";}
+.glyphicon-sort-by-order:before{content:"\e153";}
+.glyphicon-sort-by-order-alt:before{content:"\e154";}
+.glyphicon-sort-by-attributes:before{content:"\e155";}
+.glyphicon-sort-by-attributes-alt:before{content:"\e156";}
+.glyphicon-unchecked:before{content:"\e157";}
+.glyphicon-expand:before{content:"\e158";}
+.glyphicon-collapse-down:before{content:"\e159";}
+.glyphicon-collapse-up:before{content:"\e160";}
+.glyphicon-log-in:before{content:"\e161";}
+.glyphicon-flash:before{content:"\e162";}
+.glyphicon-log-out:before{content:"\e163";}
+.glyphicon-new-window:before{content:"\e164";}
+.glyphicon-record:before{content:"\e165";}
+.glyphicon-save:before{content:"\e166";}
+.glyphicon-open:before{content:"\e167";}
+.glyphicon-saved:before{content:"\e168";}
+.glyphicon-import:before{content:"\e169";}
+.glyphicon-export:before{content:"\e170";}
+.glyphicon-send:before{content:"\e171";}
+.glyphicon-floppy-disk:before{content:"\e172";}
+.glyphicon-floppy-saved:before{content:"\e173";}
+.glyphicon-floppy-remove:before{content:"\e174";}
+.glyphicon-floppy-save:before{content:"\e175";}
+.glyphicon-floppy-open:before{content:"\e176";}
+.glyphicon-credit-card:before{content:"\e177";}
+.glyphicon-transfer:before{content:"\e178";}
+.glyphicon-cutlery:before{content:"\e179";}
+.glyphicon-header:before{content:"\e180";}
+.glyphicon-compressed:before{content:"\e181";}
+.glyphicon-earphone:before{content:"\e182";}
+.glyphicon-phone-alt:before{content:"\e183";}
+.glyphicon-tower:before{content:"\e184";}
+.glyphicon-stats:before{content:"\e185";}
+.glyphicon-sd-video:before{content:"\e186";}
+.glyphicon-hd-video:before{content:"\e187";}
+.glyphicon-subtitles:before{content:"\e188";}
+.glyphicon-sound-stereo:before{content:"\e189";}
+.glyphicon-sound-dolby:before{content:"\e190";}
+.glyphicon-sound-5-1:before{content:"\e191";}
+.glyphicon-sound-6-1:before{content:"\e192";}
+.glyphicon-sound-7-1:before{content:"\e193";}
+.glyphicon-copyright-mark:before{content:"\e194";}
+.glyphicon-registration-mark:before{content:"\e195";}
+.glyphicon-cloud-download:before{content:"\e197";}
+.glyphicon-cloud-upload:before{content:"\e198";}
+.glyphicon-tree-conifer:before{content:"\e199";}
+.glyphicon-tree-deciduous:before{content:"\e200";}
+.glyphicon-briefcase:before{content:"\1f4bc";}
+.glyphicon-calendar:before{content:"\1f4c5";}
+.glyphicon-pushpin:before{content:"\1f4cc";}
+.glyphicon-paperclip:before{content:"\1f4ce";}
+.glyphicon-camera:before{content:"\1f4f7";}
+.glyphicon-lock:before{content:"\1f512";}
+.glyphicon-bell:before{content:"\1f514";}
+.glyphicon-bookmark:before{content:"\1f516";}
+.glyphicon-fire:before{content:"\1f525";}
+.glyphicon-wrench:before{content:"\1f527";}
+</style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    <div style="position:fixed;bottom:48px;left:10px;z-index:9999;background:rgba(255,255,255,.94);padding:6px 10px;border:1px solid #999;font:12px/1.35 sans-serif;max-width:min(520px,calc(100% - 20px));box-sizing:border-box"><b>K-Means — hotspot nhu cầu đón, master_v1</b><br>Chấm = tâm cụm (centroid), diện tích ∝ số chuyến; <b>+</b> = tâm cụm (8 cụm lớn nhất); vòng nét đứt = bán kính RMS quanh tâm (không phải ranh giới cụm).<br>Điểm nhiễu (nhãn −1) KHÔNG được vẽ là hotspot; tỷ lệ noise ghi ở tên lớp. Tọa độ là centroid của census tract/community area, KHÔNG phải GPS; không đọc là vị trí giao lộ.<br><i>Nguồn: Chicago Taxi Trips (wrvz-psew), 17/04–14/05/2023; master_v1</i></div>
+    
+            <div class="folium-map" id="map_34119a7693ec1267b6fe337f99851ad5" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_34119a7693ec1267b6fe337f99851ad5 = L.map(
+                "map_34119a7693ec1267b6fe337f99851ad5",
+                {
+                    center: [41.838091271500005, -87.7242637485],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_34119a7693ec1267b6fe337f99851ad5);
+
+            
+
+        
+    
+            var tile_layer_2db49d70601bd1f7178ece36231f2f21 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_2db49d70601bd1f7178ece36231f2f21.addTo(map_34119a7693ec1267b6fe337f99851ad5);
+        
+    
+            var tile_layer_1340d0def32428ed4ea7483b9ced4a2e = L.tileLayer(
+                "",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "kh\u00f4ng n\u1ec1n (offline)",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            var feature_group_419e9a2f27705e54a6591db5f4dc0c70 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_96046ce5c414c16bf45ce78d194b5d97 = L.circle(
+                [41.88487611914548, -87.63453088466163],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 2101.479500437378, "stroke": true, "weight": 1}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var circle_marker_463f0a103ac4b485ea00e670e2a787d0 = L.circleMarker(
+                [41.88487611914548, -87.63453088466163],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.601971508928713, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            circle_marker_463f0a103ac4b485ea00e670e2a787d0.bindTooltip(
+                `<div>
+                     K-Means · AM · cụm 0 (hạng 1) · 37,673 chuyến · 62.3% · BK RMS 2.10 km · khu vực 8
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c36f4a86e56ab325891feb91ed952923 = L.marker(
+                [41.88487611914548, -87.63453088466163],
+                {
+}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var div_icon_1e59aec4508232d0b9d09c06de6b8cc7 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_c36f4a86e56ab325891feb91ed952923.bindTooltip(
+                `<div>
+                     tâm cụm 0
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_c36f4a86e56ab325891feb91ed952923.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_c36f4a86e56ab325891feb91ed952923.setIcon(div_icon_1e59aec4508232d0b9d09c06de6b8cc7);
+            
+    
+            var circle_fac3bb76fea3b6c89c31257417cb092b = L.circle(
+                [41.97945808776881, -87.90417049863932],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1343.3669015925057, "stroke": true, "weight": 1}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var circle_marker_6b3cb2b233d77b805fb2be50e473661e = L.circleMarker(
+                [41.97945808776881, -87.90417049863932],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.914769734713815, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            circle_marker_6b3cb2b233d77b805fb2be50e473661e.bindTooltip(
+                `<div>
+                     K-Means · AM · cụm 1 (hạng 2) · 9,695 chuyến · 16.0% · BK RMS 1.34 km · khu vực 76
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_9347561030eaeb35d2419905b34c4fdc = L.marker(
+                [41.97945808776881, -87.90417049863932],
+                {
+}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var div_icon_4f032c5b16d6ba46cfeaf3f7c81e39a2 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_9347561030eaeb35d2419905b34c4fdc.bindTooltip(
+                `<div>
+                     tâm cụm 1
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_9347561030eaeb35d2419905b34c4fdc.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_9347561030eaeb35d2419905b34c4fdc.setIcon(div_icon_4f032c5b16d6ba46cfeaf3f7c81e39a2);
+            
+    
+            var circle_08fed472ee9dbc5508f62641cf50a9be = L.circle(
+                [41.96350115402057, -87.67302711463789],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 3551.052257731953, "stroke": true, "weight": 1}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var circle_marker_aaa69e424f66939aff4b5c340f871505 = L.circleMarker(
+                [41.96350115402057, -87.67302711463789],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.077816023877023, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            circle_marker_aaa69e424f66939aff4b5c340f871505.bindTooltip(
+                `<div>
+                     K-Means · AM · cụm 2 (hạng 3) · 7,753 chuyến · 12.8% · BK RMS 3.55 km · khu vực 6
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_8813aa4286c25acd4a61920dcb8f90bd = L.marker(
+                [41.96350115402057, -87.67302711463789],
+                {
+}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var div_icon_5abf92ccf2206f8fd1926774234babcf = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_8813aa4286c25acd4a61920dcb8f90bd.bindTooltip(
+                `<div>
+                     tâm cụm 2
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_8813aa4286c25acd4a61920dcb8f90bd.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_8813aa4286c25acd4a61920dcb8f90bd.setIcon(div_icon_5abf92ccf2206f8fd1926774234babcf);
+            
+    
+            var circle_0729c56e7af9d0e8704e2e3407b50b92 = L.circle(
+                [41.760731686950095, -87.60855877812287],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 5406.316272797212, "stroke": true, "weight": 1}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var circle_marker_95d9e46876ca991ee8154e0be1492006 = L.circleMarker(
+                [41.760731686950095, -87.60855877812287],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.736463947613721, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            circle_marker_95d9e46876ca991ee8154e0be1492006.bindTooltip(
+                `<div>
+                     K-Means · AM · cụm 3 (hạng 4) · 3,472 chuyến · 5.7% · BK RMS 5.41 km · khu vực 41
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_0827109a3cd3124778bdc81e369f4c55 = L.marker(
+                [41.760731686950095, -87.60855877812287],
+                {
+}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var div_icon_9028a84c21bee7bc5659031aa0f823fe = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_0827109a3cd3124778bdc81e369f4c55.bindTooltip(
+                `<div>
+                     tâm cụm 3
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_0827109a3cd3124778bdc81e369f4c55.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_0827109a3cd3124778bdc81e369f4c55.setIcon(div_icon_9028a84c21bee7bc5659031aa0f823fe);
+            
+    
+            var circle_1eac17a0faec20194e64b86d14b126bf = L.circle(
+                [41.78687238882186, -87.75113702243685],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 2062.056580813604, "stroke": true, "weight": 1}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var circle_marker_61e17a8860e3242e9b21f43149850b37 = L.circleMarker(
+                [41.78687238882186, -87.75113702243685],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.508422339775222, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            circle_marker_61e17a8860e3242e9b21f43149850b37.bindTooltip(
+                `<div>
+                     K-Means · AM · cụm 4 (hạng 5) · 1,905 chuyến · 3.1% · BK RMS 2.06 km · khu vực 56
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_17ad83150e5450766d1ff124199440a9 = L.marker(
+                [41.78687238882186, -87.75113702243685],
+                {
+}
+            ).addTo(feature_group_419e9a2f27705e54a6591db5f4dc0c70);
+        
+    
+            var div_icon_150b2977135e3ce62c13313ce2383948 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_17ad83150e5450766d1ff124199440a9.bindTooltip(
+                `<div>
+                     tâm cụm 4
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_17ad83150e5450766d1ff124199440a9.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_17ad83150e5450766d1ff124199440a9.setIcon(div_icon_150b2977135e3ce62c13313ce2383948);
+            
+    
+            feature_group_419e9a2f27705e54a6591db5f4dc0c70.addTo(map_34119a7693ec1267b6fe337f99851ad5);
+        
+    
+            var feature_group_eb9b6f29d5df977a364dde3319876ecf = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_f025c9f68cefedf6893261a8435104bc = L.circle(
+                [41.88321741256953, -87.6305406677322],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1905.2422769069465, "stroke": true, "weight": 1}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var circle_marker_6fa9475e91460ccef629a3beadbd65af = L.circleMarker(
+                [41.88321741256953, -87.6305406677322],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 22.702662991377846, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            circle_marker_6fa9475e91460ccef629a3beadbd65af.bindTooltip(
+                `<div>
+                     K-Means · PM · cụm 0 (hạng 1) · 54,135 chuyến · 62.5% · BK RMS 1.91 km · khu vực 8
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_742da698b2eae321f398bd831680ad86 = L.marker(
+                [41.88321741256953, -87.6305406677322],
+                {
+}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var div_icon_76ed11e54182e6b19b9a6228dd02ef75 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_742da698b2eae321f398bd831680ad86.bindTooltip(
+                `<div>
+                     tâm cụm 0
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_742da698b2eae321f398bd831680ad86.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_742da698b2eae321f398bd831680ad86.setIcon(div_icon_76ed11e54182e6b19b9a6228dd02ef75);
+            
+    
+            var circle_f90b1f0f898e4c037d51fdf4373eddee = L.circle(
+                [41.97954813486605, -87.90580538924674],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1002.3081028065884, "stroke": true, "weight": 1}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var circle_marker_b077140bdfd7d8547485b47ee19578ca = L.circleMarker(
+                [41.97954813486605, -87.90580538924674],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.765625838920306, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            circle_marker_b077140bdfd7d8547485b47ee19578ca.bindTooltip(
+                `<div>
+                     K-Means · PM · cụm 1 (hạng 2) · 17,937 chuyến · 20.7% · BK RMS 1.00 km · khu vực 76
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7f0ba795b90c70dd257fb6bed778ce2c = L.marker(
+                [41.97954813486605, -87.90580538924674],
+                {
+}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var div_icon_2511a46ac700532a2a531ab256e083e0 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_7f0ba795b90c70dd257fb6bed778ce2c.bindTooltip(
+                `<div>
+                     tâm cụm 1
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_7f0ba795b90c70dd257fb6bed778ce2c.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_7f0ba795b90c70dd257fb6bed778ce2c.setIcon(div_icon_2511a46ac700532a2a531ab256e083e0);
+            
+    
+            var circle_6f7f29b0821e25e08c507081911d4c34 = L.circle(
+                [41.95217511578586, -87.67193191471908],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 3861.193961399423, "stroke": true, "weight": 1}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var circle_marker_7d7ae37bec65967d6f8d3b2cdda8e839 = L.circleMarker(
+                [41.95217511578586, -87.67193191471908],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.071422744016663, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            circle_marker_7d7ae37bec65967d6f8d3b2cdda8e839.bindTooltip(
+                `<div>
+                     K-Means · PM · cụm 2 (hạng 3) · 7,739 chuyến · 8.9% · BK RMS 3.86 km · khu vực 6
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_9e225780521b3ea4c065bb7ac83c278e = L.marker(
+                [41.95217511578586, -87.67193191471908],
+                {
+}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var div_icon_f3adcdfc7498713ba12d960754995b1b = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_9e225780521b3ea4c065bb7ac83c278e.bindTooltip(
+                `<div>
+                     tâm cụm 2
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_9e225780521b3ea4c065bb7ac83c278e.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_9e225780521b3ea4c065bb7ac83c278e.setIcon(div_icon_f3adcdfc7498713ba12d960754995b1b);
+            
+    
+            var circle_7ff2ab75471f86f4c5b6ee5806ce1ef6 = L.circle(
+                [41.76420692488875, -87.60773144054646],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 5249.841375802821, "stroke": true, "weight": 1}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var circle_marker_6ba3fdd95b42cbb9a0dd00dff022b1ca = L.circleMarker(
+                [41.76420692488875, -87.60773144054646],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.927027374638168, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            circle_marker_6ba3fdd95b42cbb9a0dd00dff022b1ca.bindTooltip(
+                `<div>
+                     K-Means · PM · cụm 3 (hạng 4) · 3,757 chuyến · 4.3% · BK RMS 5.25 km · khu vực 41
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_5116fb95d756ddb38e187512a4e062a8 = L.marker(
+                [41.76420692488875, -87.60773144054646],
+                {
+}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var div_icon_a4e156370727e59c119414800de36f93 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_5116fb95d756ddb38e187512a4e062a8.bindTooltip(
+                `<div>
+                     tâm cụm 3
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_5116fb95d756ddb38e187512a4e062a8.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_5116fb95d756ddb38e187512a4e062a8.setIcon(div_icon_a4e156370727e59c119414800de36f93);
+            
+    
+            var circle_ded971a1482c7c6ba0bb8fefcae649f1 = L.circle(
+                [41.78839587695199, -87.7550408841527],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1538.702744725138, "stroke": true, "weight": 1}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var circle_marker_6774aba57cb547a01e4398401ca1c2ae = L.circleMarker(
+                [41.78839587695199, -87.7550408841527],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.438570167794484, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            circle_marker_6774aba57cb547a01e4398401ca1c2ae.bindTooltip(
+                `<div>
+                     K-Means · PM · cụm 4 (hạng 5) · 3,049 chuyến · 3.5% · BK RMS 1.54 km · khu vực 56
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e7edc12685a072a5e91e02d2b866a4b6 = L.marker(
+                [41.78839587695199, -87.7550408841527],
+                {
+}
+            ).addTo(feature_group_eb9b6f29d5df977a364dde3319876ecf);
+        
+    
+            var div_icon_9fe1ddc98da7cdfdb0def6a59fe2bccf = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_e7edc12685a072a5e91e02d2b866a4b6.bindTooltip(
+                `<div>
+                     tâm cụm 4
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_e7edc12685a072a5e91e02d2b866a4b6.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_e7edc12685a072a5e91e02d2b866a4b6.setIcon(div_icon_9fe1ddc98da7cdfdb0def6a59fe2bccf);
+            
+    
+            var feature_group_668bb864ef11fb445dfd2ecb3136872f = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_825645fac33cf5e940111427d63c6877 = L.circle(
+                [41.88385237456725, -87.63106245074712],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 2183.8747187994686, "stroke": true, "weight": 1}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var circle_marker_45eeb53dfe442a14d196470c0aab455b = L.circleMarker(
+                [41.88385237456725, -87.63106245074712],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 24.255088331482444, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            circle_marker_45eeb53dfe442a14d196470c0aab455b.bindTooltip(
+                `<div>
+                     K-Means · Cuối tuần · cụm 0 (hạng 1) · 63,495 chuyến · 52.7% · BK RMS 2.18 km · khu vực 8
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7a88ec7f10bd79dcaa04ff29c5250d70 = L.marker(
+                [41.88385237456725, -87.63106245074712],
+                {
+}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var div_icon_631a54d07b63f29c75bb74bba0be3c8a = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_7a88ec7f10bd79dcaa04ff29c5250d70.bindTooltip(
+                `<div>
+                     tâm cụm 0
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_7a88ec7f10bd79dcaa04ff29c5250d70.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_7a88ec7f10bd79dcaa04ff29c5250d70.setIcon(div_icon_631a54d07b63f29c75bb74bba0be3c8a);
+            
+    
+            var circle_d85d2160909b5ec11fa010c488ea51ba = L.circle(
+                [41.97969769345716, -87.90735475629086],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1040.9783525489247, "stroke": true, "weight": 1}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var circle_marker_a6459ed46069940677ef062bb2c2a972 = L.circleMarker(
+                [41.97969769345716, -87.90735475629086],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.80389871316566, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            circle_marker_a6459ed46069940677ef062bb2c2a972.bindTooltip(
+                `<div>
+                     K-Means · Cuối tuần · cụm 1 (hạng 2) · 29,490 chuyến · 24.5% · BK RMS 1.04 km · khu vực 76
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_2dd0e567ed7dfee84d9e0f0d9a8104c3 = L.marker(
+                [41.97969769345716, -87.90735475629086],
+                {
+}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var div_icon_3827bd1dd51943d17a47d5ad28ac1e8b = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_2dd0e567ed7dfee84d9e0f0d9a8104c3.bindTooltip(
+                `<div>
+                     tâm cụm 1
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_2dd0e567ed7dfee84d9e0f0d9a8104c3.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_2dd0e567ed7dfee84d9e0f0d9a8104c3.setIcon(div_icon_3827bd1dd51943d17a47d5ad28ac1e8b);
+            
+    
+            var circle_705504cda60cc0db9571f492d0842286 = L.circle(
+                [41.952651145677, -87.67050023439322],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 3804.29802385528, "stroke": true, "weight": 1}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var circle_marker_72a92c608bb99b8b9db4690681c2f1ba = L.circleMarker(
+                [41.952651145677, -87.67050023439322],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.241189321636316, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            circle_marker_72a92c608bb99b8b9db4690681c2f1ba.bindTooltip(
+                `<div>
+                     K-Means · Cuối tuần · cụm 2 (hạng 3) · 16,232 chuyến · 13.5% · BK RMS 3.80 km · khu vực 6
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ef8a56e84500654cee62a5890cbb2cd5 = L.marker(
+                [41.952651145677, -87.67050023439322],
+                {
+}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var div_icon_fec48b024df79e8728433bf2b3f4c115 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_ef8a56e84500654cee62a5890cbb2cd5.bindTooltip(
+                `<div>
+                     tâm cụm 2
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_ef8a56e84500654cee62a5890cbb2cd5.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_ef8a56e84500654cee62a5890cbb2cd5.setIcon(div_icon_fec48b024df79e8728433bf2b3f4c115);
+            
+    
+            var circle_34c04ef68093409a4d8a760a83d4d243 = L.circle(
+                [41.75579333478662, -87.6102924715641],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 5456.34592038868, "stroke": true, "weight": 1}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var circle_marker_3b6d0fcd74f9a45b234b2752b5f4057a = L.circleMarker(
+                [41.75579333478662, -87.6102924715641],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.418070336087904, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            circle_marker_3b6d0fcd74f9a45b234b2752b5f4057a.bindTooltip(
+                `<div>
+                     K-Means · Cuối tuần · cụm 3 (hạng 4) · 6,375 chuyến · 5.3% · BK RMS 5.46 km · khu vực 41
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3c6f0586c96e15f47b8c7ae0d7612ff3 = L.marker(
+                [41.75579333478662, -87.6102924715641],
+                {
+}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var div_icon_d2a1549307a579e9ab2bd8139a7d2511 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_3c6f0586c96e15f47b8c7ae0d7612ff3.bindTooltip(
+                `<div>
+                     tâm cụm 3
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_3c6f0586c96e15f47b8c7ae0d7612ff3.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_3c6f0586c96e15f47b8c7ae0d7612ff3.setIcon(div_icon_d2a1549307a579e9ab2bd8139a7d2511);
+            
+    
+            var circle_643afd39a6f6f217c2901a2d0d94552f = L.circle(
+                [41.78933152453783, -87.75817072491893],
+                {"bubblingMouseEvents": true, "color": "#0072B2", "dashArray": "4,4", "dashOffset": null, "fill": false, "fillColor": "#0072B2", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.6, "radius": 1726.5193955467496, "stroke": true, "weight": 1}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var circle_marker_7d4908c39cda0dc49b906ecfefc9415c = L.circleMarker(
+                [41.78933152453783, -87.75817072491893],
+                {"bubblingMouseEvents": true, "color": "#222", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0072B2", "fillOpacity": 0.55, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.671989795494557, "stroke": true, "weight": 0.8}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            circle_marker_7d4908c39cda0dc49b906ecfefc9415c.bindTooltip(
+                `<div>
+                     K-Means · Cuối tuần · cụm 4 (hạng 5) · 4,979 chuyến · 4.1% · BK RMS 1.73 km · khu vực 56
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_d7c581dbc0b136a1b247d950dbe1449a = L.marker(
+                [41.78933152453783, -87.75817072491893],
+                {
+}
+            ).addTo(feature_group_668bb864ef11fb445dfd2ecb3136872f);
+        
+    
+            var div_icon_1184f42ebf4d878a4064288ab41f8700 = L.divIcon({
+  "html": "\u003cdiv style=\"font:bold 14px sans-serif;color:#000;transform:translate(-5px,-9px)\"\u003e+\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+            marker_d7c581dbc0b136a1b247d950dbe1449a.bindTooltip(
+                `<div>
+                     tâm cụm 4
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                {
+                    const element = marker_d7c581dbc0b136a1b247d950dbe1449a.getElement();
+                    if (element) {
+                        element.style.width = "";
+                        element.style.height = "";
+                        element.style.marginLeft = "";
+                        element.style.marginTop = "";
+                    }
+                }
+                marker_d7c581dbc0b136a1b247d950dbe1449a.setIcon(div_icon_1184f42ebf4d878a4064288ab41f8700);
+            
+    
+            map_34119a7693ec1267b6fe337f99851ad5.fitBounds(
+                [[41.630136051, -87.943624596], [42.046046492, -87.504902901]],
+                {}
+            );
+        
+    
+            var layer_control_788bdde0a1dd2ce6f6cb9494229e1ecb_layers = {
+                base_layers : {
+                    "N\u1ec1n OSM (c\u1ea7n Internet)" : tile_layer_2db49d70601bd1f7178ece36231f2f21,
+                    "Kh\u00f4ng n\u1ec1n (offline)" : tile_layer_1340d0def32428ed4ea7483b9ced4a2e,
+                },
+                overlays :  {
+                    "AM \u2014 5 c\u1ee5m \u00b7 noise 0,0%" : feature_group_419e9a2f27705e54a6591db5f4dc0c70,
+                    "PM \u2014 5 c\u1ee5m \u00b7 noise 0,0%" : feature_group_eb9b6f29d5df977a364dde3319876ecf,
+                    "Cu\u1ed1i tu\u1ea7n \u2014 5 c\u1ee5m \u00b7 noise 0,0%" : feature_group_668bb864ef11fb445dfd2ecb3136872f,
+                },
+            };
+            let layer_control_788bdde0a1dd2ce6f6cb9494229e1ecb = L.control.layers(
+                layer_control_788bdde0a1dd2ce6f6cb9494229e1ecb_layers.base_layers,
+                layer_control_788bdde0a1dd2ce6f6cb9494229e1ecb_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_34119a7693ec1267b6fe337f99851ad5);
+
+        
+</script>
+</html>

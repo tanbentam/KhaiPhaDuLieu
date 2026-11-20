@@ -1,0 +1,15 @@
+artifact,source,size_kb,sha256,generated_by,owner
+outputs/metrics/metrics_comparison.csv,baseline_metrics.csv + hdbscan_metrics.csv,5.5,7fed07ff959ecf3e768cd42dfc6be776cf7f0fa5c8e9a5d61faa8408da1437aa,scripts/build_m4.py,M4
+outputs/figures/comparison/runtime_noise_comparison.png,metrics_comparison.csv,471.2,6d2724eb5c0fa8fdb597d49d958d3b399002fa0239087d746cbfaac47a13caaa,scripts/build_m4.py,M4
+outputs/figures/comparison/temporal_hotspot_comparison.png,hdbscan_clusters_master_v1.csv + hotspot_tracking.csv,407.1,4d9db1c23f6ec5de097b38a5ba0c738174662ef0994ef2b4158753784ca90e9d,scripts/build_m4.py,M4
+outputs/maps/cluster_comparison.html,metrics_comparison.csv,4720.1,cbe98f13218bb4ab0389cad3965e4304cecbbc4a58e230787f1454c99fa340d0,scripts/build_m4.py,M4
+outputs/maps/pickup_demand_heatmap.html,eda/pickup_coords.csv,38.3,a91f2dbb99e5f10f93ad2354f068d9fd7f90ce88b3f835a879ff4c26d583a027,scripts/build_m4.py,M4
+outputs/figures/comparison/pickup_demand_heatmap.png,eda/pickup_coords.csv,405.9,188d041b50a77f25f9825a47acccbbce892785ea36444a4726313c1f3fb02817,scripts/build_m4.py,M4
+outputs/maps/cluster_map_kmeans.html,kmeans_clusters_master_v1.csv,53.4,79712cfd4a4dea4bc11f6517158b1dded8df934acf62354ea3e5e729d938b902,scripts/build_m4.py,M4
+outputs/maps/cluster_map_dbscan.html,dbscan_clusters_master_v1.csv (cau hinh chinh A),43.5,790a161c11dcf9394deb5d77ed085fb383d37cca21045b50785130a8f25cd3ee,scripts/build_m4.py,M4
+outputs/maps/cluster_map_hdbscan.html,hdbscan_clusters_master_v1.csv,261.8,104caac385cbc010dba8796b39b722d13d274c2a03e75ca4942c6324c896f1be,scripts/build_m4.py,M4
+outputs/maps/cluster_map_comparison.html,3 bang cum master_v1,71.4,9dbde77ef1680a2fce4395bd3b06bbed8a58a3d5d03b061be22cb17f78491b11,scripts/build_m4.py,M4
+outputs/figures/comparison/algorithm_comparison.png,3 bang cum master_v1,772.5,67994a8cb74efbaf87ea5f0a839e202e916af5317fef4522cfcea1ebc2a069a8,scripts/build_m4.py,M4
+outputs/figures/comparison/algorithm_comparison_WEEKDAY_AM.png,3 bang cum master_v1,344.2,4bacfb851e01889a0d06a0a2d7d857286421f1d45c449b0d57165f455b7351d8,scripts/build_m4.py,M4
+outputs/figures/comparison/algorithm_comparison_WEEKDAY_PM.png,3 bang cum master_v1,341.3,df832baafa3a80be10a041cdb757b35acf22fc7b08b31139965a5f1046026fdd,scripts/build_m4.py,M4
+outputs/figures/comparison/algorithm_comparison_WEEKEND.png,3 bang cum master_v1,354.6,4c74a393fd5c08acea608e538bf583705d50f20d54dd6b47904d8a780f5ed4c5,scripts/build_m4.py,M4

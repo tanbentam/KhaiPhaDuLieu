@@ -1,0 +1,11 @@
+claim_id,source,claim,observed,verdict,owner
+C01,reports/m3_hdbscan_temporal.md,"HDBSCAN (mcs=100, ms=10) có Noise Ratio ≈ 10% (10,8%)","metrics chính thức: WEEKDAY_AM 2.1%, WEEKDAY_PM 2.3%, WEEKEND 0.9%",KHÔNG KHỚP,M3
+C02,docs/Phan 5/hdbscan_interpretation.md,"HDBSCAN Noise Ratio 9,8%–11,5%",metrics chính thức: 0.9%–2.3%,KHÔNG KHỚP,M3
+C03,reports/m3_hdbscan_temporal.md,"mcs=100 cho '4 cụm lớn' (Loop/Near North, O'Hare, Midway, Hyde Park)","bảng cụm chính thức: WEEKDAY_AM 67 cụm, WEEKDAY_PM 63 cụm, WEEKEND 78 cụm",KHÔNG KHỚP,M3
+C04,reports/m3_hdbscan_temporal.md,"Silhouette 0,78 và DBI 0,19 cho cấu hình chọn",metrics chính thức: Silhouette 0.981–0.991; DBI 0.180–0.288,KHÔNG KHỚP,M3
+C05,reports/m3_hdbscan_temporal.md,"O'Hare tăng từ 11,5% (sáng) lên 16,8% (chiều)","Σ share cụm khu 76: sáng 15.7% → chiều 20.4% (cụm lớn nhất: 10,6% → 12,8%)",KHÔNG KHỚP,M3
+C06,reports/m3_hdbscan_temporal.md,Tâm cụm trung tâm dịch chuyển 820 m về phía bắc (sáng → chiều); interpretation: 650–950 m,"dịch chuyển của các cụm lớn (≥ 2000 chuyến) sáng→chiều: 0 m, 0 m, 0 m, 0 m, 0 m, 0 m, 83 m, 0 m, 0 m; không có cặp nào trong khoảng 650–950 m ở nhóm này",KHÔNG KHỚP,M3
+C07,reports/m3_hdbscan_temporal.md,"Hyde Park (khu 41) xuất hiện rõ ở sáng ngày thường (611 chuyến, 1,0%), tan rã chiều/cuối tuần","HDBSCAN khu 41: WEEKDAY_AM 351 chuyến (0.6%), WEEKDAY_PM 607 chuyến (0.7%), WEEKEND 748 chuyến (0.6%). Số 611 chuyến / 1,0% trùng cụm DBSCAN A khu 41: 611 chuyến",KHÔNG KHỚP,M3
+C08,reports/m3_hdbscan_temporal.md,"Midway (khu 56) giữ tỷ trọng 4,2%–4,8% ở cả 3 lát cắt","Σ share cụm HDBSCAN khu 56: WEEKDAY_AM 2.7%, WEEKDAY_PM 3.3%, WEEKEND 3.8%",KHÔNG KHỚP,M3
+C09,docs/Phan 5/hdbscan_interpretation.md,"DBSCAN Noise Ratio 9,4%–12,6%",dbscan_clusters (A): 9.4%–12.6%,KHỚP,M3
+C10,docs/Phan 5/5.5-bien-ban-ban-giao-m3.md,"Bảng H05 gồm đúng 9 dòng (3 K-Means, 3 DBSCAN A, 3 HDBSCAN)",baseline + hdbscan = 9 dòng,KHỚP,M3
