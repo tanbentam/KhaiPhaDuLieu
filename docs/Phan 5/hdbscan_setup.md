@@ -4,6 +4,8 @@ Người thực hiện: Thành viên 3 (M3 – Hoàng Tuấn Bảo)
 Ngày hoàn thành: 19/11/2026  
 Nhánh Git: `m3/hdbscan-temporal`
 
+> **Cập nhật trạng thái:** Đây là biên bản môi trường của lần chạy trước. Mã nguồn hiện không fallback sang scikit-learn khi `hdbscan` không nạp được; cần chạy `python -m src.models.benchmark_hdbscan` trên máy bàn giao để xác nhận `fit_predict`, `probabilities_`, `cluster_persistence_`, `condensed_tree_`, runtime/RAM và sinh environment snapshot hiện hành.
+
 ---
 
 ## 1. Xác thực Dữ liệu Đầu vào (Handoff từ M1)

@@ -6,6 +6,8 @@
 - **Nhánh làm việc:** `m3/hdbscan-temporal`
 - **Bộ dữ liệu chính thức:** `master_v1` (535.167 dòng, CRS `EPSG:26916`, 304 toạ độ centroid)
 
+> **Trạng thái bàn giao:** Các số liệu HDBSCAN trong artifacts hiện có chưa được xác nhận bằng backend sau rà soát. Log cũ ghi version package nhưng không xác định backend import thực tế; bảng tuning cũng chưa có persistence. Mã nguồn hiện yêu cầu package `hdbscan` và dừng rõ ràng nếu không nạp được backend hoặc thiếu stability outputs. Trước khi M4 dùng số liệu như kết quả cuối, cần chạy `python -m src.models.benchmark_hdbscan`, `python -m src.models.run_hdbscan` và `python -m src.evaluation.run_temporal_comparison` trong môi trường đã kiểm tra được.
+
 ---
 
 ## MỤC LỤC
@@ -51,10 +53,10 @@ HDBSCAN giải quyết bài toán trên qua 5 bước toán học:
 ## 2. KẾT QUẢ THỰC NGHIỆM VÀ HYPERPARAMETER TUNING
 
 ### 2.1. Khảo sát `min_cluster_size` và `min_samples`
-Thực nghiệm khảo sát lưới tham số được thực thi trên lát cắt `WEEKDAY_AM` ($60.498$ dòng, $304$ toạ độ duy nhất) và lưu tại `outputs/metrics/`:
+Artifacts hiện có khảo sát lưới tham số trên lát cắt `WEEKDAY_AM` (khung giờ 07:00–09:59, $60.498$ dòng, $304$ toạ độ duy nhất) và lưu tại `outputs/metrics/`. Kết quả dưới đây cần được tái sinh sau khi xác nhận backend:
 - **Khảo sát `min_cluster_size`:** Giữ `min_samples = 10` cố định (tránh thay đổi ngầm theo R05), khảo sát $mcs \in [50, 100, 200]$:
   - Khi $mcs = 50$: Thu được $89$ cụm, phân rã thành nhiều micro-clusters nhỏ lẻ, tỷ lệ nhiễu cực thấp $0,7\%$ ($416$ điểm), Silhouette $0,991$, DBI $0,225$.
-  - Khi $mcs = 100$: Thu được $67$ cụm, loại bỏ các điểm gom quá nhỏ, bảo toàn các điểm đón khách thực chất, tỷ lệ nhiễu $2,1\%$ ($1.275$ điểm), Silhouette $0,981$, DBI $0,288$, thời gian fit $32,9\text{ s}$.
+  - Khi $mcs = 100$: Thu được $67$ cụm, loại bỏ các điểm gom quá nhỏ, bảo toàn các điểm đón khách thực chất, tỷ lệ nhiễu $2,1\%$ ($1.275$ điểm), Silhouette $0,981$, DBI $0,288$, thời gian fit ghi nhận ở bước tuning là $32,9\text{ s}$ (lúc chạy chính thức là $18,1\text{ s}$ do dao động tải hệ thống/bộ đệm CPU).
   - Khi $mcs = 200$: Thu được $51$ cụm, tỷ lệ nhiễu tăng lên $3,1\%$ ($1.863$ điểm), nhiều cụm nhỏ bị loại bỏ, Silhouette $0,954$, DBI $0,344$.
 - **Khảo sát `min_samples`:** Cố định $mcs = 100$, khảo sát $ms \in [5, 10, 20]$:
   - $ms = 5$: $67$ cụm, nhiễu $2,10\%$ ($1.272$ điểm), Silhouette $0,980$, DBI $0,288$.
@@ -64,75 +66,96 @@ Thực nghiệm khảo sát lưới tham số được thực thi trên lát c�
 
 $\Rightarrow$ **Cấu hình chính thức chốt:** `min_cluster_size = 100`, `min_samples = 10`, `cluster_selection_method = 'eom'`.
 
+Script và notebook hiện lấy dải tuning/cấu hình cuối từ `config/experiment.yaml`; lần chạy kế tiếp sẽ dùng đủ dải đã khai báo trong config.
+
 ---
 
 ## 3. BẢNG SO SÁNH CHỈ SỐ GIỮA 3 MÔ HÌNH TRÊN DỮ LIỆU `master_v1`
 
-*(Dữ liệu trích xuất chính thức từ `outputs/metrics/baseline_metrics.csv` và `outputs/metrics/hdbscan_metrics.csv`)*
+*(Các con số HDBSCAN dưới đây được trích từ artifacts hiện có; xem trạng thái bàn giao ở đầu báo cáo và không coi là kết quả cuối trước khi chạy lại backend đã xác nhận.)*
 
 | Thuật toán | Lát cắt thời gian | Số điểm ($N$) | Số cụm | Noise Ratio (%) | Coverage (%) | Cụm lớn nhất (%) | Silhouette | Davies-Bouldin | Runtime (s) | RAM thêm (MB) |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **K-Means** ($K=5$) | WEEKDAY_AM | 60.498 | 5 | 0,0% | 100,0% | 62,3% | 0,733 | 0,445 | 0,12 s* | 2,2 MB |
-| | WEEKDAY_PM | 86.617 | 5 | 0,0% | 100,0% | 62,5% | 0,753 | 0,459 | 0,14 s* | 2,7 MB |
-| | WEEKEND | 120.571 | 5 | 0,0% | 100,0% | 52,7% | 0,726 | 0,477 | 0,16 s* | 3,7 MB |
-| **DBSCAN A** ($1\%, 1500\text{m}$) | WEEKDAY_AM | 60.498 | 4 | 12,6% | 87,4% | 68,9% | 0,741 | 0,220 | 0,04 s* | 3,3 MB |
-| | WEEKDAY_PM | 86.617 | 3 | 9,4% | 90,6% | 66,9% | 0,859 | 0,153 | 0,06 s* | 2,7 MB |
-| | WEEKEND | 120.571 | 4 | 9,9% | 90,1% | 62,1% | 0,825 | 0,159 | 0,07 s* | 4,3 MB |
-| **HDBSCAN** ($mcs=100, ms=10$) | WEEKDAY_AM | 60.498 | 67 | 2,1% | 97,9% | 10,6% | **0,981** | **0,288** | 18,13 s** | 14,2 MB |
-| | WEEKDAY_PM | 86.617 | 63 | 2,3% | 97,7% | 12,8% | **0,990** | **0,180** | 57,15 s** | 17,9 MB |
-| | WEEKEND | 120.571 | 78 | 0,9% | 99,1% | 12,6% | **0,991** | **0,269** | 72,68 s** | 23,3 MB |
+| **K-Means** ($K=5$) | WEEKDAY_AM (07:00–09:59) | 60.498 | 5 | 0,0% | 100,0% | 62,3% | 0,733 | 0,445 | 0,12 s* | 2,2 MB |
+| | WEEKDAY_PM (16:00–18:59) | 86.617 | 5 | 0,0% | 100,0% | 62,5% | 0,753 | 0,459 | 0,14 s* | 2,7 MB |
+| | WEEKEND (cả ngày) | 120.571 | 5 | 0,0% | 100,0% | 52,7% | 0,726 | 0,477 | 0,16 s* | 3,7 MB |
+| **DBSCAN A** ($1\%, 1500\text{m}$) | WEEKDAY_AM (07:00–09:59) | 60.498 | 4 | 12,6% | 87,4% | 68,9% | 0,741 | 0,220 | 0,04 s* | 3,3 MB |
+| | WEEKDAY_PM (16:00–18:59) | 86.617 | 3 | 9,4% | 90,6% | 66,9% | 0,859 | 0,153 | 0,06 s* | 2,7 MB |
+| | WEEKEND (cả ngày) | 120.571 | 4 | 9,9% | 90,1% | 62,1% | 0,825 | 0,159 | 0,07 s* | 4,3 MB |
+| **HDBSCAN** ($mcs=100, ms=10$) | WEEKDAY_AM (07:00–09:59) | 60.498 | 67 | 2,1% | 97,9% | 10,6% | **0,981** | **0,288** | 18,13 s** | 14,2 MB |
+| | WEEKDAY_PM (16:00–18:59) | 86.617 | 63 | 2,3% | 97,7% | 12,8% | **0,990** | **0,180** | 57,15 s** | 17,9 MB |
+| | WEEKEND (cả ngày) | 120.571 | 78 | 0,9% | 99,1% | 12,6% | **0,991** | **0,269** | 72,68 s** | 23,3 MB |
 
 > ### Các Lưu ý Phương pháp luận & Phân tích Tính Hợp lệ (Methodological Caveats):
-> 1. **Khác biệt cách fit và Runtime (* vs **):** 
+> 1. **Khác biệt cách fit và Dao động Runtime (* vs **):** 
 >    - K-Means và DBSCAN được fit có trọng số (`sample_weight`) trên đúng 304 toạ độ duy nhất ($N_{\text{fit}} = 304$), chạy trên môi trường Python 3.10.6 nên thời gian chỉ mất $0,04 - 0,16\text{ s}$.
->    - HDBSCAN dựng cây khoảng cách tiếp cận tương hỗ (mutual reachability MST) trên toàn bộ tập điểm rời rạc ($N_{\text{fit}} = 60.498 - 120.571$), chạy trên môi trường Python 3.11.9 (Windows) nên thời gian từ $18,1\text{ s}$ đến $72,7\text{ s}$. Vì vậy, sự chênh lệch thời gian phản ánh số điểm đầu vào của mô hình ($N=304$ vs $N \approx 10^5$), không so sánh trực tiếp hiệu năng ngang hàng.
-> 2. **Hiện tượng Silhouette bị thổi phồng (0,98 - 0,99) do bán kính cụm bằng 0:**
->    - Trong dữ liệu taxi Chicago, toạ độ đã bị làm mờ về tâm của census tract/khu vực (chỉ có 304 toạ độ).
->    - Thống kê từ `hdbscan_clusters_master_v1.csv` cho thấy có **62,7% số cụm ở AM (42/67 cụm)** có bán kính nội cụm $RMS = 0\text{ m}$ (chỉ gồm duy nhất một toạ độ centroid có $\ge 100$ lượt đón).
->    - Với các điểm trong cụm bán kính 0, khoảng cách nội cụm $a(i) = 0$, dẫn đến điểm Silhouette cục bộ $s(i) = \frac{b(i) - 0}{\max(a(i), b(i))} = 1,0$. Hiện tượng nén toạ độ này đã kéo Silhouette trung bình của HDBSCAN lên mức $0,98 - 0,99$. Đây là hạn chế về độ phân giải của dữ liệu (Spatial Coarsening), cần giải trình rõ khi bảo vệ đồ án.
+>    - HDBSCAN dựng cây khoảng cách tiếp cận tương hỗ (mutual reachability MST) trên toàn bộ tập điểm rời rạc ($N_{\text{fit}} = 60.498 - 120.571$), chạy trên môi trường Python 3.11.9 (Windows) nên thời gian từ $18,1\text{ s}$ đến $72,7\text{ s}$.
+>    - *Dao động runtime:* Ngay trong HDBSCAN với cùng tham số $mcs=100, ms=10$ trên `WEEKDAY_AM`, runtime có sự dao động tự nhiên từ $18,1\text{ s}$ (lần fit chính thức) đến $32,9\text{ s}$ (lần quét lưới), phản ánh mức độ chiếm dụng CPU/thread tại thời điểm chạy. Vì vậy, các con số runtime chỉ có giá trị tham khảo định lượng, không thể dùng để so sánh trực tiếp hiệu năng ngang hàng giữa các thuật toán.
+> 2. **Hiện tượng Silhouette và Davies-Bouldin bị ảnh hưởng bởi cụm bán kính 0:**
+>    - Trong dữ liệu taxi Chicago, toạ độ đã bị làm mờ về tâm của census tract/khu vực (304 toạ độ duy nhất).
+>    - Thống kê chính xác từ `hdbscan_clusters_master_v1.csv` cho thấy tỷ lệ cụm đơn toạ độ (bán kính nội cụm $RMS \approx 0\text{ m}$) chiếm tỷ trọng áp đảo:
+>      - `WEEKDAY_AM`: **39/67 cụm = 58,2%**
+>      - `WEEKDAY_PM`: **41/63 cụm = 65,1%**
+>      - `WEEKEND`: **51/78 cụm = 65,4%**
+>      - Toàn bộ 3 lát cắt: **131/208 cụm = 63,0%**
+>    - *Ảnh hưởng tới chỉ số nội tại:* 
+>      - **Silhouette:** Khi khoảng cách nội cụm $a(i) = 0$, điểm Silhouette từng điểm đạt $s(i) = \frac{b(i)-0}{\max(a(i),b(i))} = 1,0$, kéo Silhouette trung bình lên $0,98 - 0,99$.
+>      - **Davies-Bouldin Index (DBI):** Độ phân tán nội cụm $s_i \approx 0$ khiến tử số $s_i + s_j$ trong công thức $R_{ij} = \frac{s_i + s_j}{d(c_i, c_j)}$ bị thu hẹp đáng kể, từ đó kéo chỉ số DBI xuống thấp nhân tạo ($0,18 - 0,29$). Do đó, DBI thấp không hoàn toàn phản ánh thuật toán "vượt trội", mà là hệ quả từ hiện tượng nén toạ độ của dữ liệu (Spatial Coarsening).
 > 3. **Lưu ý nghiệp vụ bắt buộc:**
 >    - *Toạ độ đón xe là toạ độ centroid khu vực hành chính (không phải vị trí GPS chính xác của xe).*
 >    - *Hotspot thể hiện điểm tập trung nhu cầu đón xe (pickup demand), không phải điểm ùn tắc giao thông.*
+
+> **Lưu ý so sánh:** M2 fit K-Means/DBSCAN trên 304 tọa độ có trọng số; HDBSCAN fit trên từng dòng chuyến vì implementation không nhận `sample_weight`. Đây là khác biệt về biểu diễn lúc fit. Không so sánh trực tiếp runtime; khi diễn giải metrics phải giữ caveat này và nêu rõ số điểm dùng để tính metrics.
 
 ---
 
 ## 4. KẾT QUẢ PHÂN TÍCH DỊCH CHUYỂN HOTSPOT THEO THỜI GIAN
 
-*(Dữ liệu chính thức từ `outputs/metrics/hotspot_tracking.csv` và `hdbscan_clusters_master_v1.csv`)*
+*(Tracking hiện có được tạo từ artifacts HDBSCAN trước khi xác nhận backend; cần tái sinh cùng với nhãn/cụm trước khi M4 chốt các cặp và cluster ID.)*
 
-Thuật toán ghép cặp cụm (Hungarian Matching với ngưỡng $\le 3.500\text{ m}$) đã ghép thành công **229 cặp chuyển tiếp**. 
+Các tổng lượt theo `pickup_community_area` dưới đây được tính trực tiếp trên dữ liệu nguồn M1, bao gồm cả lượt bị gán noise. Chúng không đồng nghĩa với tổng kích thước các cụm có `top_community_area` tương ứng.
+
+Thuật toán ghép cặp theo tâm gần nhất (Nearest Centroid Matching với ngưỡng tối đa $\le 3.500\text{ m}$) tạo ra **229 dòng phân tích**:
+- **195 cặp MATCHED:** ghép thành công giữa các cụm tương đồng vị trí. Do thuật toán ghép tham lam (không ràng buộc một-một), có 4 cụm đích nhận ghép từ nhiều cụm nguồn lân cận.
+- **32 cụm EMERGING:** cụm mới xuất hiện ở lát cắt sau mà không có cụm nguồn tương ứng trong phạm vi $\le 3.500\text{ m}$.
+- **2 cụm DISSOLVED:** cụm ở lát cắt trước tiêu biến, không tìm thấy cụm đích tiếp nối.
 
 ### 4.1. Bản chất của hiện tượng "Dịch chuyển 0 m":
-Trong bảng `hotspot_tracking.csv`, có **53,8% cặp ghép (105/195 cặp MATCHED)** có khoảng cách dịch chuyển $\Delta d = 0\text{ m}$.  
-Điều này xảy ra do tâm cụm của cả hai lát cắt đều neo tại cùng một toạ độ centroid hành chính cố định. **Khoảng cách $0\text{ m}$ không có nghĩa nhu cầu đứng yên**, mà thể hiện vị trí hạ tầng đón khách cố định (như nhà ga sân bay, toà cao ốc), trong khi sự biến động dịch chuyển thể hiện qua **sự tăng/giảm số chuyến ($\Delta\text{trips}$) và tỷ trọng thị phần ($\Delta\text{share}$)**.
+Trong số 195 cặp MATCHED, có **105 cặp (53,8%)** có khoảng cách dịch chuyển tâm $\Delta d = 0\text{ m}$.  
+Điều này xảy ra do tâm cụm của cả hai lát cắt đều neo tại cùng một toạ độ centroid cố định. **Khoảng cách $0\text{ m}$ không có nghĩa nhu cầu đứng yên**, mà thể hiện vị trí hạ tầng đón khách cố định (như nhà ga sân bay, toà cao ốc), trong khi sự biến động dịch chuyển thể hiện qua **sự tăng/giảm số chuyến ($\Delta\text{trips}$) và tỷ trọng thị phần ($\Delta\text{share}$)**.
 
-### 4.2. Phân tích Chi tiết Các Vùng Trọng Điểm:
+### 4.2. Phân tích Chi tiết Các Khu Vực Trọng Điểm:
+*(Lưu ý: Các diễn giải về "bệnh viện UIC", "nhân viên tan làm", "nhà ga sân bay" là các giả thuyết suy luận bối cảnh đô thị, không phải thuộc tính trực tiếp ghi nhận trong dữ liệu).*
+
 1. **Cụm Sân bay Quốc tế O'Hare (Khu vực 76):**
-   - Được HDBSCAN nhận diện qua 2 cụm nhà ga lớn (Cụm 0 và Cụm 4 ở AM; Cụm 0 và Cụm 2 ở PM/Weekend).
-   - Tâm cụm cố định tuyệt đối tại vị trí nhà ga ($\Delta d = 0\text{ m}$).
-   - **Tỷ trọng nhu cầu tăng vọt theo thời gian:**
-     - Buổi sáng (`WEEKDAY_AM`): $15,7\%$ tổng nhu cầu ($9.469$ chuyến: Cụm 0 chiếm $10,6\%$, Cụm 4 chiếm $5,1\%$).
-     - Buổi chiều (`WEEKDAY_PM`): Tăng lên **$20,4\%$** ($17.690$ chuyến: Cụm 0 chiếm $12,8\%$, Cụm 2 chiếm $7,7\%$).
-     - Cuối tuần (`WEEKEND`): Chiếm tới **$24,2\%$** ($29.137$ chuyến: Cụm 0 chiếm $12,6\%$, Cụm 2 chiếm $11,5\%$).
-   - *Ý nghĩa nghiệp vụ:* Nhu cầu hạ cánh và đón taxi từ sân bay về thành phố dồn dập vào chiều tối và dịp cuối tuần.
+   - Được HDBSCAN nhận diện qua 2 cụm lớn (Cụm 0 và Cụm 4 ở AM; Cụm 0 và Cụm 2 ở PM/Weekend), tâm cố định $\Delta d = 0\text{ m}$.
+   - **Tỷ trọng nhu cầu tăng theo thời gian:**
+     - Buổi sáng (`WEEKDAY_AM`): $15,7\%$ tổng lượt trong lát cắt ($9.469$ chuyến).
+     - Buổi chiều (`WEEKDAY_PM`): **$20,4\%$** ($17.693$ chuyến).
+     - Cuối tuần (`WEEKEND`): **$24,2\%** ($29.137$ chuyến).
+   - Số lượt ở trên lấy trực tiếp từ `pickup_community_area=76`; không phụ thuộc vào cluster ID. Kích thước/ID cụm sẽ được cập nhật từ artifacts sau lần chạy đã xác nhận backend.
 
-2. **Khu vực Công sở Loop (Khu vực 32):**
-   - Tập trung nhiều cụm tài chính văn phòng (Cụm 2, 5, 10 ở AM; Cụm 1, 4, 5 ở PM).
-   - Tổng tỷ trọng đón khách tăng từ **$15,3\%$ (sáng)** lên **$19,7\%$ (chiều)** do làn sóng nhân viên công sở tan làm đón xe.
+2. **Khu vực Trung tâm Loop (Khu vực 32):**
+   - Tổng lượt theo `pickup_community_area=32` là **$17,98\%$** ($10.875$ chuyến) ở AM, **$22,53\%$** ($19.516$ chuyến) ở PM và **$13,54\%$** ($16.328$ chuyến) vào cuối tuần. Đây là tổng theo vùng từ dữ liệu nguồn, không phải phép cộng theo `top_community_area` của các cluster.
 
-3. **Khu vực Near West Side (Khu vực 28 - Bệnh viện UIC & Công sở phía Tây):**
-   - Biến động mạnh nhất về sụt giảm thị phần: Cụm 1 ở AM chiếm **$9,71\%$** ($5.874$ chuyến), nhưng sang PM ghép với Cụm 9 chỉ còn **$3,06\%$** ($2.651$ chuyến), giảm sâu **$-6,65\%$ điểm thị phần**. Phản ánh đặc thù hành khách đến khám bệnh và làm việc buổi sáng, giảm mạnh vào chiều.
+3. **Khu vực Near West Side (Khu vực 28):**
+   - Thể hiện sự sụt giảm thị phần lớn nhất trong chuyển tiếp sáng $\rightarrow$ chiều: Cụm 1 ở AM chiếm **$9,71\%$** ($5.874$ chuyến), sang PM ghép với Cụm 9 chỉ còn **$3,06\%$** ($2.650$ chuyến), giảm sâu **$-6,65\%$ điểm thị phần**. 
+   - *Lưu ý:* Mức giảm $-6,65\%$ điểm là lớn nhất ở chuyển tiếp ngày thường (AM $\rightarrow$ PM). Ở chuyển tiếp sáng $\rightarrow$ cuối tuần (AM $\rightarrow$ Weekend), Cụm 1 sang Cụm 16 còn sụt giảm mạnh hơn: **$-8,15\%$ điểm** (từ $9,71\%$ xuống $1,56\%$).
 
-4. **Khu vực Giải trí Near North Side (Khu vực 8 - River North & Michigan Ave):**
-   - Ngày thường duy trì ổn định $11,9\% - 13,2\%$, nhưng bùng nổ vào cuối tuần (`WEEKEND`): riêng Cụm 1 đã đạt **$12,0\%$** ($14.454$ chuyến), trở thành tâm điểm vui chơi, ăn uống lớn nhất thành phố.
+4. **Khu vực Near North Side (Khu vực 8):**
+   - Tổng lượt theo `pickup_community_area=8` là **$19,18\%$** ($11.604$ chuyến) ở AM, **$22,93\%$** ($19.857$ chuyến) ở PM và **$23,48\%$** ($28.312$ chuyến) vào cuối tuần.
+   - Kích thước cụm cuối tuần nêu trong artifacts hiện có cần được xác nhận lại sau lần chạy backend đã xác nhận; không suy ra tổng lượt toàn khu vực từ một cluster hoặc từ `top_community_area`.
 
-5. **Khu vực Giáo dục Hyde Park (Khu vực 41 - Đại học Chicago):**
-   - Ở lát cắt `WEEKDAY_AM`: HDBSCAN phát hiện Cụm 29 ($351$ chuyến, $0,58\%$, bán kính $RMS = 117\text{ m}$).
-   - Ở lát cắt `WEEKDAY_PM`: Cụm 27 ($607$ chuyến, $0,70\%$, bán kính $RMS = 338\text{ m}$).
-   - Cuối tuần (`WEEKEND`): Tách thành Cụm 30 ($629$ chuyến) và Cụm 74 ($119$ chuyến).
-   - *(Đính chính: Con số "611 chuyến, 1,0%" là của cụm DBSCAN M2, không phải của HDBSCAN).*
+5. **Sân bay Midway (Khu vực 56):**
+   - Tương tự DBSCAN, HDBSCAN cũng phân tách khu vực Midway thành **2 cụm riêng biệt** (ở AM là Cụm 15 & 22; PM là Cụm 13 & 20; Cuối tuần là Cụm 10 & 17) do khoảng cách giữa 2 toạ độ điểm đón.
+   - Tổng lượt theo `pickup_community_area=56` là **$2,71\%$** ($1.637$ chuyến) ở AM $\rightarrow$ **$3,29\%$** ($2.850$ chuyến) ở PM $\rightarrow$ **$3,80\%$** ($4.576$ chuyến) vào cuối tuần. Đây là số liệu vùng từ dữ liệu nguồn; số lượt trong các cụm đại diện khu vực có thể khác do noise/cách gán cụm.
 
-6. **Các cụm dịch chuyển không gian thực sự ($\Delta d > 0$):**
+6. **Khu vực Hyde Park (Khu vực 41):**
+   - Ở `WEEKDAY_AM`: HDBSCAN phát hiện Cụm 29 ($351$ chuyến, $0,58\%$, bán kính $RMS = 117\text{ m}$).
+   - Ở `WEEKDAY_PM`: Cụm 27 ($607$ chuyến, $0,70\%$, bán kính $RMS = 338\text{ m}$).
+   - Dữ liệu nguồn có $750$ lượt thuộc `pickup_community_area=41` vào cuối tuần. Các cluster ID/kích thước từng cụm trong artifacts hiện có cần được xác nhận lại sau lần chạy backend đã xác nhận.
+
+7. **Các cụm dịch chuyển không gian thực sự ($\Delta d > 0$):**
    - Xuất hiện ở các khu vực có nhiều toạ độ lân cận: Cụm 6 $\rightarrow$ Cụm 10 ở Lake View dịch chuyển $83\text{ m}$, Cụm 28 ở Grand Boulevard dịch chuyển $194\text{ m}$, Cụm 29 ở Hyde Park dịch chuyển $119\text{ m}$, Cụm 44 ở Lake View dịch chuyển $1.441\text{ m}$.
 
 ---
@@ -153,4 +176,4 @@ Trong bảng `hotspot_tracking.csv`, có **53,8% cặp ghép (105/195 cặp MATC
 
 ### Câu Q10: Vì sao Silhouette của HDBSCAN lên tới 0,98 - 0,99 và hơn 50% cặp cụm có khoảng cách dịch chuyển 0 m?
 *Trả lời (khoảng 30 giây):*
-"Đây là hệ quả trực tiếp từ đặc thù làm mờ dữ liệu (anonymization) của cổng dữ liệu mở Chicago: hơn 535.000 chuyến đi được nén về đúng 304 toạ độ tâm khu vực hành chính (centroid). Khi HDBSCAN phân cụm với $mcs = 100$, có tới 62,7% số cụm chỉ gồm duy nhất một toạ độ centroid có trên 100 chuyến (bán kính nội cụm bằng 0). Khi khoảng cách nội cụm $a(i) = 0$, công thức toán học sẽ cho điểm Silhouette $s(i) = 1,0$, kéo trung bình lên 0,98 - 0,99. Tương tự, 53,8% cặp ghép có dịch chuyển $\Delta d = 0\text{ m}$ vì tâm cụm cố định tại cùng toạ độ centroid; sự dịch chuyển ở đây không phải di chuyển toạ độ địa lý mà thể hiện qua sự thay đổi mạnh mẽ về số chuyến và tỷ trọng thị phần nhu cầu."
+"Đây là hệ quả trực tiếp từ đặc thù làm mờ dữ liệu (anonymization) của cổng dữ liệu mở Chicago: hơn 535.000 chuyến đi được nén về đúng 304 toạ độ tâm khu vực hành chính (centroid). Khi HDBSCAN phân cụm với $mcs = 100$, có tới 58,2% cụm ở AM và 63,0% tổng số cụm trên cả 3 lát cắt chỉ gồm duy nhất một toạ độ centroid (bán kính nội cụm bằng 0). Khi khoảng cách nội cụm $a(i) = 0$, công thức toán học sẽ cho điểm Silhouette $s(i) = 1,0$, đồng thời kéo chỉ số Davies-Bouldin xuống thấp. Tương tự, 53,8% cặp ghép (105/195 cặp MATCHED) có dịch chuyển $\Delta d = 0\text{ m}$ vì tâm cụm cố định tại cùng toạ độ centroid; sự dịch chuyển ở đây thể hiện qua sự thay đổi mạnh mẽ về số chuyến và tỷ trọng thị phần nhu cầu."

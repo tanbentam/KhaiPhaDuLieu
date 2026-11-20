@@ -1,0 +1,4 @@
+time_slice,weekdays,hours,n_days,hours_per_day,exposure_hours,n_pickups,pickups_per_hour,first_timestamp,last_timestamp,sample_id,crs
+WEEKDAY_AM,"0,1,2,3,4","7,8,9",20,3,60,60498,1008.3,2023-04-17 07:00:00,2023-05-12 09:45:00,master_v1,EPSG:26916
+WEEKDAY_PM,"0,1,2,3,4","16,17,18",20,3,60,86617,1443.6166666666666,2023-04-17 16:00:00,2023-05-12 18:45:00,master_v1,EPSG:26916
+WEEKEND,"5,6",all,8,24,192,120571,627.9739583333334,2023-04-22 00:00:00,2023-05-14 23:45:00,master_v1,EPSG:26916
