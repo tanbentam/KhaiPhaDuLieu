@@ -27,7 +27,7 @@ def fit_hdbscan(
     cluster_selection_method: str = "eom",
     cluster_selection_epsilon: float = 0.0,
     gen_min_span_tree: bool = False,
-    approx_min_span_tree: bool = True,
+    approx_min_span_tree: bool = False,
     core_dist_n_jobs: int = -1,
 ) -> tuple[np.ndarray, np.ndarray, Any]:
     """Fit mo hinh HDBSCAN tren mang toa do X.

@@ -57,7 +57,7 @@ def main() -> None:
     validate_hdbscan_api()
     df = pd.read_parquet(data_path)
     am = df.loc[df["time_slice"] == "WEEKDAY_AM", ["x_m", "y_m"]].to_numpy(dtype=np.float64)
-    sample_sizes = [5_000, 10_000, 30_000]
+    sample_sizes = [5_000, 10_000, 30_000, 50_000]
     if len(am) < max(sample_sizes):
         raise ValueError(
             f"WEEKDAY_AM has {len(am):,} rows; pilot requires {max(sample_sizes):,}."
@@ -65,6 +65,7 @@ def main() -> None:
 
     hdb_cfg = cfg["hdbscan"]
     final_cfg = hdb_cfg["final"]
+    approx_mst = bool(hdb_cfg.get("approx_min_span_tree", False))
     indices = np.random.default_rng(cfg["project"]["seed"]).permutation(len(am))
     rows = []
     for sample_size in sample_sizes:
@@ -77,6 +78,7 @@ def main() -> None:
                 metric=hdb_cfg["metric"],
                 cluster_selection_method=final_cfg["cluster_selection_method"],
                 cluster_selection_epsilon=float(hdb_cfg["cluster_selection_epsilon"]),
+                approx_min_span_tree=approx_mst,
             )
         )
         persistence = get_cluster_persistence_table(clusterer)
@@ -103,7 +105,6 @@ def main() -> None:
     benchmark_path = metrics_dir / "hdbscan_benchmark.csv"
     pd.DataFrame(rows).to_csv(benchmark_path, index=False)
 
-    environment_path = metrics_dir / "environment_hdbscan.txt"
     def _safe_version(pkg: str) -> str:
         try:
             return version(pkg)
@@ -115,6 +116,7 @@ def main() -> None:
             except Exception:
                 return "not_installed"
 
+    environment_path = metrics_dir / "environment_hdbscan.txt"
     environment_path.write_text(
         "\n".join([
             f"python={platform.python_version()}",

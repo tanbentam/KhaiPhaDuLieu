@@ -49,7 +49,7 @@ def test_cluster_matching_mock():
     res = match_clusters(df_am, df_pm, slice_from_name="AM", slice_to_name="PM", max_distance_m=3500.0)
 
     assert len(res) == 2, f"Phai co 2 cap ghep, nhan duoc {len(res)}"
-    assert (res["status"] == "MATCHED").all(), "Tat ca phai duoc ghep cap thanh cong"
+    assert (res["status"] == "STABLE").all(), "Ca 2 phai la STABLE (1-1 mutual match)"
     # Cum 0 dich chuyen 500m
     row0 = res[res["cluster_from"] == 0].iloc[0]
     assert abs(row0["shift_distance_m"] - 500.0) < 1.0, f"Dich chuyen phai la 500m, nhan duoc {row0['shift_distance_m']}"
@@ -57,6 +57,91 @@ def test_cluster_matching_mock():
     row1 = res[res["cluster_from"] == 1].iloc[0]
     assert abs(row1["shift_distance_m"] - 50.0) < 1.0, f"Dich chuyen phai la 50m, nhan duoc {row1['shift_distance_m']}"
     print("PASS: test_cluster_matching_mock thanh cong!")
+
+
+def test_two_way_matching_two_sources_one_target_merged():
+    """Kiem thu truong hop 2 cum nguon cung ghep vao 1 cum dich (MERGED)."""
+    df_am = pd.DataFrame({
+        "cluster": [0, 1],
+        "n_trips": [500, 400],
+        "share": [0.3, 0.25],
+        "center_x_m": [448000.0, 448200.0],
+        "center_y_m": [4636000.0, 4636100.0],
+        "center_lat": [41.88, 41.881],
+        "center_lon": [-87.63, -87.628],
+    })
+    df_pm = pd.DataFrame({
+        "cluster": [0],
+        "n_trips": [1000],
+        "share": [0.6],
+        "center_x_m": [448100.0],
+        "center_y_m": [4636050.0],
+        "center_lat": [41.8805],
+        "center_lon": [-87.629],
+    })
+    res = match_clusters(df_am, df_pm, slice_from_name="AM", slice_to_name="PM", max_distance_m=3500.0)
+    assert len(res) == 2, f"Expected 2 rows, got {len(res)}"
+    assert (res["status"] == "MERGED").all(), f"Expected both MERGED, got {res['status'].tolist()}"
+    assert set(res["cluster_from"]) == {0, 1}
+    assert (res["cluster_to"] == 0).all()
+    print("PASS: test_two_way_matching_two_sources_one_target_merged thanh cong!")
+
+
+def test_two_way_matching_one_source_two_targets_split():
+    """Kiem thu truong hop 1 cum nguon phan tach thanh 2 cum dich (SPLIT)."""
+    df_am = pd.DataFrame({
+        "cluster": [0],
+        "n_trips": [1000],
+        "share": [0.6],
+        "center_x_m": [448100.0],
+        "center_y_m": [4636050.0],
+        "center_lat": [41.8805],
+        "center_lon": [-87.629],
+    })
+    df_pm = pd.DataFrame({
+        "cluster": [0, 1],
+        "n_trips": [500, 400],
+        "share": [0.3, 0.25],
+        "center_x_m": [448000.0, 448200.0],
+        "center_y_m": [4636000.0, 4636100.0],
+        "center_lat": [41.88, 41.881],
+        "center_lon": [-87.63, -87.628],
+    })
+    res = match_clusters(df_am, df_pm, slice_from_name="AM", slice_to_name="PM", max_distance_m=3500.0)
+    assert len(res) == 2, f"Expected 2 rows, got {len(res)}"
+    assert (res["status"] == "SPLIT").all(), f"Expected SPLIT, got {res['status'].tolist()}"
+    assert (res["cluster_from"] == 0).all()
+    assert set(res["cluster_to"]) == {0, 1}
+    print("PASS: test_two_way_matching_one_source_two_targets_split thanh cong!")
+
+
+def test_two_way_matching_outside_threshold():
+    """Kiem thu truong hop ngoai nguong khoang cach: DISSOLVED va EMERGING."""
+    df_am = pd.DataFrame({
+        "cluster": [0],
+        "n_trips": [500],
+        "share": [0.5],
+        "center_x_m": [400000.0],
+        "center_y_m": [4600000.0],
+        "center_lat": [41.50],
+        "center_lon": [-88.00],
+    })
+    df_pm = pd.DataFrame({
+        "cluster": [0],
+        "n_trips": [500],
+        "share": [0.5],
+        "center_x_m": [450000.0],  # 50 km away > 3.5 km
+        "center_y_m": [4650000.0],
+        "center_lat": [41.90],
+        "center_lon": [-87.60],
+    })
+    res = match_clusters(df_am, df_pm, slice_from_name="AM", slice_to_name="PM", max_distance_m=3500.0)
+    assert len(res) == 2, f"Expected 2 rows, got {len(res)}"
+    dissolved = res[res["status"] == "DISSOLVED"]
+    emerging = res[res["status"] == "EMERGING"]
+    assert len(dissolved) == 1 and dissolved.iloc[0]["cluster_from"] == 0
+    assert len(emerging) == 1 and emerging.iloc[0]["cluster_to"] == 0
+    print("PASS: test_two_way_matching_outside_threshold thanh cong!")
 
 
 def test_cluster_persistence_tracks_size_relabeling():
@@ -134,6 +219,9 @@ def test_time_slice_manifest_normalizes_by_exposure_hours():
 def main():
     print("Dang chay bo kiem thu M3 (HDBSCAN & Temporal Tracking)...")
     test_cluster_matching_mock()
+    test_two_way_matching_two_sources_one_target_merged()
+    test_two_way_matching_one_source_two_targets_split()
+    test_two_way_matching_outside_threshold()
     test_cluster_persistence_tracks_size_relabeling()
     test_cluster_persistence_rejects_missing_backend_output()
     test_fit_hdbscan_requires_stability_outputs()

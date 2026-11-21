@@ -83,8 +83,13 @@ hdbscan:
   min_samples_candidates: [5, 10, 20, 50]
   min_samples_default: 10              # co dinh khi khao sat min_cluster_size
   cluster_selection_epsilon: 0.0
+  approx_min_span_tree: false          # Cay khung toi thieu chinh xac (on dinh voi toa do trung lap)
   # Tham so cuoi cung se duoc chot sau buoc tuning (Notebook 05)
   final:
     min_cluster_size: 100
     min_samples: 10
     cluster_selection_method: eom
+
+# M3: Phan tich lat cat thoi gian va ghep cap hotspot
+temporal:
+  match_max_distance_m: 3500.0         # Ban kinh ghep cap toi da (3.5 km ~ ban kinh khu vuc trung tam Chicago)

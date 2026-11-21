@@ -7,4 +7,4 @@ scikit-learn=1.7.2
 pyarrow=not_installed
 machine=windows-16t-15GB
 backend=hdbscan.hdbscan_.HDBSCAN
-git_commit=900630b
+git_commit=21114c3

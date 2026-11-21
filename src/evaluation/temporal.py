@@ -67,68 +67,70 @@ def match_clusters(
     slice_from_name: str,
     slice_to_name: str,
     max_distance_m: float = 3500.0,
+    scaled_min_trips: int | None = None,
 ) -> pd.DataFrame:
-    """Ghep cap tung cum tu lat cat A sang lat cat B dua tren khoang cach tam gan nhat.
+    """Ghep cap hai chieu va phan loai: STABLE, MERGED, SPLIT, EMERGING, DISSOLVED.
 
-    df_from va df_to can cac cot:
-        cluster, n_trips, share, center_x_m, center_y_m, center_lat, center_lon.
-    top_community_area and radius_rms_m are optional metadata.
+    Quy tac theo BA Spec v1.1 va ra soat M3:
+    - Khoang cach Euclidean giua hai tam cum <= max_distance_m (mac dinh 3500 m).
+    - STABLE (on dinh): Cap cum ghep 1-1 doi xung (mutual nearest centroid).
+    - MERGED (gop): Nhieu cum nguon cung ghep vao 1 cum dich.
+    - SPLIT (tach): 1 cum nguon phan tach thanh nhieu cum dich.
+    - DISSOLVED (mat): Cum nguon khong tim thay cum dich nao trong ban kinh nguong.
+    - EMERGING (moi): Cum dich khong co cum nguon nao trong ban kinh nguong.
     """
-    rows = []
-    # Sao chep danh sach cum muc tieu de ghep cap
-    unmatched_to = set(df_to["cluster"].tolist())
+    from_by_id = {int(r["cluster"]): r for _, r in df_from.iterrows()}
+    to_by_id = {int(r["cluster"]): r for _, r in df_to.iterrows()}
 
-    for _, r_from in df_from.iterrows():
-        c_from = int(r_from["cluster"])
+    # 1. Chieu thuan (Forward): moi cum from tim cum to gan nhat
+    f_best: dict[int, int] = {}
+    f_dist: dict[int, float] = {}
+    for c_from, r_from in from_by_id.items():
         x1, y1 = float(r_from["center_x_m"]), float(r_from["center_y_m"])
+        best_c, min_d = None, float("inf")
+        for c_to, r_to in to_by_id.items():
+            d = math.hypot(float(r_to["center_x_m"]) - x1, float(r_to["center_y_m"]) - y1)
+            if d < min_d:
+                min_d = d
+                best_c = c_to
+        if best_c is not None and min_d <= max_distance_m:
+            f_best[c_from] = best_c
+            f_dist[c_from] = min_d
+
+    # 2. Chieu nghich (Backward): moi cum to tim cum from gan nhat
+    b_best: dict[int, int] = {}
+    b_dist: dict[int, float] = {}
+    for c_to, r_to in to_by_id.items():
+        x2, y2 = float(r_to["center_x_m"]), float(r_to["center_y_m"])
+        best_c, min_d = None, float("inf")
+        for c_from, r_from in from_by_id.items():
+            d = math.hypot(x2 - float(r_from["center_x_m"]), y2 - float(r_from["center_y_m"]))
+            if d < min_d:
+                min_d = d
+                best_c = c_from
+        if best_c is not None and min_d <= max_distance_m:
+            b_best[c_to] = best_c
+            b_dist[c_to] = min_d
+
+    from collections import defaultdict
+    dst_sources = defaultdict(list)
+    for c_from, c_to in f_best.items():
+        dst_sources[c_to].append(c_from)
+
+    src_destinations = defaultdict(list)
+    for c_to, c_from in b_best.items():
+        src_destinations[c_from].append(c_to)
+
+    rows = []
+    matched_pairs: set[tuple[int, int]] = set()
+
+    # 1. Forward edges
+    for c_from in sorted(from_by_id.keys()):
+        r_from = from_by_id[c_from]
         ca1 = r_from.get("top_community_area", None)
+        n_coords_from = int(r_from.get("n_coords", 1))
 
-        best_c_to = None
-        min_dist = float("inf")
-        best_r_to = None
-
-        for _, r_to in df_to.iterrows():
-            c_to = int(r_to["cluster"])
-            x2, y2 = float(r_to["center_x_m"]), float(r_to["center_y_m"])
-            dist = math.hypot(x2 - x1, y2 - y1)
-
-            if dist < min_dist:
-                min_dist = dist
-                best_c_to = c_to
-                best_r_to = r_to
-
-        matched = (best_r_to is not None) and (min_dist <= max_distance_m)
-
-        if matched and best_r_to is not None:
-            unmatched_to.discard(best_c_to)
-            shift_x = float(best_r_to["center_x_m"]) - x1
-            shift_y = float(best_r_to["center_y_m"]) - y1
-            d_trips = int(best_r_to["n_trips"]) - int(r_from["n_trips"])
-            d_share = float(best_r_to["share"]) - float(r_from["share"])
-
-            rows.append({
-                "transition": f"{slice_from_name} -> {slice_to_name}",
-                "status": "MATCHED",
-                "cluster_from": c_from,
-                "cluster_to": best_c_to,
-                "top_area_from": ca1,
-                "top_area_to": best_r_to.get("top_community_area", None),
-                "shift_distance_m": round(min_dist, 1),
-                "shift_dx_m": round(shift_x, 1),
-                "shift_dy_m": round(shift_y, 1),
-                "trips_from": int(r_from["n_trips"]),
-                "trips_to": int(best_r_to["n_trips"]),
-                "delta_trips": d_trips,
-                "share_from": round(float(r_from["share"]) * 100, 2),
-                "share_to": round(float(best_r_to["share"]) * 100, 2),
-                "delta_share_pct_points": round(d_share * 100, 2),
-                "from_lat": float(r_from["center_lat"]),
-                "from_lon": float(r_from["center_lon"]),
-                "to_lat": float(best_r_to["center_lat"]),
-                "to_lon": float(best_r_to["center_lon"]),
-            })
-        else:
-            # Cum o slice_from khong tim thay cum tuong ung o slice_to
+        if c_from not in f_best:
             rows.append({
                 "transition": f"{slice_from_name} -> {slice_to_name}",
                 "status": "DISSOLVED",
@@ -145,36 +147,151 @@ def match_clusters(
                 "share_from": round(float(r_from["share"]) * 100, 2),
                 "share_to": 0.0,
                 "delta_share_pct_points": -round(float(r_from["share"]) * 100, 2),
+                "n_coords_from": n_coords_from,
+                "n_coords_to": None,
+                "coord_note": "dissolved_no_target",
+                "below_scaled_threshold": False,
                 "from_lat": float(r_from["center_lat"]),
                 "from_lon": float(r_from["center_lon"]),
                 "to_lat": None,
                 "to_lon": None,
             })
+        else:
+            c_to = f_best[c_from]
+            r_to = to_by_id[c_to]
+            matched_pairs.add((c_from, c_to))
+            d_val = f_dist[c_from]
+            n_coords_to = int(r_to.get("n_coords", 1))
 
-    # Cac cum o slice_to moi xuat hien (khong co trong slice_from)
-    for c_to in sorted(unmatched_to):
-        r_to = df_to[df_to["cluster"] == c_to].iloc[0]
-        rows.append({
-            "transition": f"{slice_from_name} -> {slice_to_name}",
-            "status": "EMERGING",
-            "cluster_from": None,
-            "cluster_to": c_to,
-            "top_area_from": None,
-            "top_area_to": r_to.get("top_community_area", None),
-            "shift_distance_m": None,
-            "shift_dx_m": None,
-            "shift_dy_m": None,
-            "trips_from": 0,
-            "trips_to": int(r_to["n_trips"]),
-            "delta_trips": int(r_to["n_trips"]),
-            "share_from": 0.0,
-            "share_to": round(float(r_to["share"]) * 100, 2),
-            "delta_share_pct_points": round(float(r_to["share"]) * 100, 2),
-            "from_lat": None,
-            "from_lon": None,
-            "to_lat": float(r_to["center_lat"]),
-            "to_lon": float(r_to["center_lon"]),
-        })
+            is_mutual = (b_best.get(c_to) == c_from)
+            n_src = len(dst_sources[c_to])
+            n_dst = len(src_destinations[c_from])
+
+            if is_mutual and n_src == 1 and n_dst == 1:
+                cat = "STABLE"
+            elif n_src > 1:
+                cat = "MERGED"
+            elif n_dst > 1:
+                cat = "SPLIT"
+            else:
+                cat = "STABLE"
+
+            shift_x = float(r_to["center_x_m"]) - float(r_from["center_x_m"])
+            shift_y = float(r_to["center_y_m"]) - float(r_from["center_y_m"])
+
+            coord_note = (
+                "single_coord_zero_shift"
+                if (round(d_val, 1) == 0.0 and n_coords_from == 1 and n_coords_to == 1)
+                else "multi_coord_shift" if round(d_val, 1) > 0.0
+                else "same_centroid"
+            )
+
+            is_below_scaled = (
+                scaled_min_trips is not None and int(r_to["n_trips"]) < scaled_min_trips
+            )
+
+            rows.append({
+                "transition": f"{slice_from_name} -> {slice_to_name}",
+                "status": cat,
+                "cluster_from": c_from,
+                "cluster_to": c_to,
+                "top_area_from": ca1,
+                "top_area_to": r_to.get("top_community_area", None),
+                "shift_distance_m": round(d_val, 1),
+                "shift_dx_m": round(shift_x, 1),
+                "shift_dy_m": round(shift_y, 1),
+                "trips_from": int(r_from["n_trips"]),
+                "trips_to": int(r_to["n_trips"]),
+                "delta_trips": int(r_to["n_trips"]) - int(r_from["n_trips"]),
+                "share_from": round(float(r_from["share"]) * 100, 2),
+                "share_to": round(float(r_to["share"]) * 100, 2),
+                "delta_share_pct_points": round((float(r_to["share"]) - float(r_from["share"])) * 100, 2),
+                "n_coords_from": n_coords_from,
+                "n_coords_to": n_coords_to,
+                "coord_note": coord_note,
+                "below_scaled_threshold": is_below_scaled,
+                "from_lat": float(r_from["center_lat"]),
+                "from_lon": float(r_from["center_lon"]),
+                "to_lat": float(r_to["center_lat"]),
+                "to_lon": float(r_to["center_lon"]),
+            })
+
+    # 2. Backward edges for destination clusters not covered by forward edges (SPLIT)
+    for c_to in sorted(to_by_id.keys()):
+        r_to = to_by_id[c_to]
+        n_coords_to = int(r_to.get("n_coords", 1))
+        is_below_scaled = (
+            scaled_min_trips is not None and int(r_to["n_trips"]) < scaled_min_trips
+        )
+
+        if c_to not in b_best:
+            rows.append({
+                "transition": f"{slice_from_name} -> {slice_to_name}",
+                "status": "EMERGING",
+                "cluster_from": None,
+                "cluster_to": c_to,
+                "top_area_from": None,
+                "top_area_to": r_to.get("top_community_area", None),
+                "shift_distance_m": None,
+                "shift_dx_m": None,
+                "shift_dy_m": None,
+                "trips_from": 0,
+                "trips_to": int(r_to["n_trips"]),
+                "delta_trips": int(r_to["n_trips"]),
+                "share_from": 0.0,
+                "share_to": round(float(r_to["share"]) * 100, 2),
+                "delta_share_pct_points": round(float(r_to["share"]) * 100, 2),
+                "n_coords_from": None,
+                "n_coords_to": n_coords_to,
+                "coord_note": "emerging_no_source",
+                "below_scaled_threshold": is_below_scaled,
+                "from_lat": None,
+                "from_lon": None,
+                "to_lat": float(r_to["center_lat"]),
+                "to_lon": float(r_to["center_lon"]),
+            })
+        else:
+            c_from = b_best[c_to]
+            if (c_from, c_to) not in matched_pairs:
+                matched_pairs.add((c_from, c_to))
+                r_from = from_by_id[c_from]
+                d_val = b_dist[c_to]
+                n_coords_from = int(r_from.get("n_coords", 1))
+                shift_x = float(r_to["center_x_m"]) - float(r_from["center_x_m"])
+                shift_y = float(r_to["center_y_m"]) - float(r_from["center_y_m"])
+
+                coord_note = (
+                    "single_coord_zero_shift"
+                    if (round(d_val, 1) == 0.0 and n_coords_from == 1 and n_coords_to == 1)
+                    else "multi_coord_shift" if round(d_val, 1) > 0.0
+                    else "same_centroid"
+                )
+
+                rows.append({
+                    "transition": f"{slice_from_name} -> {slice_to_name}",
+                    "status": "SPLIT",
+                    "cluster_from": c_from,
+                    "cluster_to": c_to,
+                    "top_area_from": r_from.get("top_community_area", None),
+                    "top_area_to": r_to.get("top_community_area", None),
+                    "shift_distance_m": round(d_val, 1),
+                    "shift_dx_m": round(shift_x, 1),
+                    "shift_dy_m": round(shift_y, 1),
+                    "trips_from": int(r_from["n_trips"]),
+                    "trips_to": int(r_to["n_trips"]),
+                    "delta_trips": int(r_to["n_trips"]) - int(r_from["n_trips"]),
+                    "share_from": round(float(r_from["share"]) * 100, 2),
+                    "share_to": round(float(r_to["share"]) * 100, 2),
+                    "delta_share_pct_points": round((float(r_to["share"]) - float(r_from["share"])) * 100, 2),
+                    "n_coords_from": n_coords_from,
+                    "n_coords_to": n_coords_to,
+                    "coord_note": coord_note,
+                    "below_scaled_threshold": is_below_scaled,
+                    "from_lat": float(r_from["center_lat"]),
+                    "from_lon": float(r_from["center_lon"]),
+                    "to_lat": float(r_to["center_lat"]),
+                    "to_lon": float(r_to["center_lon"]),
+                })
 
     return pd.DataFrame(rows)
 
@@ -184,20 +301,15 @@ def build_hotspot_tracking(
     *,
     max_distance_m: float = 3500.0,
 ) -> pd.DataFrame:
-    """Xay dung bang theo doi dich chuyen xuyen suot ca 3 lat cat.
-
-    So sanh:
-    1. WEEKDAY_AM -> WEEKDAY_PM (nhu cau sang som lam viec -> chieu tan tam)
-    2. WEEKDAY_PM -> WEEKEND (ngay lam viec -> cuoi tuan)
-    3. WEEKDAY_AM -> WEEKEND (sang ngay thuong -> cuoi tuan)
-    """
+    """Xay dung bang theo doi dich chuyen xuyen suot ca 3 lat cat (Hai chieu & phan loai)."""
     am = clusters_df[clusters_df["time_slice"] == "WEEKDAY_AM"].reset_index(drop=True)
     pm = clusters_df[clusters_df["time_slice"] == "WEEKDAY_PM"].reset_index(drop=True)
     we = clusters_df[clusters_df["time_slice"] == "WEEKEND"].reset_index(drop=True)
 
+    # Scaled min trips cho Weekend theo ty le kich thuoc lat cat so voi AM (100 chuyen / 60.498 dong -> 199 chuyen / 120.571 dong)
     t1 = match_clusters(am, pm, slice_from_name="WEEKDAY_AM", slice_to_name="WEEKDAY_PM", max_distance_m=max_distance_m)
-    t2 = match_clusters(pm, we, slice_from_name="WEEKDAY_PM", slice_to_name="WEEKEND", max_distance_m=max_distance_m)
-    t3 = match_clusters(am, we, slice_from_name="WEEKDAY_AM", slice_to_name="WEEKEND", max_distance_m=max_distance_m)
+    t2 = match_clusters(pm, we, slice_from_name="WEEKDAY_PM", slice_to_name="WEEKEND", max_distance_m=max_distance_m, scaled_min_trips=199)
+    t3 = match_clusters(am, we, slice_from_name="WEEKDAY_AM", slice_to_name="WEEKEND", max_distance_m=max_distance_m, scaled_min_trips=199)
 
     tracking_all = pd.concat([t1, t2, t3], ignore_index=True)
     return tracking_all

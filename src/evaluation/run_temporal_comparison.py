@@ -100,47 +100,60 @@ def main() -> None:
     print(f" -> Da luu manifest/counters: {slice_manifest_path.name}, {counts_path.name}")
 
     # 2. Xay dung bang tracking
-    print("\n[2/4] Thuc hien thuat toan ghep cap cum giua cac lat cat (Cluster Matching)...")
-    tracking_df = build_hotspot_tracking(clusters_df, max_distance_m=3500.0)
+    max_dist = float(cfg.get("temporal", {}).get("match_max_distance_m", 3500.0))
+    print(f"\n[2/4] Thuc hien thuat toan ghep cap cum giua cac lat cat (Cluster Matching, nguong {max_dist:,.0f} m)...")
+    tracking_df = build_hotspot_tracking(clusters_df, max_distance_m=max_dist)
     out_tracking_path = resolve_path(cfg, "run_log").parent / "hotspot_tracking.csv"
     tracking_df.to_csv(out_tracking_path, index=False)
     print(f" -> Da luu bang theo doi hotspot: {out_tracking_path.relative_to(ROOT)} ({len(tracking_df)} cap ghep)")
 
     # In cac cap MATCHED noi bat
-    matched = tracking_df[tracking_df["status"] == "MATCHED"]
-    print("\n   --- Top cac cap ghep thanh cong giua AM -> PM ---")
-    am_pm = matched[matched["transition"] == "WEEKDAY_AM -> WEEKDAY_PM"]
-    for _, r in am_pm.iterrows():
-        print(f"   Cum AM {int(r['cluster_from'])} (Khu {r['top_area_from']}) -> "
+    matched = tracking_df[tracking_df["status"].isin(["MATCHED", "STABLE", "MERGED", "SPLIT"])]
+    print("\n   --- Top cac cap ghep thanh cong giua AM -> PM (sap theo ty trong) ---")
+    am_pm = matched[matched["transition"] == "WEEKDAY_AM -> WEEKDAY_PM"].sort_values("share_from", ascending=False)
+    for _, r in am_pm.head(15).iterrows():
+        print(f"   [{r['status']:7s}] Cum AM {int(r['cluster_from'])} (Khu {r['top_area_from']}) -> "
               f"Cum PM {int(r['cluster_to'])} (Khu {r['top_area_to']}) | "
               f"Dich chuyen: {r['shift_distance_m']:,.0f} m | "
               f"Ty trong: {r['share_from']:.1f}% -> {r['share_to']:.1f}% ({r['delta_share_pct_points']:+.1f}%)")
 
-    # 3. Ve bieu do truc quan hoa su bien dong cua cac hotspot
-    print("\n[3/4] Ve bieu do phan tich su bien dong quy mo & ty trong cua cac hotspot...")
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    # 3. Ve bieu do truc quan hoa theo cap da ghep va ty trong
+    print("\n[3/4] Ve bieu do phan tich theo cap da ghep va ty trong nhu cau...")
+    fig, axes = plt.subplots(1, 2, figsize=(15, 6))
 
-    # Biểu đồ 1: Số chuyến theo cụm ở từng lát cắt
+    # Bieu do 1: Top 10 cap ghep AM -> PM theo ty trong (%)
     ax1 = axes[0]
-    pivot_trips = clusters_df.pivot(index="cluster", columns="time_slice", values="n_trips").fillna(0)
-    pivot_trips.plot(kind="bar", ax=ax1, width=0.8, colormap="tab10")
-    ax1.set_title("Quy mo so luot don (trips) theo cum qua cac lat cat", fontsize=11)
-    ax1.set_xlabel("Cum (Cluster ID)")
-    ax1.set_ylabel("So luot don (pickups)")
-    ax1.grid(axis="y", alpha=0.3)
-    ax1.legend(title="Lat cat thoi gian")
+    top_pairs = am_pm.head(10).iloc[::-1]
+    labels = []
+    for _, r in top_pairs.iterrows():
+        area_from = int(r["top_area_from"]) if pd.notna(r["top_area_from"]) else "?"
+        labels.append(f"AM-C{int(r['cluster_from'])} (Khu {area_from}) -> PM-C{int(r['cluster_to'])} [Δd={r['shift_distance_m']:.0f}m]")
 
-    # Biểu đồ 2: Tỷ trọng (%) của từng cụm
+    y_pos = np.arange(len(top_pairs))
+    h = 0.35
+    ax1.barh(y_pos - h / 2, top_pairs["share_from"], height=h, label="WEEKDAY_AM (%)", color="#1f77b4")
+    ax1.barh(y_pos + h / 2, top_pairs["share_to"], height=h, label="WEEKDAY_PM (%)", color="#ff7f0e")
+    ax1.set_yticks(y_pos)
+    ax1.set_yticklabels(labels, fontsize=8.5)
+    ax1.set_xlabel("Ty trong nhu cau don xe (%)")
+    ax1.set_title("Top 10 cap hotspot ghep cap AM -> PM (Dua tren ty trong da ghep)", fontsize=11)
+    ax1.grid(axis="x", alpha=0.3)
+    ax1.legend(loc="lower right")
+
+    # Bieu do 2: Phan bo cac loai cap ghep theo 5 trang thai
     ax2 = axes[1]
-    pivot_share = (clusters_df.pivot(index="cluster", columns="time_slice", values="share").fillna(0) * 100)
-    pivot_share.plot(kind="bar", ax=ax2, width=0.8, colormap="tab10")
-    ax2.set_title("Ty trong nhu cau (%) cua tung cum qua cac lat cat", fontsize=11)
-    ax2.set_xlabel("Cum (Cluster ID)")
-    ax2.set_ylabel("Ty trong (%)")
+    cat_counts = tracking_df.groupby(["transition", "status"]).size().unstack(fill_value=0)
+    desired_order = [c for c in ["STABLE", "MERGED", "SPLIT", "EMERGING", "DISSOLVED"] if c in cat_counts.columns]
+    cat_counts = cat_counts[desired_order]
+    cat_counts.plot(kind="bar", ax=ax2, colormap="tab10", width=0.75)
+    ax2.set_title("Phan loai quan he hotspot qua cac lat cat (Hai chieu)", fontsize=11)
+    ax2.set_xlabel("Chuyen tiep thoi gian")
+    ax2.set_ylabel("So luong cap / cum")
+    ax2.set_xticklabels(ax2.get_xticklabels(), rotation=15, ha="right", fontsize=9)
     ax2.grid(axis="y", alpha=0.3)
-    ax2.legend(title="Lat cat thoi gian")
+    ax2.legend(title="Trang thai ghep", fontsize=9)
 
-    fig.suptitle("HDBSCAN: Phan tich bien dong nhu cau Hotspot theo thoi gian (Temporal Analysis)", fontsize=13, y=1.02)
+    fig.suptitle("HDBSCAN: Theo doi bien dong Hotspot qua cac cap ghep (Temporal Tracking)", fontsize=13, y=1.02)
     fig.tight_layout()
     fig_path = resolve_path(cfg, "figures_dir") / "temporal_hotspot_shifts.png"
     fig.savefig(fig_path, dpi=150, bbox_inches="tight")

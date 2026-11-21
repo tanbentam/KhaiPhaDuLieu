@@ -120,18 +120,19 @@ def check_tracking(root: Path) -> list[Result]:
     hc = _read(root, MET / "hdbscan_clusters_master_v1.csv")
     sl = {s: g.set_index("cluster") for s, g in hc.groupby("time_slice")}
     bad = 0
-    for r in tr[tr.status == "MATCHED"].itertuples(index=False):
+    matched_mask = tr["status"].isin({"MATCHED", "STABLE", "MERGED", "SPLIT"})
+    for r in tr[matched_mask].itertuples(index=False):
         a, b = r.transition.split(" -> ")
         if int(sl[a].loc[int(r.cluster_from), "n_trips"]) != int(r.trips_from) or \
            int(sl[b].loc[int(r.cluster_to), "n_trips"]) != int(r.trips_to):
             bad += 1
     res.append(Result("QA-11", "hotspot_tracking", "PASS" if bad == 0 else "FAIL",
                       f"trips_from/trips_to khớp hdbscan_clusters ({bad} dòng lệch)", "M3"))
-    m = tr[tr.status == "MATCHED"]
+    m = tr[matched_mask]
     zero = float((m["shift_distance_m"] == 0).mean())
     res.append(Result("QA-12", "hotspot_tracking",
                       "WARN" if zero > 0.5 else "PASS",
-                      f"{zero * 100:.0f}% cặp MATCHED có dịch chuyển đúng 0 m (cụm trùng 1 centroid) — "
+                      f"{zero * 100:.0f}% cặp ghép (STABLE/MERGED/SPLIT) có dịch chuyển đúng 0 m (cụm trùng 1 centroid) — "
                       "giới hạn độ phân giải tọa độ, không nên đọc là 'đứng yên tuyệt đối'", "M3"))
     single = float((hc["n_coords"] == 1).mean())
     res.append(Result("QA-13", "hdbscan_clusters", "WARN" if single > 0.4 else "PASS",
@@ -233,7 +234,8 @@ def claim_register(root: Path) -> pd.DataFrame:
         f"Σ share cụm khu 76: sáng {oh_am * 100:.1f}% → chiều {oh_pm * 100:.1f}% "
         f"(cụm lớn nhất: 10,6% → 12,8%)", abs(oh_am - 0.115) < 0.005 and abs(oh_pm - 0.168) < 0.005)
     # Loop -> Near North 820 m
-    big = tr[(tr.transition == "WEEKDAY_AM -> WEEKDAY_PM") & (tr.status == "MATCHED") &
+    matched_statuses = {"MATCHED", "STABLE", "MERGED", "SPLIT"}
+    big = tr[(tr.transition == "WEEKDAY_AM -> WEEKDAY_PM") & (tr.status.isin(matched_statuses)) &
              (tr.trips_from >= 2000)]
     add("C06", src_report, r"820",
         "Tâm cụm trung tâm dịch chuyển 820 m về phía bắc (sáng → chiều); interpretation: 650–950 m",

@@ -67,7 +67,7 @@ def main() -> None:
 
     # 2. Khao sat tham so tren WEEKDAY_AM (60.498 dong)
     print("\n[2/6] Khao sat tham so HDBSCAN tren WEEKDAY_AM...", flush=True)
-    am_df = df[df.time_slice == "WEEKDAY_AM"].reset_index(drop=True)
+    am_df = df[df.time_slice == "WEEKDAY_AM"].sort_values("trip_id").reset_index(drop=True)
     X_am = am_df[["x_m", "y_m"]].to_numpy(dtype="float64")
 
     mcs_list = list(hdb_cfg["min_cluster_size_candidates"])
@@ -160,8 +160,10 @@ def main() -> None:
     final_run_ids = []
     stability_tabs = []
 
+    approx_mst = bool(hdb_cfg.get("approx_min_span_tree", False))
+
     for s in slices:
-        part = df[df.time_slice == s].reset_index(drop=True)
+        part = df[df.time_slice == s].sort_values("trip_id").reset_index(drop=True)
         X = part[["x_m", "y_m"]].to_numpy(dtype="float64")
         params = {
             "min_cluster_size": final_mcs,
@@ -169,6 +171,8 @@ def main() -> None:
             "cluster_selection_method": final_method,
             "metric": final_metric,
             "cluster_selection_epsilon": final_epsilon,
+            "approx_min_span_tree": approx_mst,
+            "backend": "hdbscan 0.8.44",
         }
 
         print(f" -> Dang fit {s} (n={len(X):,})...", end="", flush=True)
@@ -182,6 +186,7 @@ def main() -> None:
                 metric=final_metric,
                 cluster_selection_method=final_method,
                 cluster_selection_epsilon=final_epsilon,
+                approx_min_span_tree=approx_mst,
             )
             persistence = get_cluster_persistence_table(clusterer)
             persistence["time_slice"] = s
@@ -198,7 +203,7 @@ def main() -> None:
             time_slice=s,
             sample_id=sample_id,
             params=params,
-            note=f"du lieu M1 {sample_id}; cau hinh chinh thuc chot o Giai doan 2",
+            note=f"du lieu M1 {sample_id}; cau hinh chinh thuc chot o Giai doan 2 (approx_mst={approx_mst})",
         )
         final_run_ids.append(row["run_id"])
         if fitted_stability:
@@ -212,6 +217,63 @@ def main() -> None:
 
         print(f" Xong! ({row['runtime_fit_sec']:.2f}s) | Cum: {row['n_clusters']} | "
               f"Noise: {row['noise_ratio']:.1%} | Silh: {row['silhouette']:.3f} | DBI: {row['davies_bouldin']:.3f}", flush=True)
+
+    # 4.5. Khao sat tinh on dinh qua xao dong (Shuffle Stability Analysis)
+    print("\n[4.5] Khao sat tinh on dinh qua 3 lan xao dong ngau nhien (M3-05)...", flush=True)
+    from src.evaluation import evaluate
+    shuffle_rows = []
+    for s in slices:
+        part = df[df.time_slice == s].sort_values("trip_id").reset_index(drop=True)
+        X = part[["x_m", "y_m"]].to_numpy(dtype="float64")
+        # Base sorted
+        lab_base = final_hdb[s][1]
+        ev_base = evaluate(X, lab_base, silhouette_max_sample=cfg["evaluation"]["silhouette_max_sample"], seed=cfg["project"]["seed"])
+        shuffle_rows.append({
+            "time_slice": s,
+            "run_type": "sorted_by_trip_id",
+            "seed": None,
+            "n_points": len(X),
+            "n_clusters": int(np.unique(lab_base[lab_base != -1]).size),
+            "n_noise": int((lab_base == -1).sum()),
+            "noise_ratio": float((lab_base == -1).mean()),
+            "silhouette": ev_base.get("silhouette"),
+            "davies_bouldin": ev_base.get("davies_bouldin"),
+            "calinski_harabasz": ev_base.get("calinski_harabasz"),
+        })
+        for shuf_seed in [42, 123, 999]:
+            rng = np.random.default_rng(shuf_seed)
+            shuf_order = rng.permutation(len(X))
+            X_shuf = X[shuf_order]
+            lab_shuf, _, _ = fit_hdbscan(
+                X_shuf,
+                min_cluster_size=final_mcs,
+                min_samples=final_ms,
+                metric=final_metric,
+                cluster_selection_method=final_method,
+                cluster_selection_epsilon=final_epsilon,
+                approx_min_span_tree=approx_mst,
+            )
+            ev_shuf = evaluate(X_shuf, lab_shuf, silhouette_max_sample=cfg["evaluation"]["silhouette_max_sample"], seed=cfg["project"]["seed"])
+            shuffle_rows.append({
+                "time_slice": s,
+                "run_type": f"shuffle_seed_{shuf_seed}",
+                "seed": shuf_seed,
+                "n_points": len(X),
+                "n_clusters": int(np.unique(lab_shuf[lab_shuf != -1]).size),
+                "n_noise": int((lab_shuf == -1).sum()),
+                "noise_ratio": float((lab_shuf == -1).mean()),
+                "silhouette": ev_shuf.get("silhouette"),
+                "davies_bouldin": ev_shuf.get("davies_bouldin"),
+                "calinski_harabasz": ev_shuf.get("calinski_harabasz"),
+            })
+            print(f"    {s} | seed {shuf_seed:3d}: Cum {int(np.unique(lab_shuf[lab_shuf != -1]).size):2d} | "
+                  f"Noise {(lab_shuf == -1).sum():4d} ({float((lab_shuf == -1).mean()):.2%}) | "
+                  f"Silh {ev_shuf.get('silhouette', 0):.3f} | DBI {ev_shuf.get('davies_bouldin', 0):.3f}", flush=True)
+
+    shuffle_df = pd.DataFrame(shuffle_rows)
+    shuffle_csv = resolve_path(cfg, "run_log").parent / "hdbscan_shuffle_stability.csv"
+    shuffle_df.to_csv(shuffle_csv, index=False)
+    print(f" -> Da luu bang kiem dinh on dinh qua xao dong: {shuffle_csv.relative_to(ROOT)}", flush=True)
 
     # 5. Xuat hdbscan_metrics.csv va bang chi tiet cum
     print("\n[5/6] Xuat bang metrics va bang chi tiet cum...", flush=True)

@@ -141,7 +141,10 @@ def temporal_shift_map(
     }
 
     for trans in transitions:
-        sub_tr = tracking_df[(tracking_df["transition"] == trans) & (tracking_df["status"] == "MATCHED")]
+        sub_tr = tracking_df[
+            (tracking_df["transition"] == trans) &
+            (tracking_df["status"].isin(["MATCHED", "STABLE", "MERGED", "SPLIT"]))
+        ]
         style = line_styles.get(trans, {"color": "#333", "dash": "3, 3", "weight": 2})
         fg_lines = folium.FeatureGroup(name=f"Dich chuyen {trans}", show=(trans == "WEEKDAY_AM -> WEEKDAY_PM"))
 
