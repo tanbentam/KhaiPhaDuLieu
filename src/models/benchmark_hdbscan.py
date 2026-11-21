@@ -104,15 +104,26 @@ def main() -> None:
     pd.DataFrame(rows).to_csv(benchmark_path, index=False)
 
     environment_path = metrics_dir / "environment_hdbscan.txt"
+    def _safe_version(pkg: str) -> str:
+        try:
+            return version(pkg)
+        except Exception:
+            try:
+                import importlib
+                mod = importlib.import_module(pkg.replace("-", "_"))
+                return getattr(mod, "__version__", "unknown")
+            except Exception:
+                return "not_installed"
+
     environment_path.write_text(
         "\n".join([
             f"python={platform.python_version()}",
             f"hdbscan={version('hdbscan')}",
             f"numpy={np.__version__}",
             f"pandas={pd.__version__}",
-            f"scipy={version('scipy')}",
-            f"scikit-learn={version('scikit-learn')}",
-            f"pyarrow={version('pyarrow')}",
+            f"scipy={_safe_version('scipy')}",
+            f"scikit-learn={_safe_version('scikit-learn')}",
+            f"pyarrow={_safe_version('pyarrow')}",
             f"machine={machine_info()}",
             f"backend={rows[-1]['backend']}",
             f"git_commit={git_commit(ROOT)}",

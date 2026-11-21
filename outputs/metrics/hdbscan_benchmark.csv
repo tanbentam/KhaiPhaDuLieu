@@ -1,0 +1,4 @@
+sample_size,n_unique_coords,n_clusters,n_noise,noise_ratio,mean_persistence,runtime_sec,peak_mem_mb,mem_delta_mb,backend,python,hdbscan,machine,git_commit
+5000,121,17,869,0.1738,1.0,0.0463,250.5,1.2,hdbscan.hdbscan_.HDBSCAN,3.11.9,0.8.44,windows-16t-15GB,900630b
+10000,135,27,689,0.0689,1.0,0.0925,253.1,2.5,hdbscan.hdbscan_.HDBSCAN,3.11.9,0.8.44,windows-16t-15GB,900630b
+30000,151,51,909,0.0303,1.0,16.2596,265.2,13.6,hdbscan.hdbscan_.HDBSCAN,3.11.9,0.8.44,windows-16t-15GB,900630b

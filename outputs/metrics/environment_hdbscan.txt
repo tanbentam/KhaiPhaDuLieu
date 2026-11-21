@@ -1,0 +1,10 @@
+python=3.11.9
+hdbscan=0.8.44
+numpy=2.4.6
+pandas=2.3.3
+scipy=1.17.1
+scikit-learn=1.7.2
+pyarrow=not_installed
+machine=windows-16t-15GB
+backend=hdbscan.hdbscan_.HDBSCAN
+git_commit=900630b
