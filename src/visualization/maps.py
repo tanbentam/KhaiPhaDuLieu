@@ -15,8 +15,13 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-PALETTE = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-           "#8c564b", "#e377c2", "#bcbd22", "#17becf", "#7f7f7f"]
+# 20 mau phan biet ro, khong chua mau xam de khong nham voi nhieu (NOISE_COLOR)
+PALETTE = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+    "#8c564b", "#e377c2", "#bcbd22", "#17becf", "#aec7e8",
+    "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94",
+    "#f7b6d2", "#dbdb8d", "#9edae5", "#393b79", "#e6550d",
+]
 NOISE_COLOR = "#b0b0b0"
 CHICAGO_CENTER = (41.88, -87.70)
 

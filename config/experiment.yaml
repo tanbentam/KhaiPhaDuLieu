@@ -59,7 +59,7 @@ kmeans:
   k_min: 2
   k_max: 15
   init: k-means++
-  n_init: 10
+  n_init: 50
   max_iter: 300
   k_final: 5
 

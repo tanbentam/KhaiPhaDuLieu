@@ -14,7 +14,7 @@ Quy ước:
 - [x] 1.1 Môi trường Python cho phần M2: venv, `scikit-learn`, `numpy`, `pandas`, `pyarrow`, `matplotlib`, `psutil`, `folium`. Ghi phiên bản thư viện. Cài thử `hdbscan` ngay từ đầu, vì Windows hay lỗi khi cài gói này.
   - Done khi: import được tất cả thư viện; ghi lại cấu hình máy (CPU, số nhân, RAM).
   - Lưu ý: cấu trúc repo và `requirements.txt` chung thuộc phần của M1/M4. Nếu cần thay đổi thì ghi thành đề xuất.
-- [ ] 1.2 Thống nhất với M1 và M3 về định dạng dữ liệu đầu vào (tên file, các cột `trip_id`, `x_m`, `y_m`, `time_slice`) và định dạng file log kết quả.
+- [x] 1.2 Thống nhất với M1 và M3 về định dạng dữ liệu đầu vào (tên file, các cột `trip_id`, `x_m`, `y_m`, `time_slice`) và định dạng file log kết quả (đã chốt `master_v1` và 28 cột `RUN_LOG_COLUMNS` với cả M1 và M3).
   - Done khi: có một đoạn mô tả định dạng được M1 và M3 xác nhận, ghi trong log.
 
 ## Phần 2. Hạ tầng thí nghiệm dùng chung (M2-01)
@@ -41,7 +41,7 @@ Quy ước:
 
 ## Phần 4. DBSCAN (M2-04, M2-05) [chờ M1]
 
-> Đã duyệt 3 điều chỉnh so với spec (15/11/2026): DBSCAN chạy trên toạ độ duy nhất có trọng số; `min_samples` theo tỷ lệ số chuyến (0,1–1%, kèm 5 và 20 của spec để đối chiếu); eps 250–2500 m với k-distance có trọng số. Chi tiết và số đo: `docs/Phan 4/4.0-quyet-dinh-dbscan.md`.
+> Đã duyệt 3 điều chỉnh so với spec (15/11/2026): DBSCAN chạy trên toạ độ duy nhất có trọng số; `min_samples` theo tỷ lệ số chuyến (0,1–1%, kèm 5 và 20 của spec để đối chiếu); eps 500–3000 m với k-distance có trọng số (chốt sau mục 4.1). Chi tiết và số đo: `docs/Phan 4/4.0-quyet-dinh-dbscan.md`.
 
 - [x] 4.1 Đồ thị k-distance **có trọng số** (khoảng cách cần đi để gom đủ k chuyến), vẽ theo từng chuyến, với k = các `min_samples` theo tỷ lệ và 5, 20 của spec. Từ đồ thị rút ra các eps ứng viên quanh điểm gãy.
 - [x] 4.2 Chạy DBSCAN trên từng chuyến với mẫu tăng dần 10k → 30k (dừng khi RAM vượt 80–85%), so sánh với cách có trọng số (ARI, số cụm, Noise Ratio) và đo RAM của cả hai cách.
@@ -51,8 +51,8 @@ Quy ước:
 
 ## Phần 5. Phân tích và so sánh baseline (M2-06, M2-07) [chờ M1]
 
-- [x] 5.1 Chạy K-Means và DBSCAN trên 3 lát cắt WEEKDAY_AM, WEEKDAY_PM, WEEKEND, cùng tập `trip_id` với M3 (đã xong trên `master_v1`; chờ M3 xác nhận dùng chung `master_v1`).
-- [x] 5.2 Lập `baseline_metrics.csv` theo đúng định dạng đã thống nhất với M3 để M4 ghép bảng được (đã xuất 6 dòng chính `master_v1` theo 28 cột `RUN_LOG_COLUMNS`; chờ M3 xác nhận).
+- [x] 5.1 Chạy K-Means và DBSCAN trên 3 lát cắt WEEKDAY_AM, WEEKDAY_PM, WEEKEND, cùng dữ liệu `master_v1` và cùng số điểm/lát cắt với M3 (QA-02/03 đạt).
+- [x] 5.2 Lập `baseline_metrics.csv` theo đúng định dạng 28 cột `RUN_LOG_COLUMNS` đã thống nhất với M3; đã ghép thành công vào `metrics_comparison.csv` của M4 (QA-01/04 đạt).
 - [x] 5.3 So sánh hình dạng cụm và điểm nhiễu: chọn ít nhất 2 vùng mà hai thuật toán cho kết quả khác nhau, có bản đồ phóng to. Kiểm tra điểm nhiễu là ngoại lệ thật hay do eps quá nhỏ. Viết vào `baseline_interpretation.md`.
   - Done phần 5 khi: mọi nhận xét đều có bản đồ hoặc số liệu đi kèm; không kết luận "ùn tắc".
 

@@ -43,27 +43,27 @@ Ghi chú nhỏ cuối slide: *Toạ độ là tâm census tract nên nhiều lư
 
 **Bảng đề xuất** (lát `WEEKDAY_PM`, 86.617 lượt làm ví dụ; bảng đầy đủ 3 lát cắt để ở phụ lục):
 
-| Chỉ số | K-Means (`K = 5`) | DBSCAN A (`1%, eps 1500 m`) | HDBSCAN |
+| Chỉ số | K-Means (`K = 5`) | DBSCAN A (`1%, eps 1500 m`) | HDBSCAN (`mcs=100, ms=10`) |
 |---|---|---|---|
-| Số cụm | 5 | 3 | M3 điền |
-| Noise Ratio | 0% (do thiết kế) | 9,4% | M3 điền |
-| Silhouette (theo lượt / theo toạ độ) | 0,753 / 0,398 | 0,859 / 0,702 | M3 điền |
-| Davies–Bouldin | 0,459 | 0,153 | M3 điền |
-| Cụm lớn nhất | 62,5% | 66,9% | M3 điền |
-| Thời gian fit | 0,14 s | 0,06 s | M3 điền |
+| Số cụm | 5 | 3 | 63 |
+| Noise Ratio | 0% (do thiết kế) | 9,4% | 2,3% |
+| Silhouette (theo lượt / theo toạ độ) | 0,753 / 0,398 | 0,859 / 0,702 | 0,990* (63% cụm bán kính 0 m) |
+| Davies–Bouldin | 0,459 | 0,153 | 0,180 |
+| Cụm lớn nhất | 62,5% | 66,9% | 12,8% |
+| Thời gian fit | 0,14 s (188 toạ độ) | 0,06 s (188 toạ độ) | 2,34 s (86.617 lượt) |
 
 Lưu ý cho M4:
-- Cột K-Means và DBSCAN lấy trực tiếp từ `outputs/metrics/baseline_metrics.csv`. Cột HDBSCAN do M3 (Hoàng Tuấn Bảo) cung cấp từ `hdbscan_metrics.csv` theo cùng 28 cột `RUN_LOG_COLUMNS`.
-- **Thời gian fit của K-Means và DBSCAN là thời gian chạy trên 188 toạ độ duy nhất có trọng số.** HDBSCAN không hỗ trợ trọng số nên có thể chạy trên từng lượt. Nhóm cần ghi rõ dưới bảng để so sánh không bị sai.
-- Bảng 3 lát cắt cho phụ lục: lấy từ `reports/m2_kmeans_dbscan.md` (mục 1.4 và 2.5).
+- Cột K-Means và DBSCAN lấy trực tiếp từ `outputs/metrics/baseline_metrics.csv`. Cột HDBSCAN lấy từ `outputs/metrics/hdbscan_metrics.csv` (`hdbscan 0.8.44`, `approx_min_span_tree=False`, cùng 28 cột `RUN_LOG_COLUMNS`).
+- **Không so trực tiếp runtime và Silhouette của HDBSCAN với K-Means/DBSCAN:** K-Means và DBSCAN fit có trọng số trên 188 toạ độ duy nhất, còn HDBSCAN fit trên toàn bộ 86.617 lượt; 63% cụm HDBSCAN chỉ gồm 1 toạ độ tâm vùng (bán kính 0 m) nên Silhouette bị đẩy lên ~0,99.
+- Bảng 3 lát cắt cho phụ lục: lấy từ `reports/m2_kmeans_dbscan.md` (mục 1.4 và 2.5) và `outputs/metrics/metrics_comparison.csv`.
 
 **Lời nói (khoảng 1 phút):**
 
-> Đây là bảng chỉ số của khung chiều ngày thường với hơn 86 nghìn lượt đón. K-Means cho 5 cụm và không có nhiễu, nhưng đó là do thiết kế: nó bắt mọi điểm phải vào cụm, không phải vì dữ liệu sạch hơn. DBSCAN với bán kính 1500 mét cho 3 cụm và để 9,4% số lượt là nhiễu, chủ yếu ở phía nam và tây bắc.
+> Đây là bảng chỉ số của khung chiều ngày thường với hơn 86 nghìn lượt đón. K-Means cho 5 cụm và không có nhiễu, nhưng đó là do thiết kế: nó bắt mọi điểm phải vào cụm, không phải vì dữ liệu sạch hơn. DBSCAN với bán kính 1500 mét cho 3 cụm lớn và để 9,4% số lượt là nhiễu, chủ yếu ở phía nam và tây bắc. HDBSCAN với ngưỡng 100 chuyến tách thành 63 cụm nhỏ hơn với 2,3% nhiễu.
 >
-> Silhouette của DBSCAN cao hơn, nhưng cần đọc cẩn thận: các lượt trùng toạ độ có khoảng cách bằng 0 nên Silhouette tính theo lượt bị đẩy lên. Vì vậy nhóm báo thêm Silhouette tính theo toạ độ duy nhất: 0,40 với K-Means và 0,70 với DBSCAN. Thời gian fit của cả hai chỉ dưới 0,2 giây, vì chạy trên 188 toạ độ có trọng số.
+> Cần đọc Silhouette thật cẩn thận: các lượt trùng toạ độ có khoảng cách bằng 0 nên Silhouette tính theo lượt bị đẩy lên mạnh — nhất là ở HDBSCAN (0,990) vì hơn 60% cụm chỉ gồm đúng một tâm vùng. Vì vậy nhóm báo thêm Silhouette theo toạ độ duy nhất cho K-Means (0,40) và DBSCAN (0,70), và lưu ý thời gian fit không so ngang vì K-Means/DBSCAN chạy có trọng số trên 188 toạ độ, còn HDBSCAN chạy trên toàn bộ 86 nghìn lượt.
 >
-> Kết luận của nhóm: không chọn mô hình chỉ vì một chỉ số. Nhóm xét cùng lúc Noise Ratio, số cụm và bản đồ, như các bạn sẽ thấy ở slide tiếp theo.
+> Kết luận của nhóm: không chọn mô hình chỉ vì một chỉ số, mà xét cùng lúc Noise Ratio, số cụm và bản đồ ở slide tiếp theo.
 
 ---
 

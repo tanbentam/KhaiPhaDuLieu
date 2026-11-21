@@ -54,20 +54,20 @@ Thử K = 2..15, `k-means++`, `max_iter = 300`, `seed = 42` (100% số lần ch�
 
 Kết quả trên `master_v1`:
 
-1. **Khuỷu Elbow nằm ở K = 5 ở cả 3 lát cắt.** Khi tăng từ K = 4 lên K = 5, J giảm mạnh 31,7–37,3%; từ K = 6 trở đi, mỗi lần thêm một cụm chỉ giảm 15,4–23,0%.
-2. **Với `n_init = 10` (giá trị trong spec), K-Means dễ rơi vào cực tiểu cục bộ khi K ≥ 6**: J tệ hơn mức tốt nhất tới 8,3–11,3% (`weighted` và `full`), còn với `n_init = 50` sai lệch tối đa chỉ 0,9%. Nhóm dùng **`n_init = 50`**.
-3. Trong khoảng K ≥ 4, **K = 5 đạt cao nhất đồng thời Silhouette theo lượt, Silhouette theo toạ độ và thấp nhất DBI ở cả 3 lát cắt**. K = 2 có chỉ số cao hơn nhưng chỉ tách sân bay O'Hare khỏi phần còn lại, quá thô. CH tăng đều đến K = 15 nên không giúp chọn.
+1. **Khuỷu Elbow nằm ở K = 5 ở cả 3 lát cắt.** Khi tăng từ K = 4 lên K = 5, J giảm mạnh 31,7–37,3%; từ K = 6 đến K = 10 mỗi lần thêm một cụm giảm 15,4–23,0%, còn từ K = 11 đến K = 15 chỉ giảm 7,0–18,0%.
+2. **Với `n_init = 10`, K-Means dễ rơi vào cực tiểu cục bộ khi K ≥ 6**: J tệ hơn mức tốt nhất tới 8,3–11,3% (`weighted` và `full`), còn với `n_init = 50` sai lệch tối đa chỉ 0,9%. Nhóm đã cập nhật **`n_init = 50`** vào `config/experiment.yaml`.
+3. Trong khoảng K ≥ 4, **K = 5 đạt cao nhất đồng thời Silhouette theo lượt, Silhouette theo toạ độ và thấp nhất DBI ở cả 3 lát cắt**. K = 2 có Silhouette theo lượt và DBI tốt hơn, còn K = 3 có Silhouette theo toạ độ cao hơn K = 5 ở cả 3 lát cắt (0,456 / 0,454 / 0,508 so với 0,416 / 0,398 / 0,406), nhưng cả K = 2 và K = 3 đều quá thô để diễn giải thành hotspot (chủ yếu chỉ tách sân bay O'Hare khỏi phần lớn thành phố, chưa tách được Midway và vùng phía bắc/phía nam). Calinski–Harabasz chỉ tăng đều đến K = 15 ở cuối tuần (buổi sáng giảm từ K = 5 sang K = 6; buổi chiều giảm từ K = 6 sang K = 7) nên không dùng làm tiêu chí chọn K đơn lẻ.
 4. Bản đồ với K = 5 cho 5 vùng địa lý rõ ràng và nhất quán giữa cả 3 lát cắt.
 
 **Chốt K = 5.**
 
 ### 1.4 Kết quả K-Means (K = 5)
 
-| Lát cắt | Số lượt | Toạ độ duy nhất | Silhouette (theo lượt) | Silhouette (theo toạ độ) | DBI | Cụm lớn nhất | Thời gian fit |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| WEEKDAY_AM | 60.498 | 165 | 0,733 | 0,416 | 0,445 | 62,3% | 0,122 s |
-| WEEKDAY_PM | 86.617 | 188 | 0,753 | 0,398 | 0,459 | 62,5% | 0,140 s |
-| WEEKEND | 120.571 | 189 | 0,726 | 0,406 | 0,477 | 52,7% | 0,157 s |
+| Lát cắt | Số lượt | Toạ độ duy nhất | Silhouette (lượt / toạ độ) | DBI | Calinski–Harabasz | Cụm lớn nhất | Fit | RAM đỉnh / thêm |
+|---|---:|---:|---|---:|---:|---:|---:|---:|
+| WEEKDAY_AM | 60.498 | 165 | 0,733 / 0,416 | 0,445 | 249.064 | 62,3% | 0,122 s | 534,6 / 2,2 MB |
+| WEEKDAY_PM | 86.617 | 188 | 0,753 / 0,398 | 0,459 | 515.724 | 62,5% | 0,140 s | 379,3 / 2,7 MB |
+| WEEKEND | 120.571 | 189 | 0,726 / 0,406 | 0,477 | 650.286 | 52,7% | 0,157 s | 427,9 / 3,7 MB |
 
 | Cụm | Vùng | AM | PM | WEEKEND |
 |---:|---|---:|---:|---:|
@@ -118,7 +118,7 @@ Các điểm không có nhãn: nhiễu (-1)
 
 Số đo thực nghiệm trên cả pilot và `master_v1` cho thấy chạy đúng như giá trị khởi điểm trong spec sẽ không phù hợp với dữ liệu centroid:
 
-1. **Fit trên toạ độ duy nhất với trọng số.** Các lượt trùng toạ độ có khoảng cách 0 nên luôn là láng giềng của nhau; tổng trọng số thay cho số điểm. Kiểm chứng trên `WEEKEND` của `master_v1` ở cỡ 10k và 20k (6 cấu hình): 6/6 khớp hoàn toàn số cụm và tập nhiễu (`same_noise = True`), 5/6 có `ARI = 1,0000`, 1 cấu hình có `ARI = 0,99995` (do tính không tất định thứ tự gán điểm biên giữa 2 cụm). Về bộ nhớ, ở cỡ 20k cách `full` tốn 189–456 MB; ở toàn bộ `WEEKEND` (`120.571` lượt), cách `full` ước tính tốn **7,2–17,4 GB RAM** (vượt RAM 15,2 GB của máy) nên phải bỏ qua, trong khi cách có trọng số chỉ tốn **3,7 MB RAM** và **0,06 s** (nhanh hơn 13–53 lần ở các cỡ đo được).
+1. **Fit trên toạ độ duy nhất với trọng số.** Các lượt trùng toạ độ có khoảng cách 0 nên luôn là láng giềng của nhau; tổng trọng số thay cho số điểm. Kiểm chứng benchmark trên `WEEKEND` của `master_v1` theo đúng các cỡ mẫu trong `config/experiment.yaml` (`10k`, `30k`, `50k` — 9 cấu hình): 9/9 khớp hoàn toàn số cụm và tập nhiễu (`same_noise = True`), 7/9 có `ARI = 1,00000`, 2 cấu hình ở `eps = 1000 m` có `ARI = 0,99968–0,99993` (do tính không tất định thứ tự gán điểm biên giữa 2 cụm). Về tài nguyên: ở cỡ `50.000` lượt, cách `full` tốn **1,18–2,84 GB RAM** và **3,01–7,10 s**, còn cách `weighted` chỉ tốn **≤ 0,1 MB RAM** và **0,067–0,091 s** (nhanh hơn **45–96 lần**); ở toàn bộ `WEEKEND` (`120.571` lượt), cách `full` ước tính tốn **7,2–17,4 GB RAM** (vượt ngưỡng bảo vệ) nên phải bỏ qua, trong khi cách `weighted` chỉ tốn **3,7–4,6 MB RAM** và **0,20–0,22 s** (`outputs/metrics/dbscan_full_vs_weighted_master_v1.csv`).
 2. **`min_samples` theo tỷ lệ số lượt của lát cắt** (0,1 / 0,3 / 0,5 / 1%). Với 5–20 như spec, 99,5–99,9% số lượt trên `master_v1` nằm ở toạ độ tự là core, nên DBSCAN gần như không lọc được nhiễu (Noise Ratio tối đa chỉ 0,38% ở mọi `eps`).
 3. **`eps` 500–3000 m.** Các toạ độ duy nhất cách nhau trung vị khoảng 795–837 m (phân vị 10% khoảng 304–313 m); với `eps < 300 m` hầu như không toạ độ nào nối được với toạ độ khác.
 
@@ -130,28 +130,58 @@ Số đo thực nghiệm trên cả pilot và `master_v1` cho thấy chạy đú
   - `eps = 500 m` cho Silhouette rất cao (0,805–0,859) nhưng đó là **kết quả giả**: gần như mỗi toạ độ thành một cụm riêng (18–113 cụm).
   - `eps ≥ 2500 m` gộp phần lớn thành phố thành một cụm (67,6–84,1%).
   - Vùng hợp lý là `min_samples` 0,5–1% với `eps` 1000–2000 m.
-- **So sánh 4 ứng viên** A (`1%, 1500 m`), B (`1%, 2000 m`), C (`0,5%, 1000 m`), D (`0,5%, 1250 m`) trên bảng chỉ số và bản đồ `master_v1`, rồi chốt:
-  - **Cấu hình chính A:** 1% số lượt, `eps = 1500 m`. Vượt trội B ở cả 3 lát cắt về Silhouette (trung bình **0,809** so với 0,764), Silhouette theo toạ độ (trung bình **0,639** so với 0,455) và DBI (trung bình **0,177** so với 0,214); đồng thời tách được Hyde Park (khu 41) vào sáng ngày thường, trong khi B ở `WEEKDAY_AM` sinh cụm nhỏ sát rìa bắc dải Trung tâm (khu 2) làm Silhouette theo toạ độ tụt còn 0,244.
-  - **Cấu hình phụ C:** 0,5%, `eps = 1000 m`, dùng để minh hoạ độ nhạy của `eps`.
+- **So sánh 4 ứng viên** A (`1%, 1500 m`), B (`1%, 2000 m`), C (`0,5%, 1000 m`), D (`0,5%, 1250 m`) trên bảng chỉ số (luôn đặt tỷ lệ nhiễu và số điểm tính chỉ số cạnh Silhouette) và bản đồ `master_v1`:
+
+| Ứng viên | Lát cắt | `min_samples` | Số cụm | Noise | `n_points_metric` | Silhouette (lượt / toạ độ) | DBI | Cụm lớn nhất |
+|---|---|---:|---:|---:|---:|---|---:|---:|
+| **A** (`1%, 1500 m`) | WEEKDAY_AM | 605 | 4 | 12,6% | 52.850 | 0,741 / 0,560 | 0,220 | 68,9% |
+| | WEEKDAY_PM | 867 | 3 | 9,4% | 78.480 | 0,859 / 0,702 | 0,153 | 66,9% |
+| | WEEKEND | 1.206 | 4 | 9,9% | 108.657 | 0,825 / 0,656 | 0,159 | 62,1% |
+| **B** (`1%, 2000 m`) | WEEKDAY_AM | 605 | 4 | 8,6% | 55.308 | 0,670 / 0,244 | 0,258 | 71,7% |
+| | WEEKDAY_PM | 867 | 3 | 5,9% | 81.544 | 0,827 / 0,571 | 0,173 | 70,4% |
+| | WEEKEND | 1.206 | 3 | 6,7% | 112.435 | 0,795 / 0,550 | 0,211 | 65,2% |
+| **C** (`0,5%, 1000 m`) | WEEKDAY_AM | 303 | 13 | 9,4% | 54.793 | 0,597 / 0,442 | 0,253 | 50,5% |
+| | WEEKDAY_PM | 434 | 11 | 7,4% | 80.250 | 0,686 / 0,495 | 0,255 | 49,7% |
+| | WEEKEND | 603 | 13 | 8,8% | 109.954 | 0,720 / 0,468 | 0,241 | 39,0% |
+| **D** (`0,5%, 1250 m`) | WEEKDAY_AM | 303 | 11 | 8,7% | 55.218 | 0,604 / 0,355 | 0,234 | 58,5% |
+| | WEEKDAY_PM | 434 | 11 | 6,3% | 81.157 | 0,655 / 0,377 | 0,264 | 53,8% |
+| | WEEKEND | 603 | 11 | 8,0% | 110.975 | 0,461 / 0,015 | 0,332 | 52,5% |
+
+- **Chốt cấu hình:**
+  - **Cấu hình chính A (`1%, eps = 1500 m`):** Cần lưu ý A loại nhiều điểm nhiễu hơn B (9,4–12,6% so với 5,9–8,6%, tức `n_points_metric` nhỏ hơn khoảng 2,5–3,8 nghìn lượt), nên Silhouette cao hơn một phần đến từ việc loại thêm vùng thưa. Lý do chọn A không chỉ dựa vào Silhouette mà dựa vào bản đồ và cấu trúc cụm: ở `WEEKDAY_AM`, B (`eps = 2000 m`) gộp hành lang trung tâm rộng hơn (71,7%) và sinh một cụm nhỏ sát rìa bắc dải Trung tâm (khu 2) làm Silhouette theo toạ độ tụt còn 0,244; trong khi A giữ cấu trúc cụm gọn hơn và xuất hiện thêm cụm Hyde Park (khu 41) — tuy nhiên đây là **cụm nằm sát ngưỡng** (611 lượt so với ngưỡng 605, xem kiểm tra ổn định mục 2.6).
+  - **Cấu hình phụ C (`0,5%, eps = 1000 m`):** Giữ lại để minh hoạ độ nhạy của `eps`.
 
 ### 2.5 Kết quả DBSCAN
 
-| Lát cắt | Cấu hình | `min_samples` | Số cụm | Noise | Silhouette (lượt / toạ độ) | DBI | Cụm lớn nhất | Fit |
-|---|---|---:|---:|---:|---|---:|---:|---:|
-| WEEKDAY_AM | A | 605 | 4 | 12,6% | 0,741 / 0,560 | 0,220 | 68,9% | 0,037 s |
-| WEEKDAY_PM | A | 867 | 3 | 9,4% | 0,859 / 0,702 | 0,153 | 66,9% | 0,055 s |
-| WEEKEND | A | 1.206 | 4 | 9,9% | 0,825 / 0,656 | 0,159 | 62,1% | 0,070 s |
-| WEEKDAY_AM | C | 303 | 13 | 9,4% | 0,597 / 0,442 | 0,253 | 50,5% | 0,033 s |
-| WEEKDAY_PM | C | 434 | 11 | 7,4% | 0,686 / 0,495 | 0,255 | 49,7% | 0,052 s |
-| WEEKEND | C | 603 | 13 | 8,8% | 0,720 / 0,468 | 0,241 | 39,0% | 0,072 s |
+| Lát cắt | Cấu hình | `min_samples` | Số cụm | Noise | Coverage | Silhouette (lượt / toạ độ) | DBI | Calinski–Harabasz | Cụm lớn nhất | Fit | RAM đỉnh / thêm |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|
+| WEEKDAY_AM | A | 605 | 4 | 12,6% | 87,4% | 0,741 / 0,560 | 0,220 | 189.276 | 68,9% | 0,037 s | 572,4 / 3,3 MB |
+| WEEKDAY_PM | A | 867 | 3 | 9,4% | 90,6% | 0,859 / 0,702 | 0,153 | 904.682 | 66,9% | 0,055 s | 432,3 / 2,7 MB |
+| WEEKEND | A | 1.206 | 4 | 9,9% | 90,1% | 0,825 / 0,656 | 0,159 | 546.172 | 62,1% | 0,070 s | 486,4 / 4,3 MB |
+| WEEKDAY_AM | C | 303 | 13 | 9,4% | 90,6% | 0,597 / 0,442 | 0,253 | 316.789 | 50,5% | 0,033 s | 494,8 / 4,6 MB |
+| WEEKDAY_PM | C | 434 | 11 | 7,4% | 92,6% | 0,686 / 0,495 | 0,255 | 1.019.220 | 49,7% | 0,052 s | 493,9 / 3,4 MB |
+| WEEKEND | C | 603 | 13 | 8,8% | 91,2% | 0,720 / 0,468 | 0,241 | 1.322.858 | 39,0% | 0,072 s | 543,8 / 3,7 MB |
 
 Các cụm chính của cấu hình A:
 1. Hành lang trung tâm và phía bắc dọc hồ (khu 8/32/6): 62,1–68,9% số lượt.
 2. Sân bay O'Hare (khu 76): 15,7–24,2%, chỉ gồm 2 toạ độ, bán kính RMS 0,41–0,44 km.
 3. Sân bay Midway (khu 56): 1,8% (`WEEKDAY_AM`), 3,3% (`WEEKDAY_PM`), và ở `WEEKEND` tách làm 2 cụm nhỏ sát nhau (2,3% + 1,5% = 3,8%).
-4. Riêng `WEEKDAY_AM` xuất hiện thêm cụm thứ 4 tại Hyde Park (khu 41): 1,0% (611 lượt, 6 toạ độ).
+4. Riêng `WEEKDAY_AM` xuất hiện thêm cụm thứ 4 tại Hyde Park (khu 41): 1,0% (611 lượt, 6 toạ độ) — **cụm nằm sát ngưỡng** (`min_samples = 605`).
 
 Phần lớn phía nam và tây bắc là nhiễu.
+
+### 2.6 Kiểm tra độ ổn định (K-Means và DBSCAN A)
+
+Nguồn: `outputs/metrics/m2_stability_master_v1.csv`. K-Means (`K = 5`, `n_init = 50`) được thử với **10 seed khác nhau**; DBSCAN A (`1%, eps = 1500 m`) được thử **5 lần lấy mẫu 80% dữ liệu không hoàn lại** (đối chiếu ARI với kết quả trên toàn bộ lát cắt):
+
+| Thuật toán | Phép thử | Lát cắt | Số lần | Số cụm (min–max) | Noise (min–max) | ARI so với bản gốc | Ghi chú |
+|---|---|---|---:|---|---|---:|---|
+| K-Means (`K = 5`) | 10 seed | WEEKDAY_AM | 10 | 5–5 | 0,0% | 1,0000 | Trùng hoàn toàn 10/10 |
+| K-Means (`K = 5`) | 10 seed | WEEKDAY_PM | 10 | 5–5 | 0,0% | 1,0000 | Trùng hoàn toàn 10/10 |
+| K-Means (`K = 5`) | 10 seed | WEEKEND | 10 | 5–5 | 0,0% | 1,0000 | Trùng hoàn toàn 10/10 |
+| DBSCAN A | 5×80% | WEEKDAY_AM | 5 | 3–4 | 12,6–13,6% | 0,9906–1,0000 | Cụm Hyde Park xuất hiện 3/5 lần (sát ngưỡng) |
+| DBSCAN A | 5×80% | WEEKDAY_PM | 5 | 3–3 | 9,3–9,5% | 0,9969–1,0000 | Ổn định cả 3 cụm chính |
+| DBSCAN A | 5×80% | WEEKEND | 5 | 4–5 | 9,8–10,2% | 0,9683–1,0000 | Các cụm lõi ổn định; cụm rìa nhỏ dao động |
 
 ---
 
@@ -164,14 +194,14 @@ Phần lớn phía nam và tây bắc là nhiễu.
 | Vùng | K-Means (`K = 5`) | DBSCAN A (`1%, 1500 m`) | Diễn giải |
 |---|---|---|---|
 | Phía nam (R1) | Một cụm riêng (4,3–5,7%), bán kính rộng nhất (5,25–5,46 km) | 78,6–92,7% số lượt trong vùng là nhiễu (100% cụm 3 K-Means ở PM/WE; AM tách được Hyde Park 17,6%) | Vùng thưa. K-Means tạo "cụm" rộng chỉ vì phải gán mọi điểm |
-| O'Hare và tây bắc (R2) | Cụm rộng: 7–9 toạ độ, bán kính 1,00–1,34 km | Cụm chặt: 2 toạ độ nhà ga, 0,41–0,44 km; xung quanh là nhiễu (6,3–11,8%) | DBSCAN cho ranh giới hotspot sân bay sát thực tế hơn |
+| O'Hare và tây bắc (R2) | Cụm rộng: 7–9 toạ độ, bán kính 1,00–1,34 km | Cụm chặt: 2 toạ độ tâm vùng, 0,41–0,44 km; xung quanh là nhiễu (6,3–11,8%) | DBSCAN cho cụm gọn hơn (2 toạ độ tâm vùng thay vì kéo thêm các khu ven) |
 | Phía bắc dọc hồ (R3) | Cụm riêng (8,9–13,5%) | Gộp 60,6–74,5% vào dải trung tâm; rìa tây bắc là nhiễu (5,2–6,8% khung R3) | DBSCAN giữ được cụm hình dải dọc hồ, nhưng `eps = 1500 m` vẫn gộp Loop với Lake View |
 
 **Nhiễu của DBSCAN A chủ yếu là vùng thưa thật, không phải do `eps` quá nhỏ:**
 - 68,8–83,9% toạ độ nhiễu cách toạ độ core gần nhất hơn 3 km (gấp đôi `eps`); trung vị 4,8–5,9 km (gấp 3,2–3,9 lần `eps`).
 - Chỉ 3–7 toạ độ mỗi lát cắt nằm sát ngưỡng `eps` (`1,5–1,875 km`).
 - Cấu hình phụ C chỉ chuyển lại được 25,4–34,6% số lượt nhiễu vào cụm.
-- Nhiễu cũng **không đồng nghĩa với bản ghi lỗi**: tỷ lệ cờ chất lượng của lượt nhiễu chỉ nhỉnh hơn một phần nhỏ ở một số cờ (`flag_speed_gt_80` 0,12–0,30% so với 0,04%; `flag_zero_duration` 2,61–4,34% so với 1,31–1,67%), và tuyệt đại đa số lượt nhiễu không có cờ nào.
+- Nhiễu cũng **không đồng nghĩa với bản ghi lỗi**, dù một số cờ chất lượng cao hơn rõ rệt ở điểm nhiễu (đáng chú ý nhất là cờ quãng đường bằng 0 `flag_zero_distance`: buổi sáng 12,2% vs 8,8%, buổi chiều 16,0% vs 9,6%, cuối tuần 9,7% vs 10,1%; ngoài ra `flag_zero_duration` 2,61–4,34% vs 1,31–1,67% và `flag_speed_gt_80` 0,12–0,30% vs 0,04%). Tuy nhiên phần lớn các lượt nhiễu (trên 80%) không mang cờ lỗi nào, nên nhiễu ở đây chủ yếu phản ánh vùng có mật độ đón thấp.
 
 | Tiêu chí | K-Means (`K = 5`) | DBSCAN A (`1%, 1500 m`) |
 |---|---|---|
@@ -197,7 +227,7 @@ Hạn chế "một `eps` cho mọi mật độ" là lý do để so sánh tiếp
 1. Toạ độ là centroid của census tract hoặc community area, không phải GPS, nên hotspot ở đây là ở **mức khu vực**.
 2. Thời gian trong dữ liệu đã làm tròn 15 phút. Các lát cắt dùng khung 3 giờ nên không bị ảnh hưởng.
 3. Hotspot là vùng nhiều lượt đón taxi, **không phải điểm ùn tắc**: dữ liệu không có tốc độ hay lưu lượng xe.
-4. Kết quả trên chạy trên bản đầy đủ `master_v1` (4 tuần, 535.167 lượt); cần chốt đối chiếu trên cùng tập `trip_id` với HDBSCAN của M3.
+4. Kết quả trên chạy trên bản đầy đủ `master_v1` (4 tuần, 535.167 lượt), cùng tập dữ liệu và số điểm theo lát cắt với HDBSCAN của M3 (`hdbscan_metrics.csv`).
 
 ## Tài liệu tham khảo
 

@@ -5,7 +5,7 @@ Checklist: `docs/checklist-m2.md`
 | Mục | Nội dung | Trạng thái | Commit |
 |---|---|---|---|
 | 1.1 | [Môi trường Python, requirements.txt](Phan%201/1.1-moi-truong.md) | Xong (chưa kiểm trên Colab) | 7657227 |
-| 1.2 | [Định dạng dữ liệu và log chung](Phan%201/1.2-dinh-dang-du-lieu.md) | Đã chốt đầu vào với M1 (v1); chờ M3 (Bảo) xác nhận log chung | 3730d87, 8fb008d |
+| 1.2 | [Định dạng dữ liệu và log chung](Phan%201/1.2-dinh-dang-du-lieu.md) | Xong (đã chốt `master_v1` và 28 cột `RUN_LOG_COLUMNS` với M1, M3) | 3730d87, 8fb008d |
 | 2.1 | [File cấu hình thí nghiệm](Phan%202/2.1-file-cau-hinh.md) | Xong (chưa kiểm trên Colab) | 3730d87 |
 | 2.2 | [Hàm đánh giá dùng chung](Phan%202/2.2-ham-danh-gia.md) | Xong (chưa kiểm dữ liệu thật) | cce6f53 |
 | 2.3 | [Đo runtime, RAM và ghi log](Phan%202/2.3-do-tai-nguyen-ghi-log.md) | Xong (chưa kiểm dữ liệu thật) | 969075d |
@@ -18,10 +18,11 @@ Checklist: `docs/checklist-m2.md`
 | 4.1 | [DBSCAN: k-distance có trọng số](Phan%204/4.1-dbscan-k-distance.md) | Xong trên pilot; đã chốt lưới eps 500–3000 m | 70e69b9 |
 | 4.2 | [DBSCAN: full so với weighted, đo RAM](Phan%204/4.2-dbscan-full-vs-weighted.md) | Xong trên pilot (9/9 ARI = 1) | a34ed37 |
 | 4.3 | [DBSCAN: lưới eps × min_samples](Phan%204/4.3-dbscan-luoi-tham-so.md) | Xong trên pilot (144 cấu hình) | a1ba81c |
-| 4.4 | [DBSCAN: chọn cấu hình, log, bản đồ](Phan%204/4.4-dbscan-chon-cau-hinh.md) | Xong trên pilot (chính B: 1%, 2000 m; phụ C: 0,5%, 1000 m) | 813b756 |
-| 5.1 | [Chạy 3 lát cắt trên dữ liệu M1 (master_v1)](Phan%205/5.1-chay-ba-lat-cat.md) | Xong trên master_v1 (K = 5; DBSCAN chính A: 1%, 1500 m; phụ C: 0,5%, 1000 m); chờ M3 chốt cùng tập trip_id | ae8122b |
-| 5.2 | [Bảng tổng hợp baseline_metrics.csv](Phan%205/5.2-bang-chi-so-baseline.md) | Xong trên master_v1 (6 dòng chính, 28 cột `RUN_LOG_COLUMNS`); chờ M3 xác nhận để M4 ghép | 46795bd |
+| 4.4 | [DBSCAN: chọn cấu hình, log, bản đồ](Phan%204/4.4-dbscan-chon-cau-hinh.md) | Xong (pilot chọn B; trên `master_v1` cập nhật sang chính A: 1%, 1500 m; phụ C: 0,5%, 1000 m) | 813b756 |
+| 5.1 | [Chạy 3 lát cắt trên dữ liệu M1 (master_v1)](Phan%205/5.1-chay-ba-lat-cat.md) | Xong trên `master_v1` (K = 5; DBSCAN A: 1%, 1500 m; C: 0,5%, 1000 m; khớp QA-02/03 với M3) | ae8122b |
+| 5.2 | [Bảng tổng hợp baseline_metrics.csv](Phan%205/5.2-bang-chi-so-baseline.md) | Xong trên `master_v1` (6 dòng chính, 28 cột `RUN_LOG_COLUMNS`; khớp H05 với M3, M4) | 46795bd |
 | 5.3 | [So sánh K-Means và DBSCAN](Phan%205/5.3-so-sanh-kmeans-dbscan.md), [diễn giải](Phan%205/baseline_interpretation.md) | Đã cập nhật trên master_v1 (K = 5 vs DBSCAN A: 1%, 1500 m; trùng 9/9 nhãn) | e112c9e, e5b1ea4 |
-| 7.1 | [Phần báo cáo K-Means và DBSCAN](Phan%207/7.1-ly-thuyet-bao-cao.md) | Đã cập nhật trên master_v1 (84/84 số khớp CSV) | 9b92ddf |
-| 7.2 | [Tư liệu slide gửi M4](Phan%207/7.2-tu-lieu-slide.md) | Đã cập nhật trên master_v1 (slide 6, 8; HDBSCAN chờ M3) | 9b92ddf |
+| 5.6 | [Xử lý rà soát M2 trước khi nộp (21/11)](Phan%205/5.6-ra-soat-m2.md) | Xong (benchmark 50k, ổn định, 4 ứng viên, test M2, bảng 20 màu, sửa báo cáo & config) | — |
+| 7.1 | [Phần báo cáo K-Means và DBSCAN](Phan%207/7.1-ly-thuyet-bao-cao.md) | Đã cập nhật trên `master_v1` (kèm bảng 4 ứng viên, ổn định, CH, RAM và 5 câu rà soát) | 9b92ddf |
+| 7.2 | [Tư liệu slide gửi M4](Phan%207/7.2-tu-lieu-slide.md) | Đã cập nhật trên `master_v1` (đã điền đủ cột HDBSCAN ở slide 8) | 9b92ddf |
 | 7.3 | [Chuẩn bị vấn đáp](Phan%207/7.3-chuan-bi-van-dap.md) | Đã cập nhật trên master_v1 (5 câu chính 23–36 s + 9 câu nối tiếp; chưa tập nói) | 20aa77a |
