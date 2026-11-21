@@ -1,0 +1,67 @@
+{
+  "sample_id": "master_v1",
+  "file": "master_pickups_v1.parquet",
+  "created_at": "2026-11-18T17:45:48+00:00",
+  "created_by": "M1",
+  "source": "https://data.cityofchicago.org/Transportation/Taxi-Trips-2013-2023-/wrvz-psew",
+  "query_where": "trip_start_timestamp >= '2023-04-17T00:00:00' AND trip_start_timestamp < '2023-05-15T00:00:00'",
+  "date_window": [
+    "2023-04-17",
+    "2023-05-14"
+  ],
+  "raw_file": "raw_extract_20230417_20230514.parquet",
+  "raw_sha256": "f249fc450c7d0d3cd9f7ce3a5ccb5d5b8bf251d9bc43e1a2eafe3ca1ceafcaa1",
+  "crs": "EPSG:26916",
+  "features": [
+    "x_m",
+    "y_m"
+  ],
+  "seed": 42,
+  "rows_raw": 554794,
+  "rows_after_cleaning": 535167,
+  "rows_dropped_by_rule": {
+    "trip_id_null": 0,
+    "trip_id_duplicate": 0,
+    "start_time_invalid": 0,
+    "start_time_outside_window": 0,
+    "pickup_coord_missing": 19627,
+    "pickup_coord_out_of_range": 0,
+    "pickup_outside_chicago_bbox": 0
+  },
+  "columns": [
+    "trip_id",
+    "trip_start_timestamp",
+    "x_m",
+    "y_m",
+    "pickup_lat",
+    "pickup_lon",
+    "pickup_hour",
+    "weekday",
+    "is_weekend",
+    "is_weekday",
+    "daypart",
+    "time_slice",
+    "pickup_community_area",
+    "trip_seconds",
+    "trip_miles",
+    "flag_zero_duration",
+    "flag_zero_distance",
+    "flag_speed_gt_80",
+    "flag_end_before_start",
+    "flag_missing_area"
+  ],
+  "notes": [
+    "Toa do la tam census tract / community area, khong phai GPS.",
+    "Thoi gian lam tron 15 phut.",
+    "Mo hinh chi dung [x_m, y_m]; cot thoi gian chi de loc lat cat."
+  ],
+  "rows_in_sample": 535167,
+  "rows_by_time_slice": {
+    "OTHER": 267481,
+    "WEEKDAY_AM": 60498,
+    "WEEKDAY_PM": 86617,
+    "WEEKEND": 120571
+  },
+  "unique_pickup_coords": 304,
+  "sha256": "7459bd276a0b77c32d905d9f4bc7165c1c77594e8b92ae5925173d069079da51"
+}

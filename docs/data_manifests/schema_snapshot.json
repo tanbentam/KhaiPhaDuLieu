@@ -1,0 +1,152 @@
+{
+  "dataset_id": "wrvz-psew",
+  "name": "Taxi Trips (2013-2023)",
+  "portal_url": "https://data.cityofchicago.org/Transportation/Taxi-Trips-2013-2023-/wrvz-psew",
+  "metadata_url": "https://data.cityofchicago.org/api/views/wrvz-psew.json",
+  "retrieved_at_utc": "2026-11-18T14:09:37+00:00",
+  "rows_updated_at_utc": "2024-02-07T20:40:12+00:00",
+  "view_last_modified_utc": "2026-03-19T18:55:14+00:00",
+  "license": "See Terms of Use",
+  "attribution": "City of Chicago",
+  "n_columns": 23,
+  "columns": [
+    {
+      "fieldName": "trip_id",
+      "name": "Trip ID",
+      "dataTypeName": "text",
+      "description": "A unique identifier for the trip."
+    },
+    {
+      "fieldName": "taxi_id",
+      "name": "Taxi ID",
+      "dataTypeName": "text",
+      "description": "A unique identifier for the taxi."
+    },
+    {
+      "fieldName": "trip_start_timestamp",
+      "name": "Trip Start Timestamp",
+      "dataTypeName": "calendar_date",
+      "description": "When the trip started, rounded to the nearest 15 minutes."
+    },
+    {
+      "fieldName": "trip_end_timestamp",
+      "name": "Trip End Timestamp",
+      "dataTypeName": "calendar_date",
+      "description": "When the trip ended, rounded to the nearest 15 minutes."
+    },
+    {
+      "fieldName": "trip_seconds",
+      "name": "Trip Seconds",
+      "dataTypeName": "number",
+      "description": "Time of the trip in seconds."
+    },
+    {
+      "fieldName": "trip_miles",
+      "name": "Trip Miles",
+      "dataTypeName": "number",
+      "description": "Distance of the trip in miles."
+    },
+    {
+      "fieldName": "pickup_census_tract",
+      "name": "Pickup Census Tract",
+      "dataTypeName": "text",
+      "description": "The Census Tract where the trip began.  For privacy, this Census Tract is not shown for some trips. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "dropoff_census_tract",
+      "name": "Dropoff Census Tract",
+      "dataTypeName": "text",
+      "description": "The Census Tract where the trip ended.  For privacy, this Census Tract is not shown for some trips. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "pickup_community_area",
+      "name": "Pickup Community Area",
+      "dataTypeName": "number",
+      "description": "The Community Area where the trip began. This column will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "dropoff_community_area",
+      "name": "Dropoff Community Area",
+      "dataTypeName": "number",
+      "description": "The Community Area where the trip ended. This column will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "fare",
+      "name": "Fare",
+      "dataTypeName": "number",
+      "description": "The fare for the trip."
+    },
+    {
+      "fieldName": "tips",
+      "name": "Tips",
+      "dataTypeName": "number",
+      "description": "The tip for the trip. Cash tips generally will not be recorded."
+    },
+    {
+      "fieldName": "tolls",
+      "name": "Tolls",
+      "dataTypeName": "number",
+      "description": "The tolls for the trip."
+    },
+    {
+      "fieldName": "extras",
+      "name": "Extras",
+      "dataTypeName": "number",
+      "description": "Extra charges for the trip."
+    },
+    {
+      "fieldName": "trip_total",
+      "name": "Trip Total",
+      "dataTypeName": "number",
+      "description": "Total cost of the trip, the total of the previous columns."
+    },
+    {
+      "fieldName": "payment_type",
+      "name": "Payment Type",
+      "dataTypeName": "text",
+      "description": "Type of payment for the trip."
+    },
+    {
+      "fieldName": "company",
+      "name": "Company",
+      "dataTypeName": "text",
+      "description": "The taxi company."
+    },
+    {
+      "fieldName": "pickup_centroid_latitude",
+      "name": "Pickup Centroid Latitude",
+      "dataTypeName": "number",
+      "description": "The latitude of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "pickup_centroid_longitude",
+      "name": "Pickup Centroid Longitude",
+      "dataTypeName": "number",
+      "description": "The longitude of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "pickup_centroid_location",
+      "name": "Pickup Centroid Location",
+      "dataTypeName": "point",
+      "description": "The location of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "dropoff_centroid_latitude",
+      "name": "Dropoff Centroid Latitude",
+      "dataTypeName": "number",
+      "description": "The latitude of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "dropoff_centroid_longitude",
+      "name": "Dropoff Centroid Longitude",
+      "dataTypeName": "number",
+      "description": "The longitude of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    },
+    {
+      "fieldName": "dropoff_centroid_location",
+      "name": "Dropoff Centroid  Location",
+      "dataTypeName": "point",
+      "description": "The location of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago."
+    }
+  ]
+}

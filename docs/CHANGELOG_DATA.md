@@ -21,6 +21,8 @@ File dữ liệu đã phát hành không bị ghi đè. Mỗi lần đổi dữ 
 
 Mã sha256 đầy đủ nằm trong hai file manifest ở `data/manifests/`.
 
+Thư mục `data/` không nằm trong Git, nên bản sao của sáu file trong `data/manifests/` (nguồn, schema, từ điển dữ liệu và ba manifest) được lưu ở `docs/data_manifests/` để xem được ngay trên repo. Bản dùng khi chạy vẫn là `data/manifests/`; khi phát hành phiên bản mới, chép lại sang `docs/data_manifests/`.
+
 Số dòng và số toạ độ khác nhau theo lát cắt:
 
 | Lát cắt | Master: dòng | Master: toạ độ | Mẫu: dòng | Mẫu: toạ độ |

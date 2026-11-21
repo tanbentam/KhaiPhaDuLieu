@@ -1,0 +1,24 @@
+field_name,display_name,source_type,used_by_m1,internal_name,unit,role,source_description
+trip_id,Trip ID,text,True,trip_id,,Khoa chuyen di; dung de tai lap mau,A unique identifier for the trip.
+taxi_id,Taxi ID,text,False,,,,A unique identifier for the taxi.
+trip_start_timestamp,Trip Start Timestamp,calendar_date,True,trip_start_timestamp,"gio dia phuong Chicago, lam tron 15 phut","Thoi diem don; tao pickup_hour, weekday, time_slice","When the trip started, rounded to the nearest 15 minutes."
+trip_end_timestamp,Trip End Timestamp,calendar_date,True,trip_end_timestamp,"gio dia phuong Chicago, lam tron 15 phut",Kiem tra end < start,"When the trip ended, rounded to the nearest 15 minutes."
+trip_seconds,Trip Seconds,number,True,trip_seconds,giay,EDA va co chat luong; KHONG dua vao mo hinh,Time of the trip in seconds.
+trip_miles,Trip Miles,number,True,trip_miles,dam (mile),EDA va co chat luong; KHONG dua vao mo hinh,Distance of the trip in miles.
+pickup_census_tract,Pickup Census Tract,text,True,pickup_census_tract,ma census tract,EDA khong gian; co the bi an,"The Census Tract where the trip began.  For privacy, this Census Tract is not shown for some trips. This column often will be blank for locations outside Chicago."
+dropoff_census_tract,Dropoff Census Tract,text,True,dropoff_census_tract,ma census tract,EDA khong gian; co the bi an,"The Census Tract where the trip ended.  For privacy, this Census Tract is not shown for some trips. This column often will be blank for locations outside Chicago."
+pickup_community_area,Pickup Community Area,number,True,pickup_community_area,ma khu 1-77,Dien giai cum nam o khu nao,The Community Area where the trip began. This column will be blank for locations outside Chicago.
+dropoff_community_area,Dropoff Community Area,number,True,dropoff_community_area,ma khu 1-77,Nhanh doi chieu drop-off,The Community Area where the trip ended. This column will be blank for locations outside Chicago.
+fare,Fare,number,True,fare,USD,EDA; KHONG dua vao mo hinh,The fare for the trip.
+tips,Tips,number,True,tips,USD,EDA; KHONG dua vao mo hinh,The tip for the trip. Cash tips generally will not be recorded.
+tolls,Tolls,number,False,,,,The tolls for the trip.
+extras,Extras,number,False,,,,Extra charges for the trip.
+trip_total,Trip Total,number,True,trip_total,USD,EDA; KHONG dua vao mo hinh,"Total cost of the trip, the total of the previous columns."
+payment_type,Payment Type,text,False,,,,Type of payment for the trip.
+company,Company,text,True,company,,EDA phan khuc,The taxi company.
+pickup_centroid_latitude,Pickup Centroid Latitude,number,True,pickup_lat,"do (WGS84), tam vung, khong phai GPS","Toa do don -> chieu sang x_m, y_m",The latitude of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.
+pickup_centroid_longitude,Pickup Centroid Longitude,number,True,pickup_lon,"do (WGS84), tam vung, khong phai GPS","Toa do don -> chieu sang x_m, y_m",The longitude of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.
+pickup_centroid_location,Pickup Centroid Location,point,False,,,,The location of the center of the pickup census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.
+dropoff_centroid_latitude,Dropoff Centroid Latitude,number,True,dropoff_lat,"do (WGS84), tam vung, khong phai GPS",Nhanh doi chieu drop-off,The latitude of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.
+dropoff_centroid_longitude,Dropoff Centroid Longitude,number,True,dropoff_lon,"do (WGS84), tam vung, khong phai GPS",Nhanh doi chieu drop-off,The longitude of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.
+dropoff_centroid_location,Dropoff Centroid  Location,point,False,,,,The location of the center of the dropoff census tract or the community area if the census tract has been hidden for privacy. This column often will be blank for locations outside Chicago.

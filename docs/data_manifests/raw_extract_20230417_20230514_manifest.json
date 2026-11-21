@@ -1,0 +1,40 @@
+{
+  "file": "raw_extract_20230417_20230514.parquet",
+  "created_by": "M1",
+  "dataset_name": "Taxi Trips (2013-2023)",
+  "source": "https://data.cityofchicago.org/Transportation/Taxi-Trips-2013-2023-/wrvz-psew",
+  "endpoint": "https://data.cityofchicago.org/resource/wrvz-psew.json",
+  "retrieved_at_utc": "2026-11-18T14:15:48+00:00",
+  "rows_updated_at_utc": "2024-02-07T20:40:12+00:00",
+  "license": "See Terms of Use",
+  "query_select": "trip_id,trip_start_timestamp,trip_end_timestamp,trip_seconds,trip_miles,pickup_census_tract,dropoff_census_tract,pickup_community_area,dropoff_community_area,fare,tips,trip_total,company,pickup_centroid_latitude,pickup_centroid_longitude,dropoff_centroid_latitude,dropoff_centroid_longitude",
+  "query_where": "trip_start_timestamp >= '2023-04-17T00:00:00' AND trip_start_timestamp < '2023-05-15T00:00:00'",
+  "query_order": "trip_id",
+  "date_window": [
+    "2023-04-17",
+    "2023-05-14"
+  ],
+  "columns": [
+    "trip_id",
+    "trip_start_timestamp",
+    "trip_end_timestamp",
+    "trip_seconds",
+    "trip_miles",
+    "pickup_census_tract",
+    "dropoff_census_tract",
+    "pickup_community_area",
+    "dropoff_community_area",
+    "fare",
+    "tips",
+    "trip_total",
+    "company",
+    "pickup_centroid_latitude",
+    "pickup_centroid_longitude",
+    "dropoff_centroid_latitude",
+    "dropoff_centroid_longitude"
+  ],
+  "rows_server_count": 554794,
+  "rows_raw": 554794,
+  "file_size_bytes": 31592641,
+  "sha256": "f249fc450c7d0d3cd9f7ce3a5ccb5d5b8bf251d9bc43e1a2eafe3ca1ceafcaa1"
+}
