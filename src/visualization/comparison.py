@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 from .style import (ALGO_COLOR, ALGO_ORDER, SLICE_COLOR, SLICE_ORDER, SLICE_SHORT, SLICE_LABEL,
-                    SOURCE_NOTE, algo_label, apply_matplotlib_style, fmt_int, plotly_layout)
+                    SOURCE_NOTE, CENTROID_CAVEAT, algo_label, apply_matplotlib_style, fmt_int, plotly_layout)
 
 METRICS_DIR = Path("outputs") / "metrics"
 FIG_DIR = Path("outputs") / "figures" / "comparison"
@@ -236,7 +236,8 @@ def comparison_plotly(df: pd.DataFrame, out_html: str | Path) -> Path:
                         "Cùng tập trip_id mỗi lát cắt · Silhouette chỉ tính trên điểm có nhãn, đọc cùng coverage "
                         "(hover) · K-Means noise = 0 là do thiết kế")
     fig.update_layout(barmode="group", height=760, **lay)
-    fig.add_annotation(text=(SOURCE_NOTE + ". Runtime: HDBSCAN fit trên toàn bộ điểm, K-Means/DBSCAN fit weighted "
+    fig.add_annotation(text=(SOURCE_NOTE + ". " + CENTROID_CAVEAT +
+                             " Runtime: HDBSCAN fit trên toàn bộ điểm, K-Means/DBSCAN fit weighted "
                              "trên tọa độ duy nhất → không so trực tiếp. Nguồn: metrics_comparison.csv."),
                        xref="paper", yref="paper", x=0, y=-0.14, showarrow=False, align="left",
                        font=dict(size=10, color="#555"))

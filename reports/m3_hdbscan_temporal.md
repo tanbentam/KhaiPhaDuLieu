@@ -230,3 +230,46 @@ Trong tổng số $222$ cặp cụm ghép được (loại trừ $7$ trường h
 ### Câu Q10: Vì sao có tới 46,4% cặp ghép có khoảng cách dịch chuyển đúng 0 m? Điều đó có ý nghĩa gì?
 *Trả lời (khoảng 30 giây):*
 "Khoảng cách dịch chuyển $0\text{ m}$ xuất hiện ở 103 cặp ghép (46,4% số cặp đối sánh thành công) vì cả hai lát cắt đều có tâm cụm neo tại cùng một toạ độ centroid khu vực hành chính (census tract). Đây là hệ quả tất yếu của quá trình làm mờ dữ liệu (Spatial Coarsening) từ cổng dữ liệu mở Chicago. Khoảng cách $0\text{ m}$ không có nghĩa nhu cầu đứng yên, mà vị trí tâm vùng được giữ nguyên trong khi sự biến động thực chất của nhu cầu thể hiện qua sự thay đổi về số chuyến đi và tỷ trọng thị phần. Ngược lại, 53,6% cặp có khoảng cách dịch chuyển $> 0\text{ m}$ đều là các cụm đa toạ độ có trọng tâm dịch chuyển khi phân bố nhu cầu giữa các điểm thành viên thay đổi."
+
+---
+
+## 6. BẢNG ĐỐI CHIẾU VÀ ĐÍNH CHÍNH CÁC TUYÊN BỐ SỐ LIỆU (CLAIM REGISTER C01–C08)
+
+Nhằm chuẩn hóa toàn bộ các phát biểu trong báo cáo kỹ thuật và tài liệu thuyết trình, bảng dưới đây đối chiếu chi tiết các khẳng định C01–C08 giữa văn bản sơ thảo ban đầu và số liệu nghiệm thu chính thức từ các file CSV (`hdbscan_metrics.csv`, `hdbscan_clusters_master_v1.csv`, `hotspot_tracking.csv`):
+
+| Claim ID | Chủ đề | Tuyên bố ban đầu / Hiểu nhầm trước rà soát | Số liệu chính thức từ CSV (`master_v1`) | Giải thích bản chất & Đính chính kỹ thuật | Trạng thái |
+|---|---|---|---|---|---|
+| **C01** | HDBSCAN Noise Ratio | "HDBSCAN có Noise Ratio ≈ 10% (10,8%)" | **AM: 2,11%**, **PM: 2,27%**, **Weekend: 0,93%** (`hdbscan_metrics.csv`) | Hiểu nhầm số liệu của DBSCAN A (9,4%–12,6%). HDBSCAN thực tế bao phủ đến 97,7%–99,1% dữ liệu. Đã sửa số chính thức vào báo cáo. | **RESOLVED** |
+| **C02** | Dải Noise Ratio | "HDBSCAN Noise Ratio dao động 9,8%–11,5%" | **0,93% – 2,27%** trên cả 3 lát cắt | Đã đính chính thành dải 0,9%–2,3% trong toàn bộ tài liệu diễn giải. | **RESOLVED** |
+| **C03** | Số lượng cụm | "$mcs=100$ phát hiện '4 cụm vĩ mô' (Loop/Near North, O'Hare, Midway, Hyde Park)" | **AM: 67 cụm**, **PM: 63 cụm**, **Weekend: 78 cụm** | 4 cụm lớn là kết quả của DBSCAN A. HDBSCAN nhận diện mạng lưới vi mô 63–78 cụm chi tiết. Đã cập nhật đúng số cụm. | **RESOLVED** |
+| **C04** | Silhouette & DBI | "Silhouette đạt 0,78 và DBI đạt 0,19" | **Silhouette: 0,981 – 0,991**; **DBI: 0,180 – 0,288** | Số 0,78 là của bản chạy thử cũ. Số chính thức là 0,98–0,99 do hiện tượng nén toạ độ (Spatial Coarsening). Đã cập nhật kèm caveat. | **RESOLVED** |
+| **C05** | Thị phần O'Hare (Khu 76) | "O'Hare tăng từ 11,5% (sáng) lên 16,8% (chiều)" | **Cụm lớn nhất (Cụm 0): 10,6% $\rightarrow$ 12,8%**; **Tổng toàn khu 76: 15,7% $\rightarrow$ 20,4% $\rightarrow$ 24,2%** | Số cũ là ước lượng nháp. Đã phân biệt rõ giữa thị phần của cụm lớn nhất và tổng nhu cầu toàn khu vực hành chính 76. | **RESOLVED** |
+| **C06** | Dịch chuyển Cụm Trung tâm | "Tâm cụm trung tâm dịch chuyển khoảng 800–900 m (hoặc 650–950 m) về phía bắc" | **Các cụm lớn ($\ge 2000$ chuyến) dịch chuyển: $0\text{ m}, 0\text{ m}, 0\text{ m}, 0\text{ m}, 0\text{ m}, 0\text{ m}, 83\text{ m}, 0\text{ m}, 0\text{ m}$** | Không có cụm lớn nào dịch 650–950m. Tâm cụm cố định tại centroid; nhu cầu tăng tại chỗ ở Loop/Near North chứ không di chuyển vật lý. Đã sửa trong báo cáo. | **RESOLVED** |
+| **C07** | Hotspot Hyde Park (Khu 41) | "Hyde Park xuất hiện rõ ở sáng (611 chuyến, 1,0%), tan rã chiều/cuối tuần" | **AM: Cụm 29 ($351$ chuyến, $0,58\%$); PM: Cụm 27 ($607$ chuyến, $0,70\%$); Weekend: Cụm 24 ($748$ chuyến, $0,62\%$)** | Số 611 chuyến là của DBSCAN A. HDBSCAN nhận diện Hyde Park liên tục ở cả 3 lát cắt với số chuyến chiều và cuối tuần cao hơn sáng. Đã sửa đúng số liệu. | **RESOLVED** |
+| **C08** | Thị phần Midway (Khu 56) | "Midway giữ tỷ trọng 4,2%–4,8% ở cả 3 lát cắt" | **Σ share cụm HDBSCAN: AM: 2,74%, PM: 3,29%, Weekend: 3,80%** (Tổng thô khu 56: 2,71%, 3,29%, 3,80%) | Số 4,2%–4,8% là số liệu nháp cũ. Đã cập nhật đúng số liệu từ `hdbscan_clusters_master_v1.csv` và xác nhận HDBSCAN tách Midway thành 2 cụm độc lập. | **RESOLVED** |
+
+---
+
+## 7. QUYẾT ĐỊNH NGHIỆP VỤ & THỐNG NHẤT PHƯƠNG PHÁP LUẬN M2 + M3 (FAIR REPORTING PROTOCOL)
+
+Nhằm đảm bảo tính khách quan và khoa học cao nhất khi đối chiếu các mô hình trong toàn bộ đồ án, hai thành viên M2 (Baseline Lead) và M3 (Advanced Modeling Lead) đã thống nhất và quyết định nguyên tắc đánh giá như sau:
+
+### 7.1. Nguyên tắc Báo cáo Silhouette Score và Davies-Bouldin Index (DBI) Công bằng
+1. **Quy định về Silhouette:**
+   - Silhouette của HDBSCAN đạt rất cao ($0,981 - 0,991$), vượt trội về mặt con số so với K-Means ($0,726 - 0,753$) và DBSCAN ($0,741 - 0,859$). Tuy nhiên, **không được dùng con số này để kết luận HDBSCAN tốt hơn**.
+   - Con số này phản ánh hệ quả toán học của hiện tượng làm mờ dữ liệu (Spatial Coarsening): có tới **$63,0\%$ cụm HDBSCAN ($131/208$ cụm)** chỉ gồm một toạ độ centroid duy nhất (bán kính nội cụm $RMS = 0\text{ m}$). Khoảng cách nội cụm $a(i) = 0$ tự động đẩy điểm $s(i) = 1,0$.
+   - **Yêu cầu bắt buộc:** Báo cáo Silhouette luôn phải đi kèm tỷ lệ bao phủ (Coverage), tỷ lệ nhiễu (Noise Ratio), số điểm tính metric ($N_{\text{metric}}$), và tỷ lệ cụm đơn toạ độ.
+2. **Quy định về Davies-Bouldin Index (DBI):**
+   - **Chỉ số DBI của DBSCAN thấp hơn (tốt hơn) HDBSCAN ở cả ba lát cắt** ($0,220$ vs $0,288$ ở AM; $0,153$ vs $0,180$ ở PM; $0,159$ vs $0,269$ ở Weekend).
+   - **Quyết định:** Bảng so sánh tổng hợp H05 và slide thuyết trình **in đậm DBI của DBSCAN**, tuyệt đối không in đậm DBI của HDBSCAN.
+   - Giải thích bản chất: DBSCAN chỉ tạo 3–4 cụm đại diện vĩ mô rất cách xa nhau, trong khi HDBSCAN chia nhỏ không gian thành 63–78 cụm vi mô nên khoảng cách giữa các tâm cụm gần nhau hơn, làm tăng tỷ số DBI.
+3. **Tiêu chuẩn lựa chọn mô hình thực tế:** Đánh giá mô hình dựa trên sự cân bằng đa mục tiêu: khả năng bao quát không gian (Coverage $\ge 97\%$), tỷ lệ nhiễu thấp ($\le 2,5\%$), tính ổn định qua xáo dòng ngẫu nhiên, và năng lực nhận diện các điểm nóng vi mô phục vụ điều phối phương tiện chi tiết tại từng khu vực.
+
+### 7.2. Thống nhất Giới hạn So sánh Thời gian Chạy (Runtime Limits)
+1. **Khác biệt cốt lõi về biểu diễn dữ liệu khi fit:**
+   - K-Means và DBSCAN được tối ưu hóa bằng cách fit có trọng số (`sample_weight`) trên đúng các toạ độ duy nhất ($N_{\text{fit}} \le 189$ điểm), đo trên Python 3.10.6 $\Rightarrow$ Runtime $0,04 - 0,16\text{ s}$.
+   - HDBSCAN không hỗ trợ `sample_weight` trong thuật toán dựng Mutual Reachability Graph, bắt buộc phải fit trên toàn bộ $N_{\text{fit}} = 60.498 - 120.571$ dòng chuyến rời rạc, đo trên Python 3.11.9 với extension Cython/C (`hdbscan 0.8.44`) $\Rightarrow$ Runtime $1,39 - 3,03\text{ s}$.
+2. **Quyết định thống nhất:**
+   - **TUYỆT ĐỐI KHÔNG SO SÁNH TRỰC TIẾP RUNTIME** giữa HDBSCAN và K-Means/DBSCAN. Sự chênh lệch phản ánh quy mô dữ liệu đưa vào fit ($N_{\text{fit}} \approx 60k - 120k$ dòng vs $N_{\text{fit}} \le 189$ điểm), không phản ánh tốc độ thuần tuý của thuật toán.
+   - Trong mọi bảng biểu (H05, `metrics_comparison.csv`), biểu đồ so sánh (`runtime_noise_comparison.png`, `cluster_comparison.html`), slide thuyết trình và báo cáo Word, bắt buộc phải ghi chú rõ điều kiện đo và cỡ mẫu fit tương ứng.
+

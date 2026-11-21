@@ -21,6 +21,7 @@ QA-12,hotspot_tracking,PASS,"46% cặp ghép (STABLE/MERGED/SPLIT) có dịch ch
 QA-13,hdbscan_clusters,WARN,"62% cụm HDBSCAN chỉ gồm 1 tọa độ duy nhất (bán kính 0) → Silhouette/DBI của HDBSCAN bị thổi phồng, không so trực tiếp với K-Means/DBSCAN",M3
 QA-14,runtime,WARN,"chế độ fit theo thuật toán: {'dbscan': ['weighted'], 'hdbscan': ['unweighted'], 'kmeans': ['weighted']} → KHÔNG cùng cách fit (weighted trên tọa độ duy nhất vs toàn bộ điểm): runtime không so trực tiếp",M2/M3
 QA-15,environment,WARN,"phiên bản Python theo thuật toán: {'dbscan': ['3.10.6'], 'hdbscan': ['3.11.9'], 'kmeans': ['3.10.6']} — BA 2.4 yêu cầu ghi/đồng nhất môi trường khi đo runtime",M2/M3
+QA-17,cluster_comparison.html,PASS,có chú thích centroid ≠ GPS,M4
 QA-17,cluster_map_comparison.html,PASS,có chú thích centroid ≠ GPS,M4
 QA-17,cluster_map_dbscan.html,PASS,có chú thích centroid ≠ GPS,M4
 QA-17,cluster_map_hdbscan.html,PASS,có chú thích centroid ≠ GPS,M4

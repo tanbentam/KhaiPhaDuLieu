@@ -8,4 +8,4 @@ C06,reports/m3_hdbscan_temporal.md,Tâm cụm trung tâm dịch chuyển 820 m v
 C07,reports/m3_hdbscan_temporal.md,"Hyde Park (khu 41) xuất hiện rõ ở sáng ngày thường (611 chuyến, 1,0%), tan rã chiều/cuối tuần","HDBSCAN khu 41: WEEKDAY_AM 351 chuyến (0.6%), WEEKDAY_PM 607 chuyến (0.7%), WEEKEND 748 chuyến (0.6%). Số 611 chuyến / 1,0% trùng cụm DBSCAN A khu 41: 611 chuyến",RESOLVED,M3
 C08,reports/m3_hdbscan_temporal.md,"Midway (khu 56) giữ tỷ trọng 4,2%–4,8% ở cả 3 lát cắt","Σ share cụm HDBSCAN khu 56: WEEKDAY_AM 2.7%, WEEKDAY_PM 3.3%, WEEKEND 3.8%",RESOLVED,M3
 C09,docs/Phan 5/hdbscan_interpretation.md,"DBSCAN Noise Ratio 9,4%–12,6%",dbscan_clusters (A): 9.4%–12.6%,KHỚP,M3
-C10,docs/Phan 5/5.5-bien-ban-ban-giao-m3.md,"Bảng H05 gồm đúng 9 dòng (3 K-Means, 3 DBSCAN A, 3 HDBSCAN)",baseline + hdbscan = 9 dòng,RESOLVED,M3
+C10,docs/Phan 5/5.5-bien-ban-ban-giao-m3.md,"Bảng H05 gồm đúng 9 dòng (3 K-Means, 3 DBSCAN A, 3 HDBSCAN)",baseline + hdbscan = 9 dòng,KHỚP,M3

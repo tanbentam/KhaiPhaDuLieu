@@ -165,16 +165,14 @@ def check_artifacts(root: Path, required: list[str]) -> list[Result]:
 
 
 def check_html_maps(root: Path) -> list[Result]:
-    """Moi HTML map phai co legend/tieu de va nhac den centroid khong phai GPS."""
+    """Moi HTML map/chart phai co legend/tieu de va nhac den centroid khong phai GPS."""
     res: list[Result] = []
     for p in sorted((root / MAP).glob("*.html")):
-        if p.name == "cluster_comparison.html":   # bieu do Plotly, khong phai ban do
-            continue
         txt = p.read_text(encoding="utf-8", errors="ignore")
         has_caveat = bool(re.search(r"khong phai GPS|không phải GPS|KHÔNG phải GPS|không phải vị trí GPS", txt, re.I))
         res.append(Result("QA-17", p.name, "PASS" if has_caveat else "WARN",
                           "có chú thích centroid ≠ GPS" if has_caveat else "thiếu chú thích centroid ≠ GPS trong HTML",
-                          "M4" if p.name in M4_MAPS else "M2/M3"))
+                          "M4" if p.name in M4_MAPS or p.name == "cluster_comparison.html" else "M2/M3"))
     return res
 
 
